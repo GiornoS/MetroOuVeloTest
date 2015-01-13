@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.myappter480578" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>Métro ou Vélib ?</name>
+  <name>Métro ou Vélib ? VERSION DE TEST</name>
   <description>
         Application permettant de prévoir quel moyen de locomotion est idéal pour un trajet à un instant donné.
     </description> 
