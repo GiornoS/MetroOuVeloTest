@@ -15,7 +15,7 @@
   
   <icon src="icon.png" />
   
-  <gap:splash src="splash.png" />
+
 
 
 
@@ -25,6 +25,8 @@
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="BackupWebStorage" value="none"/>
+  
+  <gap:plugin name="org.apache.cordova.device" />
   
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
