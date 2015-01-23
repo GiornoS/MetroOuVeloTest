@@ -1,1 +1,23 @@
-/* Empty. Add your own CSS if you like */
+.validerButton
+{
+	border-radius:10px;
+	position:relative;
+}
+
+.geolocaliserButton
+{
+	border-radius:10px;
+	position:relative;
+}
+
+.CityName
+{
+	position:relative;	
+}
+
+.liste-temperature
+{
+
+}
+
+
