@@ -33,7 +33,7 @@
 
 		<label class="item item-input">
 			<i class="icon ion-search placeholder-icon"></i>
-			<input type="text" placeholder="Où voulez-vous aller ?" ng-model="city" name="city">
+			<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city">
 		</label>
 	</div>
 
@@ -41,7 +41,7 @@
 		<button ng-click="geolocate()" class="button button-outline button-positive geolocaliserButton">
 			Géolocaliser
 		</button>
-		<button ng-click="searchWeather()" class="button button-outline button-positive validerButton">
+		<button ng-click="searchWeather(city)" class="button button-outline button-positive validerButton">
 			Valider
 		</button>
 	</center>
@@ -58,7 +58,6 @@
 	
 	<div class="CityName">
 		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
-		<strong><center><br />{{coordonates.results[0].geometry.location.lat}} et {{coordonates.results[0].geometry.location.lng}}</center></strong>
 	</div>
 	<ul class="list liste-temperature" ng-repeat="t in weather.list">
 		<li class="item">

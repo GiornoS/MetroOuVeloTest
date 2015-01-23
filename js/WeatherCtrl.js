@@ -13,18 +13,29 @@ angular.module('app', ['ionic'])
 		$http.get(url).success(httpSuccess).error(httpError);	
 	}
 */
+	$scope.getCoordonates = function(address){
+		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
+		$http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
+	}	
 	
-	$scope.searchWeather = function(){
+	httpSuccessGetCoordonates = function(response){
+		$scope.coordonates = response;
+	}
+	
+	
+	$scope.searchWeather = function(location){
+		$scope.getCoordonates(location);
+		
 		var url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + $scope.coordonates.results[0].geometry.location.lat + "&lon=" + $scope.coordonates.results[0].geometry.location.lng + "&mode=json&units=metric&cnt=10";
 		//$scope.loader = true;
-		$http.get(url).success(httpSuccess).error(httpError);
+		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
 	}
 
-	
-	$scope.getCoordonates = function(){
-		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + $scope.city + "&language=fr&&sensor=false";
-		$http.get(urlbis).success(httpSuccessbis).error(httpErrorbis);
+	httpSuccessSearchWeather = function(response){
+		$scope.weather = response;
 	}
+	
+	
 	
 /*	$scope.expand = function(e){
 		$elem = $(e.currentTarget); //ATTENTION JQUERY !!!!!
@@ -45,46 +56,35 @@ angular.module('app', ['ionic'])
 	$scope.geolocate = function(){
 		navigator.geolocation.getCurrentPosition(function(position){
 		//	$scope.loader = true;
-			$http.get("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&mode=json&units=metric&cnt=10").success(httpSuccess).error(httpError)
+		$http.get("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&mode=json&units=metric&cnt=10").success(httpSuccessGeolocate).error(httpError)
 		})
 	}
 
+
 	
-	httpSuccess = function(response){
+	httpSuccessGeolocate = function(response){
 		//$scope.loader = false;
 		$scope.weather = response;
+		navigator.geolocation.getCurrentPosition(function(position){
+		$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude +"," + position.coords.longitude + "&sensor=false").success(httpSuccessGeolocateSuccess).error(httpError)
+		})
 	}
+	
+	httpSuccessGeolocateSuccess = function(response){
+		$scope.coordonates = response;
+	}
+
+
 	
 	httpError = function(response){
 		//$scope.loader=false;
 		alert('Impossible de récupérer les informations');
 	}
 	
-	httpSuccessbis = function(response){
-		//$scope.loader = false;
-		$scope.coordonates = response;
-	}
-	
-	httpErrorbis = function(response){
-		//$scope.loader=false;
-		alert('Impossible de récupérer les informations');
-	}
-	
-	httpSuccesster = function(response){
-		//$scope.loader = false;
-		$scope.weatherbis = response;
-	}
-	
-	httpErrorter = function(response){
-		//$scope.loader=false;
-		alert('Impossible de récupérer les informations');
-	}
 
-	
+
 	//$scope.geolocate();
-	$scope.city="Henri Farman Thiais";	
 	$scope.Math = Math; //Importation du module Math pour arrondir les températures
-	$scope.getCoordonates();
 });
 
 
