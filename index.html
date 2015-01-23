@@ -45,26 +45,16 @@
 			Valider
 		</button>
 	</center>
-
-
-<!--
-<form ng-submit="searchWeather()" ng-controller="WeatherCtrl">
-
-  Enter text and hit enter:
-  <input type="text" ng-model="city" name="city" />
-  <input type="submit" id="submit" value="Submit" />
-</form>
-	-->
 	
 	<div class="CityName">
 		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
 	</div>
-	<ul class="list liste-temperature" ng-repeat="t in weather.list">
+	<ul class="list liste-temperature" ng-repeat="t in weather.hourly">
 		<li class="item">
 			<center>
-				<strong>{{t.dt*1000 | date:'EEE'}}</strong>
-				{{t.dt*1000 | date:'dd/MM'}}
-				<br /><strong>{{Math.round(t.temp.day)}}°C</strong>
+				<strong>{{t.time*1000 | date:'EEE'}}</strong>
+				{{t.time*1000 | date:'dd/MM'}}
+				<br /><strong>{{Math.round(t.temperature)}}°C</strong>
 				
 			</center>
 <!--

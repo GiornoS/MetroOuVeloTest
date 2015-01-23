@@ -77,7 +77,7 @@ angular.module('app', ['ionic'])
 
 		navigator.geolocation.getCurrentPosition(function(position){
 		//	$scope.loader = true;
-			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude).success(httpSuccessGeolocate).error(httpError)
+			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError)
 		})
 	}
 
