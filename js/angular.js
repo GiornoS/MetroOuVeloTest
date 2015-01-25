@@ -215,3 +215,101 @@ x=t.clone();h=0;for(var B=g.children(),v=B.length;h<v;h++)if(""===B[h].value){w=
 d.prop("selected",!1):l=c;f?a.$watch(f,function(a,c){e.$set("value",a);a!==c&&l.removeOption(c);l.addOption(a)}):l.addOption(e.value);d.on("$destroy",function(){l.removeOption(e.value)})}}}}],gd=aa({restrict:"E",terminal:!0});W.angular.bootstrap?console.log("WARNING: Tried to load angular more than once."):((Fa=W.jQuery)&&Fa.fn.on?(A=Fa,E(Fa.fn,{scope:Oa.scope,isolateScope:Oa.isolateScope,controller:Oa.controller,injector:Oa.injector,inheritedData:Oa.inheritedData}),Gb("remove",!0,!0,!1),Gb("empty",
 !1,!1,!1),Gb("html",!1,!1,!0)):A=S,Xa.element=A,Zc(Xa),A(X).ready(function(){Wc(X,dc)}))})(window,document);!window.angular.$$csp()&&window.angular.element(document).find("head").prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>');
 //# sourceMappingURL=angular.min.js.map
+
+
+angular.module("ngLocale", [], ["$provide", function($provide) {
+var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+$provide.value("$locale", {
+"DATETIME_FORMATS": {
+"AMPMS": [
+"AM",
+"PM"
+],
+"DAY": [
+"dimanche",
+"lundi",
+"mardi",
+"mercredi",
+"jeudi",
+"vendredi",
+"samedi"
+],
+"MONTH": [
+"janvier",
+"f\u00e9vrier",
+"mars",
+"avril",
+"mai",
+"juin",
+"juillet",
+"ao\u00fbt",
+"septembre",
+"octobre",
+"novembre",
+"d\u00e9cembre"
+],
+"SHORTDAY": [
+"Dim",
+"Lun",
+"Mar",
+"Mer",
+"Jeu",
+"Ven",
+"Sam"
+],
+"SHORTMONTH": [
+"Janv",
+"F\u00e9vr",
+"Mars",
+"Avr",
+"Mai",
+"Juin",
+"Juil",
+"Ao\u00fbt",
+"Sept",
+"Oct",
+"Nov",
+"D\u00e9c"
+],
+"fullDate": "EEEE d MMMM y",
+"longDate": "d MMMM y",
+"medium": "d MMM y HH:mm:ss",
+"mediumDate": "d MMM y",
+"mediumTime": "HH:mm:ss",
+"short": "dd/MM/y HH:mm",
+"shortDate": "dd/MM/y",
+"shortTime": "HH:mm"
+},
+"NUMBER_FORMATS": {
+"CURRENCY_SYM": "\u20ac",
+"DECIMAL_SEP": ",",
+"GROUP_SEP": "\u00a0",
+"PATTERNS": [
+{
+"gSize": 3,
+"lgSize": 3,
+"maxFrac": 3,
+"minFrac": 0,
+"minInt": 1,
+"negPre": "-",
+"negSuf": "",
+"posPre": "",
+"posSuf": ""
+},
+{
+"gSize": 3,
+"lgSize": 3,
+"maxFrac": 2,
+"minFrac": 2,
+"minInt": 1,
+"negPre": "-",
+"negSuf": "\u00a0\u00a4",
+"posPre": "",
+"posSuf": "\u00a0\u00a4"
+}
+]
+},
+"id": "fr-fr",
+"pluralCat": function(n, opt_precision) { var i = n | 0; if (i == 0 || i == 1) { return PLURAL_CATEGORY.ONE; } return PLURAL_CATEGORY.OTHER;}
+});
+}]);

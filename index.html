@@ -49,18 +49,19 @@
 	<div class="CityName">
 		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
 	</div>
-	<ul class="list liste-temperature" ng-repeat="t in weather.hourly">
+	<ul class="list liste-temperature" ng-repeat="h in weather.minutely.data">
 		<li class="item">
 			<center>
-				<strong>{{t.time*1000 | date:'EEE'}}</strong>
-				{{t.time*1000 | date:'dd/MM'}}
-				<br /><strong>{{Math.round(t.temperature)}}°C</strong>
+<!--
+				METTRE LES ICÔNES !!!
+				<i class="{{h.icon}}"></i>
+-->
+				<strong>{{h.time*1000 | date:'EEE'}}</strong>
+				{{h.time*1000 | date:'dd/MM'}}
+				<br /><strong>{{Math.round(h.temperature)}}°C</strong>
 				
 			</center>
-<!--
-			METTRE LES ICONES !!!!
-			<i class="icon-{{t.weather.0.main.toLowerCase()}}"></i>
--->
+
 		</li>
 		
 	</ul>

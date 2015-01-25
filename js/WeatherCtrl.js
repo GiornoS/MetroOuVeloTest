@@ -37,7 +37,7 @@ angular.module('app', ['ionic'])
 		
 		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
 
-		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng ;
+		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si" ;
 		//$scope.loader = true;
 		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
 	}
@@ -102,10 +102,9 @@ angular.module('app', ['ionic'])
 		alert('Impossible de récupérer les informations');
 	}
 	
-
-
-	//$scope.geolocate();
 	$scope.Math = Math; //Importation du module Math pour arrondir les températures
+	$scope.geolocate();
+
 });
 
 
