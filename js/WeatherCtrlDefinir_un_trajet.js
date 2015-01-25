@@ -13,8 +13,9 @@ angular.module('app', ['ionic'])
 		$http.get(url).success(httpSuccess).error(httpError);	
 	}
 */
-	$scope.getCoordonates = function(address){
-		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
+	$scope.getCoordonates = function(city_start,city_end){
+		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + city_start + "&language=fr&&sensor=false";
+		var urlter="http://maps.googleapis.com/maps/api/geocode/json?address=" + city_end + "&language=fr&&sensor=false";
 		$http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
 	}	
 	
@@ -32,8 +33,8 @@ angular.module('app', ['ionic'])
 	}
 */
 	
-	$scope.searchWeather = function(location){
-		$scope.getCoordonates(location);
+	$scope.searchWeather = function(city_start,city_end){
+		$scope.getCoordonates(city_start,city_end);
 		
 		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
 
