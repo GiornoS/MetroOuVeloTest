@@ -1,3 +1,7 @@
+/*
+ DEFINIR UNE ADRESSE + DEFINIR UN TRAJET
+*/
+
 .validerButton
 {
 	border-radius:10px;
@@ -29,9 +33,24 @@
 .weather_icon
 {
 	width:30%;
-	height:60%;
+	height:90%;
 	position:absolute;
 	left:0px;
 	margin:15px15px15px15px;
+}
+
+/*
+ DEFINIR UN TRAJET
+*/
+
+.search_start
+{
+	position:relative;
+}
+
+.search_end
+{
+	position:relative;
+	margin-top:20px;
 }
 

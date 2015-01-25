@@ -23,19 +23,19 @@
 	
 	<!-- Le bandeau supérieur avec le nom de l'application -->
 	<ion-header-bar class="bar-positive">
-		<h1 class="title"><center> Définir une adresse</center></h1>
+		<h1 class="title"><center> Définir un trajet</center></h1>
 	</ion-header-bar>
 	
 	<ion-content>
 
 	<div class="tabs tabs-positive tabs-footer">
-		<a class="tab-item" ng-click="menu='Home'" href="../index.html">
+		<a class="tab-item" href="../index.html">
 			Home
 		</a>
-		<a class="tab-item">
+		<a class="tab-item" href="Definir_une_adresse.html">
 			Définir une adresse
 		</a>
-		<a class="tab-item" href="Definir_un_trajet.html">
+		<a class="tab-item">
 			Définir un trajet
 		</a>
 	</div>
@@ -44,9 +44,13 @@
 	
 		<div class="list list-inset">
 
-			<label class="item item-input">
+			<label class="item item-input search_start">
 				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city">
+				<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start">
+			</label>
+			<label class="item item-input search_end">
+				<i class="icon ion-search placeholder-icon"></i>
+				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city_end" name="city_end">
 			</label>
 		</div>
 
