@@ -2,7 +2,7 @@ angular.module('app', ['ionic'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http){
+.controller('WeatherCtrlDefinir_une_adresse', function($scope, $http){
 	
 	
 /*	$scope.searchWeather = function(){
@@ -103,7 +103,7 @@ angular.module('app', ['ionic'])
 	}
 	
 	$scope.Math = Math; //Importation du module Math pour arrondir les températures
-	$scope.geolocate()
+	
 });
 
 

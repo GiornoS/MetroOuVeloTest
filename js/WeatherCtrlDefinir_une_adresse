@@ -103,7 +103,11 @@ angular.module('app', ['ionic'])
 	}
 	
 	$scope.Math = Math; //Importation du module Math pour arrondir les températures
-	$scope.geolocate()
+	
+	if ($scope.menu == 'Home') {
+		alert($scope.menu);
+		$scope.geolocate();
+	}
 });
 
 
