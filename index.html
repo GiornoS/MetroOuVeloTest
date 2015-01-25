@@ -54,7 +54,7 @@
 	<div class="list liste-temperature" ng-repeat="h in weather.hourly.data">
 		<center>
 			<a class="item item-icon-left" >
-				<img src="res/weather_icon/{{h.icon}}.png">
+				<i src="res/weather_icon/{{h.icon}}.png" class="icon"></i>
 				<strong>{{h.time*1000 | date:'EEE'}}</strong>
 				{{h.time*1000 | date:'dd/MM'}}
 				<br /><strong>{{Math.round(h.temperature)}}°C</strong>					
