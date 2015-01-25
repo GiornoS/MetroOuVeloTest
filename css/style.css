@@ -20,10 +20,18 @@
 
 }
 
+.tabs-footer
+{
+	position:relative;
+}
+
+
 .weather_icon
 {
 	width:30%;
 	height:15%;
-	margin-left:23px;
+	position:absolute;
+	left:0px;
+	margin:15px15px15px15px;
 }
 
