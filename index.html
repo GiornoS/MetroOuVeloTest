@@ -49,22 +49,19 @@
 	<div class="CityName">
 		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
 	</div>
-	<ul class="list liste-temperature" ng-repeat="h in weather.minutely.data">
-		<li class="item">
-			<center>
-<!--
-				METTRE LES ICÔNES !!!
-				<i class="{{h.icon}}"></i>
--->
+
+			
+	<div class="list liste-temperature" ng-repeat="h in weather.hourly.data">
+		<center>
+			<a class="item item-icon-left" >
+				<img src="res/weather_icon/{{h.icon}}.png">
 				<strong>{{h.time*1000 | date:'EEE'}}</strong>
 				{{h.time*1000 | date:'dd/MM'}}
-				<br /><strong>{{Math.round(h.temperature)}}°C</strong>
-				
-			</center>
-
-		</li>
-		
-	</ul>
+				<br /><strong>{{Math.round(h.temperature)}}°C</strong>					
+			</a>	
+		</center>
+	
+	</div>
 	
 </ion-content>
 	
