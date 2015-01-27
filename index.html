@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="app">
 
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>Métro ou Vélo ? VERSION DE TEST</title>
@@ -10,37 +10,59 @@
     <link href="css/style.css" rel="stylesheet">
 
 
-  </head>
+</head>
   
-  
-  <body ng-controller="WeatherCtrl">
-	
 
+  
+<body>
+
+
+
+<div class="body_index" ng-controller="WeatherCtrl">
 	
-	<!-- Le bandeau supérieur avec le nom de l'application -->
+	<div ng-show="loader_var"><center><img src="res/loader_icon/loader_blue.gif" class="loader_icon"></center></div>
+
+		<!-- Le bandeau supérieur avec le nom de l'application -->
 	<ion-header-bar class="bar-positive">
-		<h1 class="title"><center> M&eacutetro ou V&eacutelib' ? VERSION DE TEST</center></h1>
+		<h1 class="title"><center> Définir une adresse</center></h1>
 	</ion-header-bar>
 	
-<ion-content>
+	<ion-content>
 
 	<div class="tabs tabs-positive tabs-footer">
 		<a class="tab-item">
-			Home
-		</a>
-		<a class="tab-item" href="templates/Definir_une_adresse.html">
 			Définir une adresse
 		</a>
 		<a class="tab-item" href="templates/Definir_un_trajet.html">
 			Définir un trajet
 		</a>
 	</div>
+
 	
+	
+		<div class="list list-inset">
+
+			<label class="item item-input">
+				<i class="icon ion-search placeholder-icon"></i>
+				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city">
+			</label>
+		</div>
+
+		<center>
+			<button ng-click="geolocate()" class="button button-outline button-positive geolocaliserButton">
+				Géolocaliser
+			</button>
+			<button ng-click="searchWeather(city)" class="button button-outline button-positive validerButton">
+				Valider
+			</button>
+		</center>
+	
+	<!-- Affichage de l'adresse voulue -->
 	<div class="CityName">
 		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
 	</div>
 
-			
+	<!-- Affichage de la météo, de la date au format jj/mm à hh:mm, de l'icône -->
 	<div class="list liste-temperature" ng-repeat="h in weather.hourly.data">
 		<center>
 			<a class="item" >
@@ -54,6 +76,7 @@
 	</div>
 	
 </ion-content>
+</div>
 	
 		
 		

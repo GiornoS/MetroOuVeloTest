@@ -1,4 +1,16 @@
 /*
+ TOUTES LES PAGES
+*/
+
+.loader_icon
+{
+	position:absolute;
+	top:500px;
+	width:5%;
+	height:5%;
+}
+
+/*
  DEFINIR UNE ADRESSE + DEFINIR UN TRAJET
 */
 
