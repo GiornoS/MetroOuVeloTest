@@ -5,9 +5,10 @@
 .loader_icon
 {
 	position:absolute;
-	top:500px;
-	width:5%;
-	height:5%;
+	left:50%;
+	top:50%;
+	width:10%;
+	height:10%;
 }
 
 /*
