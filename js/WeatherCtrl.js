@@ -2,8 +2,9 @@ angular.module('app', ['ionic'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile){
 	
+	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 	
 /*	$scope.searchWeather = function(){
 		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
@@ -14,15 +15,24 @@ angular.module('app', ['ionic'])
 	}
 */
 
-	//~ Fonction pour récupérer l'adresse à partir des coordonnées par l'API geocoding de google 
-
-	$scope.getCoordonates = function(address){
+	//~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io 	
+	$scope.searchWeather = function(address){
+		
+		//~ On affiche un gif de loading
+		$scope.loading = $ionicLoading.show({
+			content: 'Récupération des informations météorologiques...',
+			showBackdrop: false
+		});
+		//~ On récupère les coordonnées
 		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
 		$http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
 	}	
 	
+	//~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
 	httpSuccessGetCoordonates = function(response){
 		$scope.coordonates = response;
+		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si" ;
+		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
 	}
 	
 	
@@ -35,22 +45,10 @@ angular.module('app', ['ionic'])
 	}
 */
 	
-	//~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io 
-	//~ PROBLEME : IL FAUT APPUYER 2 FOIS SUR VALIDER
-	
-	$scope.searchWeather = function(location){
-		$scope.loader_var=true;
-		$scope.getCoordonates(location);			//~ On récupère les coordonnées
-		
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
-
-		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si" ;
-		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
-	}
-
+	//~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading
 	httpSuccessSearchWeather = function(response){
-		$scope.loader_var=false;
 		$scope.weather = response;
+		$ionicLoading.hide();
 	}
 	
 	
@@ -79,36 +77,36 @@ angular.module('app', ['ionic'])
 	}
 */
 
-	//~ Fonction de géolocalisation : récupère les coordonnées du lieu où on est.
-	
+	//~ Fonction de géolocalisation : récupère les coordonnées du lieu où on est et envoie une requête aux serveurs forecast.io pour connaître la météo à ces coordonnées.
 	$scope.geolocate = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
-
-
 		navigator.geolocation.getCurrentPosition(function(position){
-			$scope.loader_var = true;
+			$scope.loading = $ionicLoading.show({
+				content: 'Récupération des données météorologiques...',
+				showBackdrop: false
+			});
 			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError)
 		})
 	}
 
 
-	
+	//~ On récupère les coordonnées dans une variable à part pour pouvoir afficher l'adresse du lieu où l'on est
 	httpSuccessGeolocate = function(response){
-		$scope.loader_var = false;
-		$scope.weather = response;
+		$ionicLoading.hide();
 		navigator.geolocation.getCurrentPosition(function(position){
 		$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude +"," + position.coords.longitude + "&sensor=false").success(httpSuccessGeolocateSuccess).error(httpError)
 		})
 	}
 	
+	//~ On récupère l'adresse fournie par les serveurs de Google 
 	httpSuccessGeolocateSuccess = function(response){
 		$scope.coordonates = response;
+		$ionicLoading.hide();
 	}
 
 
-	
+	//~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
 	httpError = function(response){
-		$scope.loader_var=false;
+		$ionicLoading.hide();
 		alert('Impossible de récupérer les informations');
 	}
 	
