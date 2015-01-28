@@ -91,6 +91,7 @@ angular.module('app', ['ionic'])
 
 	//~ On récupère les coordonnées dans une variable à part pour pouvoir afficher l'adresse du lieu où l'on est
 	httpSuccessGeolocate = function(response){
+		$scope.weather = response;
 		navigator.geolocation.getCurrentPosition(function(position){
 		$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude +"," + position.coords.longitude + "&sensor=false").success(httpSuccessGeolocateSuccess).error(httpError)
 		})
