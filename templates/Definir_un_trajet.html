@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html ng-app="carte">
 
 <head>
 	<meta charset="utf-8">
@@ -9,7 +9,8 @@
 	<link href="../lib/ionic/css/ionic.css" rel="stylesheet">
 	<link href="../css/style.css" rel="stylesheet">
 
-
+   	<!-- google maps javascript -->
+   	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 
 
@@ -17,7 +18,7 @@
 </head>
   
   
-<body ng-controller="WeatherCtrlDefinir_un_trajet">
+<body ng-controller="DirectionCtrl">
 	
 
 	
@@ -43,39 +44,22 @@
 
 			<label class="item item-input search_start">
 				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start">
+				<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start" id="city_start">
 			</label>
 			<label class="item item-input search_end">
 				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city_end" name="city_end">
+				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city_end" name="city_end" id="city_end">
 			</label>
 		</div>
 
 		<center>
-			<button ng-click="geolocate()" class="button button-outline button-positive geolocaliserButton">
-				Géolocaliser
-			</button>
-			<button ng-click="searchWeather(city_start,city_end)" class="button button-outline button-positive validerButton">
+			<button ng-click="calculate(city_start, city_end)" class="button button-outline button-positive validerButton">
 				Valider
 			</button>
 		</center>
-	
-		<div class="CityName">
-			<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
-		</div>
 
-			
-		<div class="list liste-temperature" ng-repeat="h in weather.hourly.data">
-			<center>
-				<a class="item" >
-					<center><img src="../res/weather_icon/{{h.icon}}.png" class="weather_icon"></center>
-					<strong>{{h.time*1000 | date:'EEE'}}</strong>
-					{{h.time*1000 | date:"dd/MM 'à' HH:mm"}}
-					<br /><strong>{{Math.round(h.temperature)}}°C</strong>					
-				</a>	
-			</center>
-	
-		</div>
+      <div id="map" data-tap-disabled="true"></div>
+
 	
 	</ion-content>
 	

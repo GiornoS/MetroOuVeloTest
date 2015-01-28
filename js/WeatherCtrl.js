@@ -114,7 +114,6 @@ angular.module('app', ['ionic'])
 	
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
 	$scope.geolocate();		// On initialise la fonction de géolocalisation au lancement de l'application
-	$scope.loader_var=true;
 });
 
 

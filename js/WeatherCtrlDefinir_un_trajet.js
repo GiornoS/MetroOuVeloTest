@@ -1,109 +1,186 @@
-angular.module('app', ['ionic'])
+/* angular.module('carte', ['ionic'])
 
+.controller('DirectionCtrl', function($scope, $ionicLoading, $compile) {
+	
+	var panel;
+	var initialize;
+	var calculate;
+	var direction;
+	
+	$scope.initialize = function(){
+	  var paris = new google.maps.LatLng(48.85834,2.33752);
+	  var myOptions = {
+		zoom      : 14, // Zoom par défaut
+		center    : paris, // Coordonnées de départ de la carte de type latLng 
+		mapTypeId : google.maps.MapTypeId.TERRAIN, // Type de carte, différentes valeurs possible HYBRID, ROADMAP, SATELLITE, TERRAIN
+		maxZoom   : 20
+	  };
+	  
+	  map      = new google.maps.Map(document.getElementById('map'), myOptions);
+	  panel    = document.getElementById('panel');
+	  
+	  var marker = new google.maps.Marker({
+		position : paris,
+		map      : map,
+		title    : "Paris"
+		//icon     : "marker_lille.gif" // Chemin de l'image du marqueur pour surcharger celui par défaut
+	  });
+	  
+	 
+	  
+	  
+	  direction = new google.maps.DirectionsRenderer({
+		map   : map,
+		panel : panel // Dom element pour afficher les instructions d'itinéraire
+	  });
 
-
-.controller('WeatherCtrlDefinir_un_trajet', function($scope, $http){
+	};
 	
-	
-/*	$scope.searchWeather = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
-
-		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng ;
-		//$scope.loader = true;
-		$http.get(url).success(httpSuccess).error(httpError);	
-	}
-*/
-	$scope.getCoordonates = function(city_start,city_end){
-		var urlbis="http://maps.googleapis.com/maps/api/geocode/json?address=" + city_start + "&language=fr&&sensor=false";
-		var urlter="http://maps.googleapis.com/maps/api/geocode/json?address=" + city_end + "&language=fr&&sensor=false";
-		$http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
-	}	
-	
-	httpSuccessGetCoordonates = function(response){
-		$scope.coordonates = response;
-	}
-	
-	
-/*	$scope.searchWeather = function(location){
-		$scope.getCoordonates(location);
 		
-		var url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + $scope.coordonates.results[0].geometry.location.lat + "&lon=" + $scope.coordonates.results[0].geometry.location.lng + "&mode=json&units=metric&cnt=10";
-		//$scope.loader = true;
-		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
-	}
-*/
-	
-	$scope.searchWeather = function(city_start,city_end){
-		$scope.getCoordonates(city_start,city_end);
+	$scope.centerOnMe = function() {
+		if(!$scope.map) {
+			return;
+		}
+		$scope.loading = $ionicLoading.show({
+			content: 'Getting current location...',
+			showBackdrop: false
+		});
+		navigator.geolocation.getCurrentPosition(function(pos) {
+			
+			$scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			$scope.map.setZoom(15);
+			$scope.loading.hide();
+			
+			var posit = new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
+			
+			if (!marker){
+				marker = new google.maps.Marker({
+					position: posit,
+					map: $scope.map,
+					title: 'You are here'
+				});
+			}else{
+				marker.setMap(null);
+				marker = new google.maps.Marker({
+					position: posit,
+    	     		map: $scope.map,
+    	     		title: 'You are here'
+    	     	});
+  	     	}
+		}, function(error) {
+     		alert('Unable to get location: ' + error.message);
+     		$scope.loading.hide();
+     	},{
+     		timeout: 15000
+     	});
+   };
+   
+	$scope.calculate = function(){
 		
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
+	};
+   
+   $scope.initialize();
+   
+   
+});
 
-		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si" ;
-		//$scope.loader = true;
-		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
-	}
-
-	httpSuccessSearchWeather = function(response){
-		$scope.weather = response;
-	}
-	
-	
-	
-/*	$scope.expand = function(e){
-		$elem = $(e.currentTarget); //ATTENTION JQUERY !!!!!
-		$elem.addClass('row_active').siblings().removeClass('row_active');
-	}
 */
-	
-/*	$scope.geolocate = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
 
-		navigator.geolocation.getCurrentPosition(function(position){
-		//	$scope.loader = true;
-			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude).success(httpSuccess).error(httpError)
-		})
-	}
-*/
-	
-/*	$scope.geolocate = function(){
-		navigator.geolocation.getCurrentPosition(function(position){
-		//	$scope.loader = true;
-		$http.get("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&mode=json&units=metric&cnt=10").success(httpSuccessGeolocate).error(httpError)
-		})
-	}
-*/
-	
-	$scope.geolocate = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
+angular.module('carte', ['ionic'])
+.controller('DirectionCtrl', function($scope, $ionicLoading, $compile) {
+	var directionsDisplay = new google.maps.DirectionsRenderer();
+	function initialize() {
+		var paris = new google.maps.LatLng(48.85834,2.33752);
+		var mapOptions = {
+			center: paris,
+			zoom: 11,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+		directionsDisplay.setMap(map);
 
-		navigator.geolocation.getCurrentPosition(function(position){
-		//	$scope.loader = true;
-			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError)
-		})
-	}
-
-
-	
-	httpSuccessGeolocate = function(response){
-		//$scope.loader = false;
-		$scope.weather = response;
-		navigator.geolocation.getCurrentPosition(function(position){
-		$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude +"," + position.coords.longitude + "&sensor=false").success(httpSuccessGeolocateSuccess).error(httpError)
-		})
 	}
 	
-	httpSuccessGeolocateSuccess = function(response){
-		$scope.coordonates = response;
-	}
-
-
+	ionic.Platform.ready(initialize);
 	
-	httpError = function(response){
-		//$scope.loader=false;
-		alert('Impossible de récupérer les informations');
+	var marker;	//Variable pour avoir un seul marqueur
+	$scope.centerOnMe = function() {
+		if(!$scope.map) {
+			return;
+		}
+		$scope.loading = $ionicLoading.show({
+			content: 'Getting current location...',
+			showBackdrop: false
+		});
+		navigator.geolocation.getCurrentPosition(function(pos) {
+			
+			$scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			$scope.map.setZoom(15);
+			$scope.loading.hide();
+			
+			var posit = new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
+			
+			if (!marker){
+				marker = new google.maps.Marker({
+					position: posit,
+					map: $scope.map,
+					title: 'You are here'
+				});
+			}else{
+				marker.setMap(null);
+				marker = new google.maps.Marker({
+					position: posit,
+    	     		map: $scope.map,
+    	     		title: 'You are here'
+    	     	});
+  	     	}
+		}, function(error) {
+     		alert('Unable to get location: ' + error.message);
+     		$scope.loading.hide();
+     	},{
+     		timeout: 15000
+     	});
+   };
+   
+   $scope.calculate = function(city_start, city_end){
+		$scope.loader_var=true;
+		if(city_start && city_end){
+			var request = {
+				origin      : city_start,
+				destination : city_end,
+				travelMode  : google.maps.DirectionsTravelMode.BICYCLING, // Mode de conduite
+				unitSystem: google.maps.UnitSystem.METRIC
+			}
+			var directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+			directionsService.route(request, function(response, status){ // Envoie de la requête pour calculer le parcours
+				if(status == google.maps.DirectionsStatus.OK){
+					directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
+				}
+			});
+    }
+		
+		/*var url='https://maps.googleapis.com/maps/api/directions/json?origin=' + city_start + '&destination=' + city_end + '&mode=bicycling&region=fr'
+		$http.get(url).success(httpSuccessCalculate).error(httpErrorCalculate);
+		*/
 	}
 	
-	$scope.Math = Math; //Importation du module Math pour arrondir les températures
+/*	$scope.httpSuccessCalculate = function(response){
+		$scope.liste_chemin = response;
+		
+		var urlbis='https://maps.googleapis.com/maps/api/staticmap?size=400x400&path=weight:3%7Ccolor:blue%7Cenc:' + liste_chemin.routes[3];
+		$http.get(urlbis).success(httpSuccessCalculateSuccess).error(httpErrorCalculate);
+	}
+	
+	$scope.httpSuccessCalculateSuccess = function(response){
+		$scope.chemin=response;
+	}
+	
+	$scope.httpErrorCalculate = function(response){
+		$scope.loader_var=false;
+		alert("Désolé, impossible de récupérer le trajet.");
+	}
+*/	
+	
 	
 });
 

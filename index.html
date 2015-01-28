@@ -20,7 +20,10 @@
 
 <div class="body_index" ng-controller="WeatherCtrl">
 	
-	<div ng-show="loader_var"><img src="res/loader_icon/loader_blue.gif" class="loader_icon"></div>
+	<div ng-show="loader_var">
+		<img src="res/loader_icon/loader_blue.gif" class="loader_icon">
+		<div  class="loader_text">Récupération des données météorologiques</div>
+	</div>
 
 		<!-- Le bandeau supérieur avec le nom de l'application -->
 	<ion-header-bar class="bar-positive">

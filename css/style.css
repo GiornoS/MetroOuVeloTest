@@ -2,14 +2,35 @@
  TOUTES LES PAGES
 */
 
+.scroll {
+	height: 100%;
+}
+
+#map {
+	margin-top:1%;
+	margin-left:1%;
+	width: 98%;
+	height: 98%;
+}
+
 .loader_icon
 {
 	position:absolute;
 	left:45%;
 	top:50%;
-	width:10%;
-	height:10%;
+	max-width:10%;
+	max-height:10%;
 	z-index:10;
+}
+
+.loader_text
+{
+	position:absolute;
+	text-align:center;
+	top:60%;
+	left:40%;
+	vertical-align:middle;
+	color:#387ef5;
 }
 
 /*
