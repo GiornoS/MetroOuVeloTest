@@ -21,13 +21,13 @@
 <body ng-controller="DirectionCtrl">
 	
 	<!-- Le bandeau supérieur avec le nom de l'application -->
-	<ion-header-bar class="bar-positive">
+	<ion-header-bar class="bar-positive header_definir_un_trajet">
 		<h1 class="title"><center> Définir un trajet</center></h1>
 	</ion-header-bar>
 	
 	<ion-content>
 
-	<div class="tabs tabs-positive tabs-footer">
+	<div class="tabs tabs-positive tabs-footer tabs_definir_un_trajet">
 		<a class="tab-item" href="../index.html">
 			Définir une adresse
 		</a>
@@ -59,9 +59,10 @@
 
       <div id="map" data-tap-disabled="true"></div>
       
-	<div class="bar bar-footer bar-positive">
+	<!--Footer qui affiche le temps de trajet et la distance-->
+	<div class="bar bar-footer bar-positive footer_definir_un_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
-		<div class="title" ng-show="donnees_du_trajet">Distance à parcourir : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Temps de trajet à vélo : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
+		<div class="title" ng-show="donnees_du_trajet">Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
 		<button class="button button-icon icon ion-android-locate" id="geolocate_button" ng-click="centerOnMe()"></button>
 	</div>
 

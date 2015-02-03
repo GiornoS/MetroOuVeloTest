@@ -90,7 +90,6 @@
 #geolocate_button
 {
 	z-index:10;
-	position:absolute;
 	bottom:7%;
 	right:7%;
 	color:#B1CEEA;
@@ -108,20 +107,24 @@
 #map 
 {
 	position:absolute;
-	bottom:4.7%;
 	width: 100%;
-	height: 90.2%;
+	height: 90%;
+	bottom:5%;
 }
 
-/*
-.loading-container .loading {
+.footer_definir_un_trajet
+{
+	height:5%;
+}
 
-    background-color: transparent;
-    color: black;
-    width:200%;
+.tabs_definir_un_trajet
+{
+	height:5%;
+}
 
-    width: 100% !important;
-    border-width: 0px !important;
-    border-color: black !important;
-    border-style: solid !important;
- */
+.header_definir_un_trajet
+{
+	height:5%;
+}
+
+
