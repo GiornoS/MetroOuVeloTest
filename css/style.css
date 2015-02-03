@@ -87,17 +87,41 @@
 	position:relative;
 }
 
+#geolocate_button
+{
+	z-index:10;
+	position:absolute;
+	bottom:7%;
+	right:7%;
+	color:#B1CEEA;
+}
+
 /*
  CARTE
 */
 
-.scroll {
+.scroll 
+{
 	height: 100%;
 }
 
-#map {
+#map 
+{
 	position:absolute;
-	bottom:5%;
+	bottom:4.7%;
 	width: 100%;
-	height: 100%;
+	height: 90.2%;
 }
+
+/*
+.loading-container .loading {
+
+    background-color: transparent;
+    color: black;
+    width:200%;
+
+    width: 100% !important;
+    border-width: 0px !important;
+    border-color: black !important;
+    border-style: solid !important;
+ */

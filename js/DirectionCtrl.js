@@ -11,6 +11,7 @@ angular.module('carte', ['ionic'])
 		};
 		var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 		directionsDisplay.setMap(map);
+		$scope.map = map;
 
 	}
 	
@@ -22,7 +23,7 @@ angular.module('carte', ['ionic'])
 			return;
 		}
 		$scope.loading = $ionicLoading.show({
-			content: 'Getting current location...',
+			template: 'Recherche de la position en cours...',
 			showBackdrop: false
 		});
 		navigator.geolocation.getCurrentPosition(function(pos) {
@@ -47,6 +48,11 @@ angular.module('carte', ['ionic'])
     	     		title: 'You are here'
     	     	});
   	     	}
+			$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude +"," + pos.coords.longitude + "&sensor=false").success(function(response){
+		$scope.city_start=response.results[0].formatted_address;
+   }).error(function(response){
+	   alert("Impossible de récupérer la géolocalisation");
+   })
 		}, function(error) {
      		alert('Unable to get location: ' + error.message);
      		$ionicLoading.hide();
@@ -55,12 +61,23 @@ angular.module('carte', ['ionic'])
      	});
    };
    
+   
    $scope.calculate = function(city_start, city_end){
 		$scope.loading = $ionicLoading.show({
-			content: 'Calcul du trajet en cours...',
+			template: 'Calcul du trajet en cours...',
 			showBackdrop: false
 		});
 		if(city_start && city_end){
+		$http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + city_start + "&language=fr&&sensor=false").success(function(response){
+				$scope.city_start=response.results[0].formatted_address;
+		   }).error(function(response){
+			   alert("Impossible de récupérer la géolocalisation");
+		   });
+		$http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + city_end + "&language=fr&&sensor=false").success(function(response){
+				$scope.city_end=response.results[0].formatted_address;
+		   }).error(function(response){
+			   alert("Impossible de récupérer la géolocalisation");
+		   });
 			var request = {
 				origin      : city_start,
 				destination : city_end,
@@ -68,13 +85,28 @@ angular.module('carte', ['ionic'])
 				unitSystem: google.maps.UnitSystem.METRIC
 			}
 			var directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+			
 			directionsService.route(request, function(response, status){ // Envoie de la requête pour calculer le parcours
 				if(status == google.maps.DirectionsStatus.OK){
 					$ionicLoading.hide();
 					directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
+					$scope.city_start_bis=$scope.city_start;
+					$scope.city_end_bis=$scope.city_end;
+					$scope.donnees_du_trajet=response;
 				}
 			});
 		}
-	}	
+	};
+	
+	$scope.initializeAutocomplete = function(id) {
+		var addresse_a_completer = document.getElementById(id);
+		if (addresse_a_completer) {
+			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
+			google.maps.event.addListener(autocomplete);
+		  }
+	};
+	
+	$scope.initializeAutocomplete("city_start");
+	$scope.initializeAutocomplete("city_end");
 	
 });

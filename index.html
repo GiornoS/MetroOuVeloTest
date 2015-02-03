@@ -9,6 +9,8 @@
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
+   	<!-- google maps javascript for the autocomplete module -->
+   	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&language=fr"></script>
 
 </head>
   
@@ -42,7 +44,7 @@
 
 			<label class="item item-input">
 				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city">
+				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city" id="city">
 			</label>
 		</div>
 
@@ -54,11 +56,6 @@
 				Valider
 			</button>
 		</center>
-	
-	<!-- Affichage de l'adresse voulue -->
-	<div class="CityName">
-		<strong><center>{{coordonates.results[0].formatted_address}}</center></strong>
-	</div>
 
 	<!-- Affichage de la météo, de la date au format jj/mm à hh:mm, de l'icône -->
 	<div class="list liste-temperature" ng-repeat="h in weather.hourly.data">

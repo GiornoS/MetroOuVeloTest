@@ -20,7 +20,7 @@ angular.module('app', ['ionic'])
 		
 		//~ On affiche un gif de loading
 		$scope.loading = $ionicLoading.show({
-			content: 'Récupération des informations météorologiques...',
+			template: 'Récupération des informations météorologiques...',
 			showBackdrop: false
 		});
 		//~ On récupère les coordonnées
@@ -81,7 +81,7 @@ angular.module('app', ['ionic'])
 	$scope.geolocate = function(){
 		navigator.geolocation.getCurrentPosition(function(position){
 			$scope.loading = $ionicLoading.show({
-				content: 'Récupération des données météorologiques...',
+				template: 'Récupération des données météorologiques...',
 				showBackdrop: false
 			});
 			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError)
@@ -109,6 +109,17 @@ angular.module('app', ['ionic'])
 		$ionicLoading.hide();
 		alert('Impossible de récupérer les informations');
 	}
+	
+	//~ Fonction permettant de suggérer des résultats au moment de l'entrée de la ville en input
+	$scope.initializeAutocomplete = function(id) {
+		var addresse_a_completer = document.getElementById(id);
+		if (addresse_a_completer) {
+			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
+			google.maps.event.addListener(autocomplete);
+		  }
+	};
+	
+	$scope.initializeAutocomplete("city"); // On initialise l'autocomplétion
 	
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
 	$scope.geolocate();		// On initialise la fonction de géolocalisation au lancement de l'application
