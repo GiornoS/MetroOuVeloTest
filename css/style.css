@@ -44,9 +44,9 @@
 	position:relative;	
 }
 
-.liste-temperature
+.liste_temperature
 {
-
+	margin-top:20px;
 }
 
 .tabs-footer
@@ -61,8 +61,11 @@
 	height:90%;
 	position:absolute;
 	left:0px;
-	bottom:10px;
-	top:10px;
+	top:50%;
+}
+.affichage_date
+{
+	right:40%;
 }
 
 /*
@@ -90,9 +93,10 @@
 #geolocate_button
 {
 	z-index:10;
-	bottom:7%;
-	right:7%;
-	color:#B1CEEA;
+	position:absolute;
+	bottom:90px;
+	right:40px;
+	color:blue;
 }
 
 /*

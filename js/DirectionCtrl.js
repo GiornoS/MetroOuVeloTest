@@ -63,11 +63,12 @@ angular.module('carte', ['ionic'])
    
    
    $scope.calculate = function(city_start, city_end){
-		$scope.loading = $ionicLoading.show({
-			template: 'Calcul du trajet en cours...',
-			showBackdrop: false
-		});
+	   //alert(city_start);
 		if(city_start && city_end){
+			$scope.loading = $ionicLoading.show({
+				template: 'Calcul du trajet en cours...',
+				showBackdrop: false
+			});
 		$http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + city_start + "&language=fr&&sensor=false").success(function(response){
 				$scope.city_start=response.results[0].formatted_address;
 		   }).error(function(response){
@@ -98,7 +99,15 @@ angular.module('carte', ['ionic'])
 		}
 	};
 	
-	$scope.initializeAutocomplete = function(id) {
+/*	$scope.initializeAutocomplete = function(id) {
+		var addresse_a_completer = document.getElementById(id);
+		if (addresse_a_completer) {
+			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
+			google.maps.event.addListener(autocomplete);
+		  }
+	};
+	
+	$scope.initializeAutocompleteBis = function(id) {
 		var addresse_a_completer = document.getElementById(id);
 		if (addresse_a_completer) {
 			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
@@ -107,6 +116,6 @@ angular.module('carte', ['ionic'])
 	};
 	
 	$scope.initializeAutocomplete("city_start");
-	$scope.initializeAutocomplete("city_end");
+	$scope.initializeAutocompleteBis("city_end"); */
 	
 });

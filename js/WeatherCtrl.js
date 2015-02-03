@@ -17,7 +17,7 @@ angular.module('app', ['ionic'])
 
 	//~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io 	
 	$scope.searchWeather = function(address){
-		
+		//alert(address);
 		//~ On affiche un gif de loading
 		$scope.loading = $ionicLoading.show({
 			template: 'Récupération des informations météorologiques...',
@@ -111,15 +111,21 @@ angular.module('app', ['ionic'])
 	}
 	
 	//~ Fonction permettant de suggérer des résultats au moment de l'entrée de la ville en input
-	$scope.initializeAutocomplete = function(id) {
+	/*$scope.initializeAutocomplete = function(id) {
 		var addresse_a_completer = document.getElementById(id);
 		if (addresse_a_completer) {
-			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
-			google.maps.event.addListener(autocomplete);
-		  }
-	};
+			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer);
+			google.maps.event.addListener(autocomplete, 'place_changed', function() {
+			  var place = this.getPlace();
+		
+			    if (place.address_components) {
+			      var address = place.address_components[0].short_name + ' ' + place.address_components[1].short_name + ' ' + place.address_components[2].short_name ;
+			    };
+			});
+		};
+	}*/
 	
-	$scope.initializeAutocomplete("city"); // On initialise l'autocomplétion
+	//$scope.initializeAutocomplete("city"); // On initialise l'autocomplétion
 	
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
 	$scope.geolocate();		// On initialise la fonction de géolocalisation au lancement de l'application

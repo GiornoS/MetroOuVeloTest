@@ -55,15 +55,16 @@
 				Valider
 			</button>
 		</center>
+
 		
 
-      <div id="map" data-tap-disabled="true"></div>
-      
+    <div id="map" data-tap-disabled="true"></div>
+	<button class="button button-icon icon ion-android-locate" id="geolocate_button" ng-click="centerOnMe()"></button>
+		
 	<!--Footer qui affiche le temps de trajet et la distance-->
 	<div class="bar bar-footer bar-positive footer_definir_un_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
 		<div class="title" ng-show="donnees_du_trajet">Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
-		<button class="button button-icon icon ion-android-locate" id="geolocate_button" ng-click="centerOnMe()"></button>
 	</div>
 
 
