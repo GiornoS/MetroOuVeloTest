@@ -63,7 +63,7 @@ angular.module('carte', ['ionic'])
    
    
    $scope.calculate = function(city_start, city_end){
-	   //alert(city_start);
+	   alert(city_start);
 		if(city_start && city_end){
 			$scope.loading = $ionicLoading.show({
 				template: 'Calcul du trajet en cours...',
@@ -99,7 +99,7 @@ angular.module('carte', ['ionic'])
 		}
 	};
 	
-/*	$scope.initializeAutocomplete = function(id) {
+	$scope.initializeAutocomplete = function(id) {
 		var addresse_a_completer = document.getElementById(id);
 		if (addresse_a_completer) {
 			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
@@ -116,6 +116,6 @@ angular.module('carte', ['ionic'])
 	};
 	
 	$scope.initializeAutocomplete("city_start");
-	$scope.initializeAutocompleteBis("city_end"); */
+	$scope.initializeAutocompleteBis("city_end");
 	
 });
