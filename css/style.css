@@ -61,11 +61,10 @@
 	height:90%;
 	position:absolute;
 	left:0px;
-	top:50%;
+	bottom:20%;
 }
 .affichage_date
 {
-	right:40%;
 }
 
 /*
@@ -95,7 +94,7 @@
 	z-index:10;
 	position:absolute;
 	bottom:90px;
-	right:40px;
+	right:30px;
 	color:blue;
 }
 
