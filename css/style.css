@@ -117,12 +117,12 @@
 	height: 100%;
 }
 
-/*#map 
+#map 
 {
-	position:absolute;
+	position:relative;
 	width: 100%;
 	height: 87%;
-}*/
+}
 
 .card
 {
@@ -130,18 +130,6 @@
     width:96%;
 }
 
-/*.footer_definir_un_trajet
-{
-	height:7%;
-}
 
-.tabs_definir_un_trajet
-{
-}
-
-.header_definir_un_trajet
-{
-	height:50px;
-}*/
 
 
