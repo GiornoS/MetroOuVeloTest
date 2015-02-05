@@ -36,39 +36,42 @@
 		</a>
 	</div>
 
-	
-	
-		<div class="list list-inset">
 
-			<label class="item item-input search_start">
-				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start" id="city_start">
-			</label>
-			<label class="item item-input search_end">
-				<i class="icon ion-search placeholder-icon"></i>
-				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city_end" name="city_end" id="city_end">
-			</label>
+	<div class="list card" ng-show="show_card_definir_un_trajet">
+		<div class="item item-divider">
+			<center>Définir un trajet</center>
 		</div>
-
-		<center>
-			<button ng-click="calculate(city_start, city_end)" class="button  button-positive validerButtonTrajet">
-				Valider
-			</button>
-		</center>
-
+		<div class="item item-body">
+			<div class="list list-inset">
+	
+				<label class="item item-input search_start">
+					<i class="icon ion-search placeholder-icon"></i>
+					<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start" id="city_start">
+				</label>
+				<label class="item item-input search_end">
+					<i class="icon ion-search placeholder-icon"></i>
+					<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city_end" name="city_end" id="city_end">
+				</label>
+			</div>
+	
+			<center>
+				<button ng-click="calculate(city_start, city_end)" class="button  button-positive validerButtonTrajet">
+					Valider
+				</button>
+			</center>
+		</div>
+	</div>
 		
 
     <div id="map" data-tap-disabled="true"></div>
 	<button class="button button-icon icon ion-android-locate" id="geolocate_button" ng-click="centerOnMe()"></button>
-		
+	<button class="button button-icon icon ion-navigate" id="navigate_button" ng-click="showCard()"></button>
+	
 	<!--Footer qui affiche le temps de trajet et la distance-->
 	<div class="bar bar-footer bar-positive footer_definir_un_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
 		<div class="title" ng-show="donnees_du_trajet">Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
 	</div>
-
-
-	
 	</ion-content>
 	
 		

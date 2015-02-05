@@ -12,7 +12,6 @@ angular.module('carte', ['ionic'])
 		var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 		directionsDisplay.setMap(map);
 		$scope.map = map;
-
 	}
 	
 	ionic.Platform.ready(initialize);
@@ -60,10 +59,19 @@ angular.module('carte', ['ionic'])
      		timeout: 15000
      	});
    };
-   
+    
+    
+    //~ Fonction permettant d'affcher et de désafficher la carte de définition du trajet
+   $scope.showCard = function(){
+        if ($scope.show_card_definir_un_trajet==true){
+            $scope.show_card_definir_un_trajet=false;
+        }
+        else {
+            $scope.show_card_definir_un_trajet=true;
+        }
+   }
    
    $scope.calculate = function(city_start, city_end){
-	   alert(city_start);
 		if(city_start && city_end){
 			$scope.loading = $ionicLoading.show({
 				template: 'Calcul du trajet en cours...',
@@ -90,10 +98,9 @@ angular.module('carte', ['ionic'])
 			directionsService.route(request, function(response, status){ // Envoie de la requête pour calculer le parcours
 				if(status == google.maps.DirectionsStatus.OK){
 					$ionicLoading.hide();
+					$scope.showCard(); //on cache la carte de défintion d'itinéraire
 					directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
-					$scope.city_start_bis=$scope.city_start;
-					$scope.city_end_bis=$scope.city_end;
-					$scope.donnees_du_trajet=response;
+					$scope.donnees_du_trajet=response; //permet de récupérer la durée et la distance
 				}
 			});
 		}
@@ -115,7 +122,7 @@ angular.module('carte', ['ionic'])
 		  }
 	};
 	
-	$scope.initializeAutocomplete("city_start");
-	$scope.initializeAutocompleteBis("city_end");
+	//$scope.initializeAutocomplete("city_start");
+	//$scope.initializeAutocompleteBis("city_end");
 	
 });

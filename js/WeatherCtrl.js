@@ -119,14 +119,11 @@ angular.module('app', ['ionic'])
 			  var place = this.getPlace();
 		
 			    if (place.address_components) {
-			      var address = place.address_components[0].short_name + ' ' + place.address_components[1].short_name + ' ' + place.address_components[2].short_name ;
+			      $scope.address_autocomplete = place.address_components[0].short_name + ' ' + place.address_components[1].short_name + ' ' + place.address_components[2].short_name ;
 			    };
 			});
-	};
-	
-
-
-}
+		};
+	}
 	
 	$scope.initializeAutocomplete("city"); // On initialise l'autocomplétion
 	
