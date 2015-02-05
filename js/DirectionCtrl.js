@@ -122,6 +122,12 @@ angular.module('carte', ['ionic'])
 		  }
 	};
 	
+    
+   /* $scope.getheightscreen = function(){
+        var Hscreen=screen.height;
+        alert(Hscreen);
+    }
+     $scope.getheightscreen();*/
 	//$scope.initializeAutocomplete("city_start");
 	//$scope.initializeAutocompleteBis("city_end");
 	
