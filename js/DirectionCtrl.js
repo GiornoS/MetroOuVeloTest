@@ -18,6 +18,7 @@ angular.module('carte', ['ionic'])
 	
 	var marker;	//Variable pour avoir un seul marqueur
 	$scope.centerOnMe = function() {
+        $scope.show_donnees_du_trajet=false;
 		if(!$scope.map) {
 			return;
 		}
@@ -101,6 +102,7 @@ angular.module('carte', ['ionic'])
 					$scope.showCard(); //on cache la carte de défintion d'itinéraire
 					directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
 					$scope.donnees_du_trajet=response; //permet de récupérer la durée et la distance
+                    $scope.show_donnees_du_trajet=true;
 				}
 			});
 		}
