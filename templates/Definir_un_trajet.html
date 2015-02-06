@@ -68,14 +68,25 @@
 		
 
     <div id="map" data-tap-disabled="true"></div>
-	<button class="button button-icon icon ion-android-locate" id="geolocate_button" ng-click="centerOnMe()"></button>
-	<button class="button button-icon icon ion-navigate" id="navigate_button" ng-click="showCard()"></button>
+	<img class="button button-icon icon" src="../res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()"></img>
+	<img class="button button-icon icon" src="../res/img/android-navigate-bis.png" id="navigate_button" ng-click="showCard()"></img>
 	
-	<!--Footer qui affiche le temps de trajet et la distance-->
-	<div class="bar bar-footer bar-positive footer_definir_un_trajet">
+	<!--Footer qui affiche le temps de trajet et la distance   ng-show="donnees_du_trajet"-->
+	<div class="list card footer_card_definir_un_trajet" >
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
-		<div class="title" ng-show="donnees_du_trajet">Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
-	</div>
+        <div class="item tabs tabs-secondary tabs-icon-left">
+            <a class="tab-item">
+              <i class="icon ion-map"></i>
+              <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].distance.text}}</strong>
+            </a>
+            <a class="tab-item">
+              <i class="icon ion-clock"></i>
+              <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
+            </a>
+        </div>
+    </div>
+<!--		<div class="title" >Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
+	</div>-->
 	</ion-content>
 	
 		
