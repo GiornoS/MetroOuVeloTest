@@ -71,8 +71,8 @@
 	<img class="button button-icon icon" src="../res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()"></img>
 	<img class="button button-icon icon" src="../res/img/android-navigate-bis.png" id="navigate_button" ng-click="showCard()"></img>
 	
-	<!--Footer qui affiche le temps de trajet et la distance   ng-show="donnees_du_trajet"-->
-	<div class="list card footer_card_definir_un_trajet" >
+	<!--Footer qui affiche le temps de trajet et la distance   -->
+	<div class="list card footer_card_definir_un_trajet" ng-show="donnees_du_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
         <div class="item tabs tabs-secondary tabs-icon-left">
             <a class="tab-item">
