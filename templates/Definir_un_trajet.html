@@ -13,11 +13,14 @@
    	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&language=fr"></script>
     
     
-<!--    <script>
-        var Hscreen=screen.height;
-        var Wscreen=screen.width;
-        var Hfooter=Hscreen;
-    </script>-->
+	<!-- Importation du js -->
+	<script src="../lib/ionic/js/ionic.bundle.js"></script>
+
+    <script src="../cordova.js"></script>
+
+	<script src="../js/angular.js"></script>
+	<script src="../js/app.js"></script>    
+	<script src="../js/DirectionCtrl.js"></script>
     
 </head>
   
@@ -59,7 +62,7 @@
 			</div>
 	
 			<center>
-				<button ng-click="calculate(city_start, city_end)" class="button button-outline button-positive validerButtonTrajet">
+				<button ng-click="calculate(address_autocomplete1, address_autocomplete2)" class="button button-outline button-positive validerButtonTrajet">
 					Valider
 				</button>
 			</center>
@@ -93,14 +96,7 @@
 		
 
 
-		<!-- Importation du js -->
-		<script src="../lib/ionic/js/ionic.bundle.js"></script>
 
-		<script src="../cordova.js"></script>
-    
-		<script src="../js/angular.js"></script>
-		<script src="../js/app.js"></script>    
-		<script src="../js/DirectionCtrl.js"></script>
 
 </body>
 

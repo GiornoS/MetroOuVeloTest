@@ -108,29 +108,30 @@ angular.module('carte', ['ionic'])
 		}
 	};
 	
-	$scope.initializeAutocomplete = function(id) {
-		var addresse_a_completer = document.getElementById(id);
-		if (addresse_a_completer) {
-			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
-			google.maps.event.addListener(autocomplete);
-		  }
-	};
-	
-	$scope.initializeAutocompleteBis = function(id) {
-		var addresse_a_completer = document.getElementById(id);
-		if (addresse_a_completer) {
-			var autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, { types: ['geocode'] });
-			google.maps.event.addListener(autocomplete);
-		  }
-	};
+    
+    //~ FOnction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
+	$scope.initializeAutocomplete = function(id1, id2) {
+		var addresse_a_completer1 = document.getElementById(id1);
+        var addresse_a_completer2 = document.getElementById(id2);
+		if (addresse_a_completer1 && addresse_a_completer2) {
+			var autocomplete1 = new google.maps.places.Autocomplete(addresse_a_completer1);
+            var autocomplete2 = new google.maps.places.Autocomplete(addresse_a_completer2);
+			google.maps.event.addListener(autocomplete1, 'place_changed', function() {
+			  var place1 = this.getPlace();
+			    if (place1.address_components) {
+			      $scope.address_autocomplete1 = place1.address_components[0].short_name + ' ' + place1.address_components[1].short_name + ' ' + place1.address_components[2].short_name ;
+			    };
+			});
+            google.maps.event.addListener(autocomplete2, 'place_changed', function() {
+			  var place2 = this.getPlace();
+			    if (place2.address_components) {
+			      $scope.address_autocomplete2 = place2.address_components[0].short_name + ' ' + place2.address_components[1].short_name + ' ' + place2.address_components[2].short_name ;
+			    };
+			});
+		};
+	}
 	
     
-   /* $scope.getheightscreen = function(){
-        var Hscreen=screen.height;
-        alert(Hscreen);
-    }
-     $scope.getheightscreen();*/
-	//$scope.initializeAutocomplete("city_start");
-	//$scope.initializeAutocompleteBis("city_end");
+	$scope.initializeAutocomplete("city_start","city_end");
 	
 });

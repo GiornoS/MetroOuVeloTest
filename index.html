@@ -11,6 +11,15 @@
 
    	<!-- google maps javascript for the autocomplete module -->
    	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&language=fr"></script>
+    
+    <!-- Importation du javascript -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <script src="cordova.js"></script>
+    
+    <script src="js/angular.js"></script>
+    <script src="js/app.js"></script>    
+    <script src="js/WeatherCtrl.js"></script>
 
 </head>
   
@@ -21,6 +30,7 @@
 
 
 <div class="body_index" ng-controller="WeatherCtrl">
+
 	
 		<!-- Le bandeau supérieur avec le nom de l'application -->
 	<ion-header-bar class="bar-positive">
@@ -52,7 +62,7 @@
 			<button ng-click="geolocate()" class="button button-outline button-positive geolocaliserButton">
 				Géolocaliser
 			</button>
-			<button ng-click="searchWeather(city)" class="button button-outline button-positive validerButton">
+			<button ng-click="searchWeather(address_autocomplete)" class="button button-outline button-positive validerButton">
 				Valider
 			</button>
 		</center>
@@ -60,10 +70,10 @@
 	<!-- Affichage de la météo, de la date au format jj/mm à hh:mm, de l'icône -->
 	<div class="list liste_temperature" ng-repeat="h in weather.hourly.data">
 		<center>
-			<a class="item" >
+			<a class="item">
 				<img src="res/weather_icon/{{h.icon}}.png" class="weather_icon">
 				<strong class="affichage_date">{{h.time*1000 | date:'EEE'}}</strong>
-				{{h.time*1000 | date:"dd/MM 'à' HH:mm"}}
+                {{h.time*1000 | date:"dd/MM 'à' HH:mm"}}
 				<br /><strong>{{Math.round(h.temperature)}}°C</strong>					
 			</a>	
 		</center>
@@ -75,15 +85,5 @@
 	
 		
 		
-
-
-	<!-- Importation du js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-
-    <script src="cordova.js"></script>
-    
-    <script src="js/angular.js"></script>
-    <script src="js/app.js"></script>    
-    <script src="js/WeatherCtrl.js"></script>
   </body>
 </html>
