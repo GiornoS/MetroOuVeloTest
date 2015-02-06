@@ -2,30 +2,24 @@
  TOUTES LES PAGES
 */
 
-.loader_icon
-{
-	position:absolute;
-	left:45%;
-	top:50%;
-	max-width:10%;
-	max-height:10%;
-	z-index:10;
-}
-
-.loader_text
-{
-	position:absolute;
-	text-align:center;
-	top:60%;
-	left:45%;
-	vertical-align:middle;
-	color:#387ef5;
-	z-index:10;
-}
-
 /*
  DEFINIR UNE ADRESSE + DEFINIR UN TRAJET
 */
+
+.city_search
+{
+    width:70%;
+}
+
+.hour_select
+{
+    width : 30%;
+    border-width: 0px;
+    position:absolute;
+    z-index: :10;
+    right:0px;
+    top:2px; 
+}
 
 .validerButton
 {

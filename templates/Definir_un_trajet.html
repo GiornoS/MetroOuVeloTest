@@ -69,11 +69,13 @@
 		</div>
 	</div>
 		
-
+    <!-- Affichage de l'objet map de l'api google (affichage de la carte) -->
     <div id="map" data-tap-disabled="true"></div>
+    
+    <!-- Affichage des boutons de géolocalisation et de définition du trajet -->
 	<img class="button button-icon icon" src="../res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()"></img>
-	<img class="button button-icon icon" src="../res/img/android-navigate-bis.png" id="navigate_button" ng-click="showCard()"></img>
-	
+	<img class="button button-icon icon" src="../res/img/android-navigate-bisbis.png" id="navigate_button" ng-click="showCard()"></img>
+
 	<!--Footer qui affiche le temps de trajet et la distance   -->
 	<div class="list card footer_card_definir_un_trajet" ng-show="show_donnees_du_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->

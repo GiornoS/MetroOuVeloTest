@@ -25,14 +25,9 @@
   
 
   
-<body>
-
-
-
-<div class="body_index" ng-controller="WeatherCtrl">
-
+<body ng-controller="WeatherCtrl">
 	
-		<!-- Le bandeau supérieur avec le nom de l'application -->
+    <!-- Le bandeau supérieur avec le nom de l'application -->
 	<ion-header-bar class="bar-positive">
 		<h1 class="title"><center> Définir une adresse</center></h1>
 	</ion-header-bar>
@@ -52,10 +47,18 @@
 	
 		<div class="list list-inset">
 
-			<label class="item item-input">
+			<label class="item item-input city_search">
 				<i class="icon ion-search placeholder-icon"></i>
 				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city" id="city">
 			</label>
+            <label class="item item-input item-select hour_select">
+                <div class="input-label">
+                  à
+                </div>
+                <select ng-repeat="h in weather.hourly.data">
+                  <option>{{h.time*1000 | date:"HH:mm"}}</option>
+                </select>
+          </label>
 		</div>
 
 		<center>
@@ -80,10 +83,7 @@
 	
 	</div>
 	
-</ion-content>
-</div>
-	
+</ion-content>		
 		
-		
-  </body>
+</body>
 </html>

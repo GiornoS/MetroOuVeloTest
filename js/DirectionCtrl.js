@@ -109,7 +109,7 @@ angular.module('carte', ['ionic'])
 	};
 	
     
-    //~ FOnction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
+    //~ Fonction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
 	$scope.initializeAutocomplete = function(id1, id2) {
 		var addresse_a_completer1 = document.getElementById(id1);
         var addresse_a_completer2 = document.getElementById(id2);

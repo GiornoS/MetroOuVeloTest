@@ -5,15 +5,6 @@ angular.module('app', ['ionic'])
 .controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
-	
-/*	$scope.searchWeather = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
-
-		var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng ;
-		//$scope.loader_var = true;
-		$http.get(url).success(httpSuccess).error(httpError);	
-	}
-*/
 
 	//~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io 	
 	$scope.searchWeather = function(address){
@@ -34,47 +25,11 @@ angular.module('app', ['ionic'])
 		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
 	}
 	
-	
-/*	$scope.searchWeather = function(location){
-		$scope.getCoordonates(location);
-		
-		var url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + $scope.coordonates.results[0].geometry.location.lat + "&lon=" + $scope.coordonates.results[0].geometry.location.lng + "&mode=json&units=metric&cnt=10";
-		//$scope.loader_var_var = true;
-		$http.get(url).success(httpSuccessSearchWeather).error(httpError);
-	}
-*/
-	
 	//~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading
 	httpSuccessSearchWeather = function(response){
 		$scope.weather = response;
 		$ionicLoading.hide();
 	}
-	
-	
-	
-/*	$scope.expand = function(e){
-		$elem = $(e.currentTarget); //ATTENTION JQUERY !!!!!
-		$elem.addClass('row_active').siblings().removeClass('row_active');
-	}
-*/
-	
-/*	$scope.geolocate = function(){
-		var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';
-
-		navigator.geolocation.getCurrentPosition(function(position){
-		//	$scope.loader_var = true;
-			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude).success(httpSuccess).error(httpError)
-		})
-	}
-*/
-	
-/*	$scope.geolocate = function(){
-		navigator.geolocation.getCurrentPosition(function(position){
-		//	$scope.loader_var = true;
-		$http.get("http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&mode=json&units=metric&cnt=10").success(httpSuccessGeolocate).error(httpError)
-		})
-	}
-*/
 
 	//~ Fonction de géolocalisation : récupère les coordonnées du lieu où on est et envoie une requête aux serveurs forecast.io pour connaître la météo à ces coordonnées.
 	$scope.geolocate = function(){
@@ -123,10 +78,11 @@ angular.module('app', ['ionic'])
 		};
 	}
 	
+    
+    
 	$scope.initializeAutocomplete("city"); // On initialise l'autocomplétion
 	
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
-	$scope.geolocate();		// On initialise la fonction de géolocalisation au lancement de l'application
     
 
 });
