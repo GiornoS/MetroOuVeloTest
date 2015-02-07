@@ -8,17 +8,17 @@
 
 .city_search
 {
-    width:70%;
+    width:60%;
 }
 
 .hour_select
 {
-    width : 30%;
-    border-width: 0px;
+    width : 25%;
+  
     position:absolute;
     z-index: :10;
     right:0px;
-    top:2px; 
+    top:10px; 
 }
 
 .validerButton

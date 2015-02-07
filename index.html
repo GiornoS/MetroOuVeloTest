@@ -51,14 +51,13 @@
 				<i class="icon ion-search placeholder-icon"></i>
 				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city" id="city">
 			</label>
-            <label class="item item-input item-select hour_select">
+            <input type="time" name="hour_select" class="hour_select">
+            <!-- Input de l'heure de départ -->
+ <!--           <label class="item item-input item-select hour_select" type="time">
                 <div class="input-label">
                   à
                 </div>
-                <select ng-repeat="h in weather.hourly.data">
-                  <option>{{h.time*1000 | date:"HH:mm"}}</option>
-                </select>
-          </label>
+          </label>-->
 		</div>
 
 		<center>

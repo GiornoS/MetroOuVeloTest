@@ -49,7 +49,8 @@ angular.module('carte', ['ionic'])
     	     	});
   	     	}
 			$http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude +"," + pos.coords.longitude + "&sensor=false").success(function(response){
-		$scope.city_start=response.results[0].formatted_address;
+        $scope.city_start=response.results[0].formatted_address;
+		$scope.address_autocomplete1=response.results[0].formatted_address;
    }).error(function(response){
 	   alert("Impossible de récupérer la géolocalisation");
    })
@@ -132,6 +133,6 @@ angular.module('carte', ['ionic'])
 	}
 	
     
-	$scope.initializeAutocomplete("city_start","city_end");
+	$scope.initializeAutocomplete("city_start","city_end"); // On lance l'autocomplétion dès le lancement de l'application
 	
 });
