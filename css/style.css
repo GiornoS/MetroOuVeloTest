@@ -13,12 +13,22 @@
 
 .hour_select
 {
-    width : 25%;
-  
+    width : 20%;
+    border-width: 0px;
+    position:absolute;
+    z-index: :10;
+    right:20%;
+    top:2px; 
+}
+
+.minute_select
+{
+    width : 20%;
+    border-width: 0px;
     position:absolute;
     z-index: :10;
     right:0px;
-    top:10px; 
+    top:2px; 
 }
 
 .validerButton
