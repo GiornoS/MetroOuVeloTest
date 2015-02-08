@@ -2,7 +2,7 @@ angular.module('app', ['ionic','ngCordova'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaDatePicker){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 
@@ -85,7 +85,7 @@ angular.module('app', ['ionic','ngCordova'])
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
     
 
-    $scope.datePickerEssay = function ($scope, $cordovaDatePicker) {
+
 
     var options,
         dateType,
@@ -109,7 +109,7 @@ angular.module('app', ['ionic','ngCordova'])
       $cordovaDatePicker.show(options, handleDatePicker);
     };
 
-  };
+  
     
 });
 
