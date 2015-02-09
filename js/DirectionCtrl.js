@@ -73,7 +73,8 @@ angular.module('carte', ['ionic'])
         }
    }
    
-   $scope.calculate = function(city_start, city_end){
+   //~ Fonction permettant de calculer un trajet à une heure donnée
+   $scope.calculate = function(city_start, city_end, minute_choisie, heure_choisie){
 		if(city_start && city_end){
 			$scope.loading = $ionicLoading.show({
 				template: 'Calcul du trajet en cours...',
@@ -89,9 +90,38 @@ angular.module('carte', ['ionic'])
 		   }).error(function(response){
 			   alert("Impossible de récupérer la géolocalisation");
 		   });
-			var request = {
+            // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
+            var mois = d.getMonth().toString();
+            var jour = d.getDate().toString();
+            var annee = d.getFullYear().toString();
+            if (minute_choisie && heure_choisie){
+                // On récupère le jour, le mois et l'année aux quels on va ajouter l'heue et la minute choisie pour le trajet, afin de convertir le tout en millisecondes depuis le 1er Janvier 1970. On enlève le "min" et le "h" pour la minute et pour l'heure choisie
+                var heure_choisie_bis = heure_choisie.replace("h","");
+                var minute_choisie_bis = minute_choisie.replace("min","");
+            }
+
+            else if (minute_choisie){
+                var heure_choisie_bis = heure_actuelle;
+                var minute_choisie_bis = minute_choisie.replace("min","");
+            }
+            
+            else if (heure_choisie){
+                var heure_choisie_bis = heure_choisie.replace("h","");
+                var minute_choisie_bis = minute_actuelle;
+            }
+            
+            else {
+                var heure_choisie_bis = heure_actuelle;
+                var minute_choisie_bis = minute_actuelle;
+            }
+            var date_complete = mois + "/" + jour + "/" + annee + " " + heure_choisie_bis + ":" + minute_choisie_bis;
+            millisecondes_unix = Date.parse(date_complete);
+            var request = {
 				origin      : city_start,
 				destination : city_end,
+                transitOptions: {
+                    departureTime: new Date(millisecondes_unix)
+                },
 				travelMode  : google.maps.DirectionsTravelMode.BICYCLING, // Mode de conduite
 				unitSystem: google.maps.UnitSystem.METRIC
 			}
@@ -135,4 +165,11 @@ angular.module('carte', ['ionic'])
     
 	$scope.initializeAutocomplete("city_start","city_end"); // On lance l'autocomplétion dès le lancement de l'application
 	
+    //~ Initialisations des variables servant à définir la date actuelle   
+    var d=new Date();
+    var heure_actuelle=d.getHours();
+    var minute_actuelle=d.getMinutes();
+    $scope.heure_actuelle=heure_actuelle.toString()+"h";
+    $scope.minute_actuelle=minute_actuelle.toString()+"min";
+    
 });
