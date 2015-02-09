@@ -2,31 +2,33 @@
  TOUTES LES PAGES
 */
 
+.tabs-footer
+{
+	position:relative;
+}
+
 /*
- DEFINIR UNE ADRESSE + DEFINIR UN TRAJET
+ DEFINIR UNE ADRESSE
 */
 
 .city_search
 {
-    width:60%;
 }
 
-.hour_select
+.hour_select_definir_une_adresse
 {
     width : 170px;
     border-width: 0px;
     position:relative;
-    top:5px; 
-    z-index: 
 }
 
-.minute_select
+.minute_select_definir_une_adresse
 {
-    width : 170px;
+    width : 180px;
     border-width: 0px;
     position:absolute;
+    top:139px;
     left:170px;
-    bottom:60px
 }
 
 .validerButton
@@ -50,12 +52,6 @@
 {
 	margin-top:20px;
 }
-
-.tabs-footer
-{
-	position:relative;
-}
-
 
 .weather_icon
 {
@@ -83,6 +79,24 @@
 	position:relative;
 	margin-top:0.5%;
     width:90%;
+}
+
+.hour_select_definir_un_trajet
+{
+    width : 170px;
+    border-width: 0px;
+    position:relative;
+    top:5px; 
+    z-index: 
+}
+
+.minute_select_definir_un_trajet
+{
+    width : 170px;
+    border-width: 0px;
+    position:absolute;
+    left:170px;
+    bottom:60px
 }
 
 .validerButtonTrajet

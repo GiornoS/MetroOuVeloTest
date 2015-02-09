@@ -84,7 +84,12 @@ angular.module('app', ['ionic','ngCordova'])
 	
 	$scope.Math = Math;		//Importation du module Math pour arrondir les températures
     
-
+      //~ Initialisations des variables servant à définir la date actuelle   
+    var d=new Date();
+    var heure_actuelle=d.getHours();
+    var minute_actuelle=d.getMinutes();
+    $scope.heure_actuelle=heure_actuelle.toString()+"h";
+    $scope.minute_actuelle=minute_actuelle.toString()+"min";
 });
 
 

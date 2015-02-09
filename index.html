@@ -53,6 +53,33 @@
 				<input type="search" placeholder="Où voulez-vous aller ?" ng-model="city" name="city" id="city">
 			</label>
 		</div>
+        <!-- Input de l'heure de départ -->
+        <label class="item item-input item-select hour_select_definir_une_adresse">
+            <div class="input-label">
+              Départ à 
+            </div>
+           <div ng-init="heures=['01h','02h','03h','04h','05h','06h','07h','08h','09h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h','20h','21h','22h','23h','24h']">
+            <select ng-model="heure_choisie" 
+        ng-options="h as h for h in heures">
+            <option value="">{{heure_actuelle}}</option>
+            </select>
+
+          </div>
+        </label>
+
+        <!-- Input de la minute de départ -->
+        <label class="item item-input item-select minute_select_definir_une_adresse">
+            <div class="input-label">
+                :
+            </div>
+            <div ng-init="minutes=['01min','02min','03min','04min','05min','06min','07min','08min','09min','10min','11min','12min','13min','14min','15min','16min','17min','18min','19min','20min','21min','22min','23min','24min','25min','26min','27min','28min','29min','30min','31min','32min','33min','34min','35min','36min','37min','38min','39min','40min','41min','42min','43min','44min','45min','46min','47min','48min','49min','50min','51min','52min','53min','54min','55min','56min','57min','58min','59min','60min']">
+                <select ng-model="minute_choisie" 
+        ng-options="m as m for m in minutes">
+                <option value="">{{minute_actuelle}}</option>
+                </select>
+
+            </div>
+        </label>
 
 		<center>
 			<button ng-click="geolocate()" class="button button-outline button-positive geolocaliserButton">
