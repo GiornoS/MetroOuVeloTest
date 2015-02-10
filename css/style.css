@@ -15,11 +15,12 @@
 {
 }
 
-.hour_select_definir_une_adresse
+/*.hour_select_definir_une_adresse
 {
     width : 170px;
     border-width: 0px;
     position:relative;
+    margin:10px;
 }
 
 .minute_select_definir_une_adresse
@@ -29,7 +30,7 @@
     position:absolute;
     top:139px;
     left:170px;
-}
+}*/
 
 .validerButton
 {
