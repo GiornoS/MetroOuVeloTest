@@ -1,6 +1,6 @@
-angular.module('carte', ['ionic'])
+angular.module('carte', ['ionic','ngCordova'])
 
-.controller('DirectionCtrl', function($scope, $ionicLoading, $http) {
+.controller('DirectionCtrl', function($scope, $ionicLoading, $http, $cordovaGoogleAnalytics) {
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	function initialize() {
 		var paris = new google.maps.LatLng(48.85834,2.33752);
@@ -171,5 +171,11 @@ angular.module('carte', ['ionic'])
     var minute_actuelle=d.getMinutes();
     $scope.heure_actuelle=heure_actuelle.toString()+"h";
     $scope.minute_actuelle=minute_actuelle.toString()+"min";
+    
+    
+    //~ GOOGLE ANALYTICS
+/*    document.addEventListener("deviceready", function () {
+        $cordovaGoogleAnalytics.trackView('Définition du trajet');
+    }, false);*/
     
 });

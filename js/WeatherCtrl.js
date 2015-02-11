@@ -2,7 +2,7 @@ angular.module('app', ['ionic','ngCordova'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaDatePicker){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 
@@ -90,6 +90,31 @@ angular.module('app', ['ionic','ngCordova'])
     var minute_actuelle=d.getMinutes();
     $scope.heure_actuelle=heure_actuelle.toString()+"h";
     $scope.minute_actuelle=minute_actuelle.toString()+"min";
+    
+    
+    //~ GOOGLE ANALYTICS
+/*    document.addEventListener("deviceready", function () {
+        $cordovaGoogleAnalytics.trackView('Prévision météo');   
+    }, false);*/
+    document.addEventListener("deviceready", function () {
+        function _waitForAnalytics(){
+            if(typeof analytics !== 'undefined'){
+                $cordovaGoogleAnalytics.debugMode();
+                $cordovaGoogleAnalytics.startTrackerWithId('UA-59584237-1');
+                $cordovaGoogleAnalytics.trackView('Prévision Météo');
+            }
+            else{
+                setTimeout(function(){
+                    _waitForAnalytics();
+                },250);
+            }
+        };
+        _waitForAnalytics();
+    }, false);
+
+
+           
+    
 });
 
 
