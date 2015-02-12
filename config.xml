@@ -10,6 +10,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <preference name="permissions" value="none" />
     <preference name="phonegap-version" value="3.6.3" />
     <preference name="orientation" value="portrait" />
     <preference name="target-device" value="universal" />
@@ -26,6 +27,7 @@
     <preference name="android-minSdkVersion" value="7" />
     <preference name="android-installLocation" value="auto" />
     
+    <feature name="http://api.phonegap.com/1.0/geolocation" />
     
     <feature name="Keyboard">
         <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
