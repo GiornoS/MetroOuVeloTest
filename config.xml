@@ -10,7 +10,6 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <preference name="permissions" value="none" />
     <preference name="phonegap-version" value="3.6.3" />
     <preference name="orientation" value="portrait" />
     <preference name="target-device" value="universal" />
@@ -26,6 +25,8 @@
     <preference name="disable-cursor" value="false" />
     <preference name="android-minSdkVersion" value="7" />
     <preference name="android-installLocation" value="auto" />
+    
+    
     <feature name="Keyboard">
         <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
         <param name="onload" value="true" />
@@ -40,6 +41,6 @@
         <param name="android-package" value="com.danielcwilson.plugins.analytics.UniversalAnalyticsPlugin" />
     </feature>
     <feature name="Geolocation">
-        <param name="android-package" value="org.apache.cordova.geolocation.Geolocation" />
+        <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
     </feature>
 </widget>
