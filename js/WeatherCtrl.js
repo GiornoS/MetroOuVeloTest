@@ -76,7 +76,7 @@ angular.module('app', ['ionic','ngCordova'])
 	//~ On récupère l'adresse fournie par les serveurs de Google 
 	httpSuccessGeolocateSuccess = function(response){
 		$scope.coordonates = response;
-        $scope.city=response;
+        $scope.city=response[0].formatted_address;
 		$ionicLoading.hide();
 	}
 
