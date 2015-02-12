@@ -178,4 +178,19 @@ angular.module('carte', ['ionic','ngCordova'])
         $cordovaGoogleAnalytics.trackView('Définition du trajet');
     }, false);*/
     
+    
+    document.addEventListener("deviceready", function () {
+        function _waitForAnalytics(){
+            if(typeof analytics !== 'undefined'){
+                $cordovaGoogleAnalytics.trackView('Définition du trajet');
+            }
+            else{
+                setTimeout(function(){
+                    _waitForAnalytics();
+                },250);
+            }
+        };
+        _waitForAnalytics();
+    }, false);
+    
 });
