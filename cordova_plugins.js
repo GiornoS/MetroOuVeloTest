@@ -27,6 +27,13 @@ module.exports = [
         "clobbers": [
             "analytics"
         ]
+    }   
+    {
+        "file": "plugins/org.apache.cordova.geolocation/www/geolocation.js",
+        "id": "org.apache.cordova.geolocation.Geolocation",
+        "clobbers": [
+            "navigator.geolocation"
+        ]
     }
 ];
 module.exports.metadata = 
