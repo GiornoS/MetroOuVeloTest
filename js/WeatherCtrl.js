@@ -40,8 +40,6 @@ angular.module('app', ['ionic','ngCordova'])
                             template: 'Récupération des données météorologiques...',
                             showBackdrop: false
                         });
-          var lat  = position.coords.latitude;
-          var long = position.coords.longitude;
           $http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError);
         }, function(err) {
           alert("Erreur : impossible de vous géolocaliser");
@@ -65,7 +63,7 @@ angular.module('app', ['ionic','ngCordova'])
 			$http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError)
 		})
 	}
-
+*/
 
 	//~ On récupère les coordonnées dans une variable à part pour pouvoir afficher l'adresse du lieu où l'on est
 	httpSuccessGeolocate = function(response){
@@ -78,8 +76,9 @@ angular.module('app', ['ionic','ngCordova'])
 	//~ On récupère l'adresse fournie par les serveurs de Google 
 	httpSuccessGeolocateSuccess = function(response){
 		$scope.coordonates = response;
+        $scope.city=response;
 		$ionicLoading.hide();
-	}*/
+	}
 
 
 	//~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
