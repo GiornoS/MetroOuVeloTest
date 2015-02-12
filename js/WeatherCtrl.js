@@ -2,7 +2,7 @@ angular.module('app', ['ionic','ngCordova'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 
@@ -30,7 +30,31 @@ angular.module('app', ['ionic','ngCordova'])
 		$scope.weather = response;
 		$ionicLoading.hide();
 	}
+    
+  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+    $scope.geolocate = function(){
+      $cordovaGeolocation
+        .getCurrentPosition(posOptions)
+        .then(function (position) {
+            $scope.loading = $ionicLoading.show({
+                            template: 'Récupération des données météorologiques...',
+                            showBackdrop: false
+                        });
+          var lat  = position.coords.latitude;
+          var long = position.coords.longitude;
+          $http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError);
+        }, function(err) {
+          alert("Erreur : impossible de vous géolocaliser");
+          $ionicLoading.hide();
+        });        
+    }
+    
+    httpSuccessGeolocate = function(response){
+        $scope.weather=response;
+        $ionicLoading.hide();
+    }
 
+/*
 	//~ Fonction de géolocalisation : récupère les coordonnées du lieu où on est et envoie une requête aux serveurs forecast.io pour connaître la météo à ces coordonnées.
 	$scope.geolocate = function(){
 		navigator.geolocation.getCurrentPosition(function(position){
@@ -55,7 +79,7 @@ angular.module('app', ['ionic','ngCordova'])
 	httpSuccessGeolocateSuccess = function(response){
 		$scope.coordonates = response;
 		$ionicLoading.hide();
-	}
+	}*/
 
 
 	//~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
