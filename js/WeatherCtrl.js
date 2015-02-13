@@ -135,7 +135,7 @@ angular.module('app', ['ionic','ngCordova'])
     }, false);
 
     
-      var options = {
+/*      var options = {
     date: new Date(),
     mode: 'date', // or 'time'
     minDate: new Date() - 10000,
@@ -152,7 +152,7 @@ angular.module('app', ['ionic','ngCordova'])
     $cordovaDatePicker.show(options).then(function(date){
     });
 
-  }, false);
+  }, false);*/
 
            
     
