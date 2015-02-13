@@ -2,7 +2,7 @@ angular.module('app', ['ionic','ngCordova'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation, $cordovaDatePicker){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 
@@ -10,7 +10,7 @@ angular.module('app', ['ionic','ngCordova'])
 	$scope.searchWeather = function(address){
 		//~ On affiche un gif de loading
 		$scope.loading = $ionicLoading.show({
-			template: 'Récupération des informations météorologiques...',
+			template: 'Récupération des données météorologiques...',
 			showBackdrop: false
 		});
 		//~ On récupère les coordonnées
@@ -47,10 +47,10 @@ angular.module('app', ['ionic','ngCordova'])
         });        
     }
     
-    httpSuccessGeolocate = function(response){
+/*    httpSuccessGeolocate = function(response){
         $scope.weather=response;
         $ionicLoading.hide();
-    }
+    }*/
 
 /*
 	//~ Fonction de géolocalisation : récupère les coordonnées du lieu où on est et envoie une requête aux serveurs forecast.io pour connaître la météo à ces coordonnées.
@@ -134,6 +134,25 @@ angular.module('app', ['ionic','ngCordova'])
         _waitForAnalytics();
     }, false);
 
+    
+      var options = {
+    date: new Date(),
+    mode: 'date', // or 'time'
+    minDate: new Date() - 10000,
+    allowOldDates: true,
+    allowFutureDates: false,
+    doneButtonLabel: 'DONE',
+    doneButtonColor: '#F2F3F4',
+    cancelButtonLabel: 'CANCEL',
+    cancelButtonColor: '#000000'
+  };
+
+  document.addEventListener("deviceready", function () {
+
+    $cordovaDatePicker.show(options).then(function(date){
+    });
+
+  }, false);
 
            
     
