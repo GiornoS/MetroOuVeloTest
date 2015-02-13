@@ -1,6 +1,6 @@
 angular.module('carte', ['ionic','ngCordova'])
 
-.controller('DirectionCtrl', function($scope, $ionicLoading, $http, $compile, $cordovaGoogleAnalytics) {
+.controller('DirectionCtrl', function($scope, $ionicLoading, $http, $compile, $cordovaGeolocation, $cordovaGoogleAnalytics) {
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	function initialize() {
 		var paris = new google.maps.LatLng(48.85834,2.33752);
