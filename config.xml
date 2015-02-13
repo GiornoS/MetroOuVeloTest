@@ -28,7 +28,6 @@
     <preference name="android-installLocation" value="auto" />
     
     <feature name="http://api.phonegap.com/1.0/geolocation" />
-    <feature name="http://api.phonegap.com/1.0/network" />
     
     <feature name="Keyboard">
         <param name="android-package" value="com.ionic.keyboard.IonicKeyboard" />
