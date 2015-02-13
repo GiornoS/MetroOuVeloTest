@@ -1,4 +1,4 @@
-angular.module('carte', ['ionic'])
+angular.module('carte', ['ionic', 'ngCordova'])
 
 .controller('DirectionCtrl', function($scope, $ionicLoading, $http, $cordovaGoogleAnalytics) {
 	var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -172,16 +172,6 @@ angular.module('carte', ['ionic'])
     $scope.heure_actuelle=heure_actuelle.toString()+"h";
     $scope.minute_actuelle=minute_actuelle.toString()+"min";
     
-});
-
-    
-    
-/*    //~ GOOGLE ANALYTICS
-/*    document.addEventListener("deviceready", function () {
-        $cordovaGoogleAnalytics.trackView('Définition du trajet');
-    }, false);*/
-    
-    
     document.addEventListener("deviceready", function () {
         function _waitForAnalytics(){
             if(typeof analytics !== 'undefined'){
@@ -195,4 +185,16 @@ angular.module('carte', ['ionic'])
         };
         _waitForAnalytics();
     }, false);
+    
+});
+
+    
+    
+/*    //~ GOOGLE ANALYTICS
+/*    document.addEventListener("deviceready", function () {
+        $cordovaGoogleAnalytics.trackView('Définition du trajet');
+    }, false);*/
+    
+    
+
     
