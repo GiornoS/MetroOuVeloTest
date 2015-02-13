@@ -51,10 +51,8 @@ module.exports.metadata =
     "com.ionic.keyboard": "1.0.4",
     "org.apache.cordova.device": "0.2.13",
     "org.apache.cordova.splashscreen": "0.3.5",
-    "com.danielcwilson.plugins.googleanalytics": "0.6.1",
-/*
-    "com.plugin.datepicker": "0.5.0"
-*/
+    "com.danielcwilson.plugins.googleanalytics": "0.6.1"/*,
+    "com.plugin.datepicker": "0.5.0"*/
 }
 // BOTTOM OF METADATA
 });
