@@ -183,7 +183,6 @@ angular.module('carte', ['ionic','ngCordova'])
         function _waitForAnalytics(){
             if(typeof analytics !== 'undefined'){
                 $cordovaGoogleAnalytics.trackView('Définition du trajet');
-                alert("google analytics ok");
             }
             else{
                 setTimeout(function(){

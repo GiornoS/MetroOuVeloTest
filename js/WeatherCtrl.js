@@ -2,7 +2,7 @@ angular.module('app', ['ionic','ngCordova'])
 
 
 
-.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation){
+.controller('WeatherCtrl', function($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation, $cordovaDatePicker){
 	
 	var FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
 
@@ -31,23 +31,23 @@ angular.module('app', ['ionic','ngCordova'])
 		$ionicLoading.hide();
 	}
     
-  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+	var posOptions = {timeout: 10000, enableHighAccuracy: false};
     $scope.geolocate = function(){
-      $cordovaGeolocation
+		$scope.loading = $ionicLoading.show({
+			template: 'Récupération des données météorologiques...',
+            showBackdrop: false
+            });
+		$cordovaGeolocation
         .getCurrentPosition(posOptions)
         .then(function (position) {
-            $scope.loading = $ionicLoading.show({
-                            template: 'Récupération des données météorologiques...',
-                            showBackdrop: false
-                        });
           $http.get("https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + position.coords.latitude + "," + position.coords.longitude + "?units=si").success(httpSuccessGeolocate).error(httpError);
         }, function(err) {
           alert("Erreur : impossible de vous géolocaliser");
           $ionicLoading.hide();
         });        
     }
-    
-/*    httpSuccessGeolocate = function(response){
+/*    
+    httpSuccessGeolocate = function(response){
         $scope.weather=response;
         $ionicLoading.hide();
     }*/
@@ -134,7 +134,27 @@ angular.module('app', ['ionic','ngCordova'])
         _waitForAnalytics();
     }, false);
 
-      
+    
+  var options = {
+    date: new Date(),
+    mode: 'date', // or 'time'
+    minDate: new Date() - 10000,
+    allowOldDates: true,
+    allowFutureDates: false,
+    doneButtonLabel: 'DONE',
+    doneButtonColor: '#F2F3F4',
+    cancelButtonLabel: 'CANCEL',
+    cancelButtonColor: '#000000'
+  };
+
+  document.addEventListener("deviceready", function () {
+
+    $cordovaDatePicker.show(options).then(function(date){
+    });
+
+  }, false);
+
+           
     
 });
 
