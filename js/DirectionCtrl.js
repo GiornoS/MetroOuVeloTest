@@ -172,6 +172,8 @@ angular.module('carte', ['ionic', 'ngCordova'])
     $scope.heure_actuelle=heure_actuelle.toString()+"h";
     $scope.minute_actuelle=minute_actuelle.toString()+"min";
     
+    
+    //Google Analytics
     document.addEventListener("deviceready", function () {
         function _waitForAnalytics(){
             if(typeof analytics !== 'undefined'){

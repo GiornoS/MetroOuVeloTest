@@ -122,7 +122,6 @@ angular.module('app', ['ionic','ngCordova'])
     document.addEventListener("deviceready", function () {
         function _waitForAnalytics(){
             if(typeof analytics !== 'undefined'){
-                $cordovaGoogleAnalytics.startTrackerWithId('UA-59584237-1');
                 $cordovaGoogleAnalytics.trackView('Prévision Météo');
             }
             else{
