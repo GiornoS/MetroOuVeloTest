@@ -6,7 +6,7 @@
 angular.module('starter', ['ionic','ngCordova'])
 
 
-.run(function($ionicPlatform, $cordovaGoogleAnalytics) {
+.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -18,17 +18,10 @@ angular.module('starter', ['ionic','ngCordova'])
     }
     
     // GOOGLE ANALYTICS
-    function _waitForAnalytics(){
-        if(typeof analytics !== 'undefined'){
-            $cordovaGoogleAnalytics.startTrackerWithId('UA-59584237-1');
-        }
-        else{
-            setTimeout(function(){
-                _waitForAnalytics();
-            },250);
-        }
-    };
-    _waitForAnalytics();
+
+/*
+    $cordovaGoogleAnalytics.startTrackerWithId('UA-59584237-1');  
+*/
   });
 })
 
