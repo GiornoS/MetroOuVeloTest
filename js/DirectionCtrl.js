@@ -76,6 +76,7 @@ angular.module('carte', ['ionic', 'ngCordova'])
    //~ Fonction permettant de calculer un trajet à une heure donnée
    $scope.calculate = function(city_start, city_end, minute_choisie, heure_choisie){
 		if(city_start && city_end){
+            $cordovaGoogleAnalytics.trackEvent('city_end', 'click', 'Adresse Saisie');
 			$scope.loading = $ionicLoading.show({
 				template: 'Calcul du trajet en cours...',
 				showBackdrop: false

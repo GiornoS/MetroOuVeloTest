@@ -9,6 +9,7 @@ angular.module('app', ['ionic','ngCordova'])
 	//~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io 	
 	$scope.searchWeather = function(address){
 		//~ On affiche un gif de loading
+        $cordovaGoogleAnalytics.trackEvent('city', 'click', 'Adresse Saisie');
 		$scope.loading = $ionicLoading.show({
 			template: 'Récupération des données météorologiques...',
 			showBackdrop: false
