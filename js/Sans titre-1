@@ -1,6 +1,5 @@
-var app = angular.module('app', ['ionic', 'ngCordova']);
 
-function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation) {
+app.controller('WeatherCtrl', ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGeolocation', '$cordovaGoogleAnalytics', function ($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $cordovaGeolocation) {
 
     var FORECASTIO_KEY, posOptions;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
@@ -152,8 +151,16 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
     });
 
   }, false);*/
-}
 
-WeatherCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$cordovaGeolocation'];
 
-app.controller('WeatherCtrl', WeatherCtrl);
+
+}]);
+
+
+
+
+
+
+
+
+

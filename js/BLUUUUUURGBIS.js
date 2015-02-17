@@ -1,6 +1,4 @@
-var carte = angular.module('carte', ['ionic', 'ngCordova']);
-
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics) {
+$scope, $ionicLoading, $http, $compile, $cordovaGoogleAnalytics) {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     function initialize() {
 /*        var paris = new google.maps.LatLng(48.85834, 2.33752);
@@ -237,7 +235,3 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     }, false);
 
 }
-
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics'];
-
-carte.controller('DirectionCtrl', DirectionCtrl);
