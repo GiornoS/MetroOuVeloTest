@@ -25,3 +25,14 @@ starter.run(function ($ionicPlatform) {
     });
 });
 
+starter.config(function($stateProvider) {
+    $stateProvider
+        .state('index', {
+            url: '/',
+            templateUrl: 'index.html'
+        })
+        .state('Definir_un_trajet', {
+            url: '/templates',
+            templateUrl: 'Definir_un_trajet.html'
+        });
+});

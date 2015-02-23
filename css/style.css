@@ -157,5 +157,23 @@
 }
 
 
+/*
+ AUTOCOMPLETION
+*/
+
+.pac-item
+{
+    height: 50px;
+}
+
+.pac-container
+{
+    border-radius: 10px;
+}
+
+.pac-matched
+{
+    color: green;
+}
 
 

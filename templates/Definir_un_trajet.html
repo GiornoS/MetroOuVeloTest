@@ -20,9 +20,11 @@
     <script src="../cordova.js"></script>
 
 	<script src="../js/angular.js"></script>
+<!--
     <script src="../js/minify/DirectionCtrlMini.js"></script>
-<!--	<script src="../js/app.js"></script>    
-	<script src="../js/DirectionCtrl.js"></script>-->
+-->
+	<script src="../js/app.js"></script>    
+	<script src="../js/DirectionCtrl.js"></script>
     
 </head>
   
@@ -46,7 +48,7 @@
 	</div>
 
 
-	<div class="list card" ng-show="show_card_definir_un_trajet">
+	 <div class="list card" ng-show="show_card_definir_un_trajet">
 		<div class="item item-divider">
 			<center>Définir un trajet</center>
 		</div>
@@ -100,7 +102,8 @@
 		</div>
 
 	</div>
-		
+        
+
     <!-- Affichage de l'objet map de l'api google (affichage de la carte) -->
     <div id="map" data-tap-disabled="true"></div>
     
@@ -127,6 +130,27 @@
 	</ion-content>
 	
 		
+<!--		  <script id="my-modal.html" type="text/ng-template">
+    <div class="modal">
+      <ion-header-bar>
+        <h1 class="title">Edit Contact</h1>
+      </ion-header-bar>
+      <ion-content>
+        <div class="list">
+          <label class="item item-input">
+            <span class="input-label">Name</span>
+            <input type="text" ng-model="contact.name">
+          </label>
+          <label class="item item-input">
+            <span class="input-label">Info</span>
+            <input type="text" ng-model="contact.info">
+          </label>
+        </div>
+
+        <button class="button button-full button-energized" ng-click="closeModal()">Done</button>
+      </ion-content>
+    </div>
+  </script>-->
 		
 
 
