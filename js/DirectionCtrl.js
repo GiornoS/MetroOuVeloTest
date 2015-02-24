@@ -96,20 +96,41 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-     //~ Initialisations des variables servant à définir la date actuelle   
+/*     //~ Initialisations des variables servant à définir la date actuelle   
     var d, heure_actuelle, minute_actuelle;
     d = new Date();
     heure_actuelle = d.getHours();
     minute_actuelle = d.getMinutes();
-    $scope.heure_actuelle = heure_actuelle.toString();/* + "h"*/
-    $scope.minute_actuelle = minute_actuelle.toString();/* + "min"*/
+    $scope.heure_actuelle = heure_actuelle.toString();
+    $scope.minute_actuelle = minute_actuelle.toString();
     
     if (minute_actuelle < 10) {
         $scope.minute_actuelle = "0" + $scope.minute_actuelle;
     }
     if (heure_actuelle < 10) {
         $scope.heure_actuelle = "0" + $scope.heure_actuelle;
-    }
+    }*/
+    
+    //~ Initialisations des variables servant à définir la date actuelle   
+    var d, heure_actuelle, minute_actuelle;
+    
+    // Fonction qui va servir à reset l'heure à l'heure actuelle
+    $scope.setTime = function () {
+        d = new Date();
+        heure_actuelle = d.getHours();
+        minute_actuelle = d.getMinutes();
+        $scope.heure_actuelle = heure_actuelle.toString();/* + "h"*/
+        $scope.minute_actuelle = minute_actuelle.toString();/* + "min"*/
+
+        if (minute_actuelle < 10) {
+            $scope.minute_actuelle = "0" + $scope.minute_actuelle;
+        }
+        if (heure_actuelle < 10) {
+            $scope.heure_actuelle = "0" + $scope.heure_actuelle;
+        }
+    };
+    
+    $scope.setTime();
     
     //~ Fonction permettant de calculer un trajet à une heure donnée
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
@@ -225,6 +246,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
         }, false);
     };
+    
+
 
 
     //Google Analytics
