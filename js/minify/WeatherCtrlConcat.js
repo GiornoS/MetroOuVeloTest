@@ -25,6 +25,17 @@ starter.run(function ($ionicPlatform) {
     });
 });
 
+starter.config(function($stateProvider) {
+    $stateProvider
+        .state('index', {
+            url: '/',
+            templateUrl: 'index.html'
+        })
+        .state('Definir_un_trajet', {
+            url: '/templates',
+            templateUrl: 'Definir_un_trajet.html'
+        });
+});
 
 var app = angular.module('app', ['ionic', 'ngCordova']);
 
@@ -82,6 +93,7 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
     function httpSuccessGeolocateSuccess(response) {
         $scope.coordonates = response;
         $scope.city = response.results[0].formatted_address;
+        alert($scope.city);
         $ionicLoading.hide();
     }
     
@@ -118,10 +130,11 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
 
     //~ Fonction permettant de suggérer des résultats au moment de l'entrée de la ville en input
     $scope.initializeAutocomplete = function (id) {
-        var addresse_a_completer, autocomplete;
+        var addresse_a_completer, autocomplete, options;
         addresse_a_completer = document.getElementById(id);
         if (addresse_a_completer) {
-            autocomplete = new google.maps.places.Autocomplete(addresse_a_completer);
+            options = { componentRestrictions: {country: 'fr'} };
+            autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, options);
             google.maps.event.addListener(autocomplete, 'place_changed', function () {
                 var place = this.getPlace();
                 if (place.address_components) {
