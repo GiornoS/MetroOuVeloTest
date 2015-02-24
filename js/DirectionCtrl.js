@@ -1,6 +1,6 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
 
     
 /*    $ionicModal.fromTemplateUrl('my-modal.html', {
@@ -101,9 +101,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     d = new Date();
     heure_actuelle = d.getHours();
     minute_actuelle = d.getMinutes();
-    $scope.heure_actuelle = heure_actuelle.toString() + "h";
-    $scope.minute_actuelle = minute_actuelle.toString() + "min";
-
+    $scope.heure_actuelle = heure_actuelle.toString();/* + "h"*/
+    $scope.minute_actuelle = minute_actuelle.toString();/* + "min"*/
+    
+    if (minute_actuelle < 10) {
+        $scope.minute_actuelle = "0" + $scope.minute_actuelle;
+    }
+    if (heure_actuelle < 10) {
+        $scope.heure_actuelle = "0" + $scope.heure_actuelle;
+    }
+    
     //~ Fonction permettant de calculer un trajet à une heure donnée
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         if (city_start && city_end) {
@@ -134,28 +141,20 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 alert("Impossible de récupérer la géolocalisation");
             });
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
-            var jour, mois, annee, heure_choisie_bis, minute_choisie_bis;
+            var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService, millisecondes_unix;
             jour = d.getDate().toString();
             mois = d.getMonth().toString();
             annee = d.getFullYear().toString();
-            if (minute_choisie && heure_choisie) {
+            if ($scope.datePicked) {
                 // On récupère le jour, le mois et l'année aux quels on va ajouter l'heue et la minute choisie pour le trajet, afin de convertir le tout en millisecondes depuis le 1er Janvier 1970. On enlève le "min" et le "h" pour la minute et pour l'heure choisie
-                heure_choisie_bis = heure_choisie.replace("h", "");
-                minute_choisie_bis = minute_choisie.replace("min", "");
-            } else if (minute_choisie) {
-                heure_choisie_bis = heure_actuelle;
-                minute_choisie_bis = minute_choisie.replace("min", "");
-            } else if (heure_choisie) {
-                heure_choisie_bis = heure_choisie.replace("h", "");
-                minute_choisie_bis = minute_actuelle;
+                millisecondes_unix = Date.parse($scope.datePicked);
             } else {
                 heure_choisie_bis = heure_actuelle;
                 minute_choisie_bis = minute_actuelle;
+                date_complete = mois + "/" + jour + "/" + annee + " " + heure_choisie_bis + ":" + minute_choisie_bis;
+                millisecondes_unix = Date.parse(date_complete);
             }
 
-            var date_complete, request, directionsService, millisecondes_unix;
-            date_complete = mois + "/" + jour + "/" + annee + " " + heure_choisie_bis + ":" + minute_choisie_bis;
-            millisecondes_unix = Date.parse(date_complete);
             request = {
                 origin        : city_start,
                 destination   : city_end,
@@ -206,7 +205,26 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.initializeAutocomplete("city_start", "city_end"); // On lance l'autocomplétion dès le lancement de l'application
 
+    $scope.openDatePicker = function () {
+        var options = {
+            date: new Date(),
+            mode: 'time',
+            minDate: new Date(),
+            allowOldDates: false,
+            allowFutureDates: true,
+            doneButtonLabel: 'Annuler',
+            doneButtonColor: '#F2F3F4',
+            cancelButtonLabel: 'Régler',
+            cancelButtonColor: '#000000'
+        };
 
+        document.addEventListener("deviceready", function () {
+            $cordovaDatePicker.show(options).then(function (date) {
+                $scope.datePicked = date;
+                alert(date);
+            });
+        }, false);
+    };
 
 
     //Google Analytics
@@ -225,6 +243,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);

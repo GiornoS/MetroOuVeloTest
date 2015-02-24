@@ -82,22 +82,30 @@
     width:90%;
 }
 
+.heure_de_depart
+{
+    position: relative;
+}
 .hour_select_definir_un_trajet
 {
-    width : 170px;
+    width : 80px;
     border-width: 0px;
     position:relative;
-    top:5px; 
-    z-index: 
+    bottom:12px; 
 }
 
-.minute_select_definir_un_trajet
+/*.minute_select_definir_un_trajet
 {
     width : 170px;
     border-width: 0px;
     position:absolute;
     left:170px;
     bottom:60px
+}*/
+
+.clock_depart
+{
+    
 }
 
 .validerButtonTrajet

@@ -58,6 +58,7 @@
 				<label class="item item-input search_start">
 					<i class="icon ion-search placeholder-icon"></i>
 					<input type="search" placeholder="D'où partez vous ?" ng-model="city_start" name="city_start" id="city_start">
+                    {{city_start}}
 				</label>
 				<label class="item item-input search_end">
 					<i class="icon ion-search placeholder-icon"></i>
@@ -65,7 +66,7 @@
 				</label>
             </div>
             <!-- Input de l'heure de départ -->
-            <label class="item item-input item-select hour_select_definir_un_trajet">
+<!--            <label class="item item-input item-select hour_select_definir_un_trajet">
                 <div class="input-label">
                   Départ à 
                 </div>
@@ -76,10 +77,10 @@
                 </select>
 
               </div>
-            </label>
+            </label>-->
 
             <!-- Input de la minute de départ -->
-            <label class="item item-input item-select minute_select_definir_un_trajet">
+<!--        <label class="item item-input item-select minute_select_definir_un_trajet">
                 <div class="input-label">
                     :
                 </div>
@@ -90,7 +91,22 @@
                     </select>
 
                 </div>
-            </label>
+            </label>-->
+            <div class="heure_de_depart">
+                Départ à :
+                <button class="button button-clear hour_select_definir_un_trajet" ng-click="openDatePicker()">
+                    {{heure_actuelle}} : {{minute_actuelle}}
+                </button>
+                <i class="icon ion-clock clock_depart"></i>
+            </div>
+<!--<label class="item item-input item-select hour_select_definir_un_trajet">
+                <div class="input-label">
+                  Départ à 
+                </div>
+                <select ng-model="heure_choisie" ng-click="openDatePicker()">
+                <option value="">{{heure_actuelle}} : {{minute_actuelle}}</option>
+                </select>
+            </label>-->
 			
             
 	
