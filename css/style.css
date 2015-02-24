@@ -90,8 +90,6 @@
 .hour_select_definir_un_trajet
 {
     width : 80px;
-    border-width: 0px;
-    position:relative;
     bottom:14px; 
 }
 
@@ -106,7 +104,7 @@
 
 .clock_depart
 {
-   
+    bottom:14px;
 }
 
 .validerButtonTrajet
