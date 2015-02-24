@@ -172,10 +172,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             if (dateHasBeenPicked) {
                 // On récupère le jour, le mois et l'année aux quels on va ajouter l'heue et la minute choisie pour le trajet, afin de convertir le tout en millisecondes depuis le 1er Janvier 1970. On enlève le "min" et le "h" pour la minute et pour l'heure choisie
                 millisecondes_unix = Date.parse($scope.datePicked);
-                $scope.heure_choisie = $scope.datePicked.getHours();
-                $scope.minute_choisie = $scope.datePicked.getMinutes();
-                alert("ok");
-                alert($scope.heure_choisie);
             } else {
                 heure_choisie_bis = heure_choisie;
                 minute_choisie_bis = minute_choisie;
@@ -249,7 +245,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         document.addEventListener("deviceready", function () {
             $cordovaDatePicker.show(options).then(function (date) {
                 $scope.datePicked = date;
+                // La fonction calculate prend la date donnée par le datePicker
                 dateHasBeenPicked = true;
+                // On affiche l'heure choisie sur le bouton
+                $scope.heure_choisie = $scope.datePicked.getHours();
+                $scope.minute_choisie = $scope.datePicked.getMinutes();
             });
         }, false);
     };
