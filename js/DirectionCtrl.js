@@ -122,6 +122,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.heure_choisie = heure_choisie.toString();/* + "h"*/
         $scope.minute_choisie = minute_choisie.toString();/* + "min"*/
 
+        // On ajoute un 0 pour que ça affiche 01:02 et non 1:2
         if (minute_choisie < 10) {
             $scope.minute_choisie = "0" + $scope.minute_choisie;
         }
@@ -250,6 +251,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 // On affiche l'heure choisie sur le bouton
                 $scope.heure_choisie = $scope.datePicked.getHours();
                 $scope.minute_choisie = $scope.datePicked.getMinutes();
+                
+                // On ajoute un 0 pour que ça affiche 01:02 et non 1:2
+                if (minute_choisie < 10) {
+                    $scope.minute_choisie = "0" + $scope.minute_choisie;
+                }
+                if (heure_choisie < 10) {
+                    $scope.heure_choisie = "0" + $scope.heure_choisie;
+                }
             });
         }, false);
     };
