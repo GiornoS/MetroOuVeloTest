@@ -85,6 +85,7 @@
 .heure_de_depart
 {
     position: relative;
+    top: 10px;    
 }
 .hour_select_definir_un_trajet
 {
@@ -172,6 +173,7 @@
 .pac-item
 {
     height: 50px;
+    
 }
 
 .pac-container
@@ -184,4 +186,7 @@
     color: green;
 }
 
-
+.pac-item-query
+{
+    font-size: 130%;
+}
