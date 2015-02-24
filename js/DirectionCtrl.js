@@ -248,6 +248,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $cordovaDatePicker.show(options).then(function (date) {
                 $scope.datePicked = date;
                 dateHasBeenPicked = true;
+                alert($scope.datePicked.split(" ")[4].split(":")[0]);
             });
         }, false);
     };
