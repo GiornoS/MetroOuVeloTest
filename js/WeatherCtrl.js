@@ -54,7 +54,6 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
     function httpSuccessGeolocateSuccess(response) {
         $scope.coordonates = response;
         $scope.city = response.results[0].formatted_address;
-        alert($scope.city);
         $ionicLoading.hide();
     }
     

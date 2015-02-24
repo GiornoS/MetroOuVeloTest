@@ -93,15 +93,6 @@
     bottom:14px; 
 }
 
-/*.minute_select_definir_un_trajet
-{
-    width : 170px;
-    border-width: 0px;
-    position:absolute;
-    left:170px;
-    bottom:60px
-}*/
-
 .clock_depart
 {
     bottom:14px;
@@ -186,5 +177,5 @@
 
 .pac-item-query
 {
-    font-size: 130%;
+    font-size: 170%;
 }
