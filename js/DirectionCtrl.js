@@ -174,6 +174,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 millisecondes_unix = Date.parse($scope.datePicked);
                 $scope.heure_choisie = $scope.datePicked.getHours();
                 $scope.minute_choisie = $scope.datePicked.getMinutes();
+                alert("ok");
+                alert($scope.heure_choisie);
             } else {
                 heure_choisie_bis = heure_choisie;
                 minute_choisie_bis = minute_choisie;
@@ -248,7 +250,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $cordovaDatePicker.show(options).then(function (date) {
                 $scope.datePicked = date;
                 dateHasBeenPicked = true;
-                alert(date.getHours());
             });
         }, false);
     };
