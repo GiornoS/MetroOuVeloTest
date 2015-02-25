@@ -3,7 +3,7 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
 
     
-/*    $ionicModal.fromTemplateUrl('my-modal.html', {
+    $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
@@ -20,7 +20,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.$on('$destroy', function () {
         $scope.modal.remove();
-    });*/
+    });
     
     var directionsDisplay = new google.maps.DirectionsRenderer();
     function initialize() {
@@ -72,8 +72,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
                 // On affiche la ville de départ dans le formulaire
-                $scope.city_start = response.results[0].formatted_address;
                 $scope.address_autocomplete1 = response.results[0].formatted_address;
+                $scope.city_start = angular.copy($scope.address_autocomplete1);
+/*
+                $scope.address_autocomplete1 = response.results[0].formatted_address;
+*/
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
             });
@@ -92,6 +95,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.show_card_definir_un_trajet = false;
         } else {
             $scope.show_card_definir_un_trajet = true;
+            // On reset le temps
+            $scope.setTime();
+            // On affiche la bonne adresse (par exemple si l'utilisateur a réappuyé sur le bouton de géolocalisation entre temps)
+            if ($scope.city_start) {
+                document.getElementById('city_start').value = $scope.city_start;
+            }
         }
     };
 
@@ -134,7 +143,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         dateHasBeenPicked = false;
     };
     
+    // On affiche l'heure actuelle au lancement de l'application
     $scope.setTime();
+    
+    $scope.showTrajet = function () {
+        if ($scope.show_card_trajet === true) {
+            $scope.show_card_trajet = false;
+        } else {
+            $scope.show_card_trajet = true;
+        }
+    };
     
     //~ Fonction permettant de calculer un trajet à une heure donnée
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {

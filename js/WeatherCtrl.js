@@ -54,6 +54,10 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
     function httpSuccessGeolocateSuccess(response) {
         $scope.coordonates = response;
         $scope.city = response.results[0].formatted_address;
+        // On affiche la valeur obtenue par géolocalisation
+        if ($scope.city) {
+            document.getElementById('city').value = $scope.city;
+        }
         $ionicLoading.hide();
     }
     
