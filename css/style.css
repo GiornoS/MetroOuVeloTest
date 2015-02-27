@@ -124,10 +124,10 @@
 
 #map 
 {    
-    position: absolute;
+    position: relative;
 	width: 100%;
 	height: 88%;
-    bottom: 0px;
+    top: 47px;
 }
 
 .definir_un_trajet_card
@@ -139,18 +139,17 @@
 
 .footer_card_definir_un_trajet
 {
-    bottom:-18px;
+    bottom:-13px;
     width:96%;
     position:absolute;
 }
 
 .modal_affichage_trajet
 {
-    position: relative;
+    position: absolute;
     width: 100%;
-    height: 100%;
+    height: 50%;
     left: 0px;
-    top:110px;
     z-index: 10;
 }
 
