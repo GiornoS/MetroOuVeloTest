@@ -30,25 +30,26 @@
   
   
 <body ng-controller="DirectionCtrl">
-	
-	<!-- Le bandeau supérieur avec le nom de l'application -->
-	<ion-header-bar class="bar-positive header_definir_un_trajet">
-		<h1 class="title"><center> Définir un trajet</center></h1>
-	</ion-header-bar>
-	
 	<ion-content>
+        
+    <!-- Le bandeau supérieur avec le nom de l'application -->
+    <div class="bar bar-header bar-positive has-tabs-top header_definir_un_trajet">
+        <h1 class="title"><center> Définir un trajet</center></h1>
+    </div>
 
-	<div class="tabs tabs-positive tabs-footer tabs_definir_un_trajet">
-		<a class="tab-item" href="../index.html">
-			Définir une adresse
-		</a>
-		<a class="tab-item">
-			Définir un trajet
-		</a>
+	<div class="tabs-striped tabs-top tabs-background-positive tabs-color-light">
+        <div class="tabs">
+            <a class="tab-item tab_definir_une_adresse" href="../index.html">
+                Définir une adresse
+            </a>
+            <a class="tab-item active tab_definir_un_trajet">
+                Définir un trajet
+            </a>
+        </div>
 	</div>
 
 
-	 <div class="list card" ng-show="show_card_definir_un_trajet">
+	 <div class="list card definir_un_trajet_card" ng-show="show_card_definir_un_trajet">
 		<div class="item item-divider">
 			<center>Définir un trajet</center>
 		</div>
