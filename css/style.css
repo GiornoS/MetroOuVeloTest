@@ -126,8 +126,8 @@
 {    
     position: absolute;
 	width: 100%;
-    top:50px;
 	height: 88%;
+    bottom: 0px;
 }
 
 .definir_un_trajet_card
