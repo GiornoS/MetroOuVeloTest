@@ -50,7 +50,7 @@
 
 
 	 <div class="list card definir_un_trajet_card" ng-show="show_card_definir_un_trajet">
-		<div class="item item-divider">
+		<div class="item item-divider definir_un_trajet_titre_card">
 			<center>Définir un trajet</center>
 		</div>
 		<div class="item item-body">
@@ -72,16 +72,13 @@
                     {{heure_choisie}} : {{minute_choisie}}
                 </button>
                 <a class="button button-icon icon ion-android-stopwatch clock_depart" ng-click="setTime()"></a>
-            </div>
-
-			
             
-	
-			<center>
-				<button ng-click="calculate(address_autocomplete1, address_autocomplete2, minute_choisie, heure_choisie)" class="button button-outline button-positive validerButtonTrajet">
-					Valider
-				</button>
-			</center>
+                <center>
+                    <button ng-click="calculate(address_autocomplete1, address_autocomplete2, minute_choisie, heure_choisie)" class="button button-outline button-positive validerButtonTrajet">
+                        Valider
+                    </button>
+                </center>
+            </div>
 		</div>
 
 	</div>

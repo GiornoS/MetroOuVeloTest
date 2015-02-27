@@ -57,18 +57,6 @@
  DEFINIR UN TRAJET
 */
 
-.search_start
-{
-	position:relative;
-}
-
-.search_end
-{
-	position:relative;
-	margin-top:0.5%;
-    width:90%;
-}
-
 .heure_de_depart
 {
     position: relative;
@@ -130,11 +118,32 @@
     bottom: 0px;
 }
 
+.card
+{
+    border-radius: 10px;
+}
+
 .definir_un_trajet_card
 {
     position:absolute;
     top:80px;
     width:96%;
+}
+
+.search_start
+{
+    top: -17px;
+}
+
+.search_end
+{
+    top: -17px;
+	margin-top:0.5%;
+}
+
+.heure_de_depart
+{
+    top: -17px;
 }
 
 .footer_card_definir_un_trajet
@@ -148,7 +157,9 @@
 {
     position: absolute;
     width: 100%;
-    top: 50%;
+    bottom: 0px;
+    top:50%;
+    overflow: auto;
 }
 
 .km_modal
@@ -170,7 +181,6 @@
     top:44px;
     padding-right: 5px;
     border: 1px solid #999;
-    overflow:auto;
 }
 
 /*
