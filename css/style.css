@@ -154,6 +154,33 @@
     bottom:0px;
 }
 
+.modal_affichage_trajet
+{
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top:50%;
+}
+
+.km_modal
+{
+    width:50%;
+}
+
+.h_modal
+{
+    width: 50%;
+    position: absolute;
+    top: 0px;
+    right:0px;
+}
+
+.PanelTrajet
+{
+    position: absolute;
+    top:44px;
+    overflow:auto;
+}
 
 /*
  AUTOCOMPLETION

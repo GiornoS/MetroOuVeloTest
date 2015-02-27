@@ -2,7 +2,7 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
 
-    
+    // Modal d'affichage de l'itinéraire
     $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -12,6 +12,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
+        // On affiche la paneau avec les informations sur les étapes du trajet
+        directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
     };
 
     $scope.closeModal = function () {
@@ -103,22 +105,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
         }
     };
-
-
-/*     //~ Initialisations des variables servant à définir la date actuelle   
-    var d, heure_actuelle, minute_actuelle;
-    d = new Date();
-    heure_actuelle = d.getHours();
-    minute_actuelle = d.getMinutes();
-    $scope.heure_actuelle = heure_actuelle.toString();
-    $scope.minute_actuelle = minute_actuelle.toString();
-    
-    if (minute_actuelle < 10) {
-        $scope.minute_actuelle = "0" + $scope.minute_actuelle;
-    }
-    if (heure_actuelle < 10) {
-        $scope.heure_actuelle = "0" + $scope.heure_actuelle;
-    }*/
     
     //~ Initialisations des variables servant à définir la date actuelle   
     var d, heure_choisie, minute_choisie, dateHasBeenPicked;
@@ -153,6 +139,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.show_card_trajet = true;
         }
     };
+    
+
     
     //~ Fonction permettant de calculer un trajet à une heure donnée
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
@@ -207,15 +195,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 travelMode    : google.maps.DirectionsTravelMode.BICYCLING, // Mode de conduite
                 unitSystem    : google.maps.UnitSystem.METRIC
             };
-            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire*/
+            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
 
             directionsService.route(request, function (response, status) { // Envoie de la requête pour calculer le parcours
                 if (status === google.maps.DirectionsStatus.OK) {
                     $ionicLoading.hide();
-                    $scope.showCard(); //on cache la carte de défintion d'itinéraire
                     directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
+                    
                     $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
+                    // On affiche le footer avec la distance et la durée
                     $scope.show_donnees_du_trajet = true;
+                    $scope.showCard(); //on cache la carte de défintion d'itinéraire
                 }
             });
         }

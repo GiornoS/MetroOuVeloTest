@@ -104,32 +104,37 @@
             <a class="tab-item">
               <i class="icon ion-clock"></i>
               <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
+                
             </a>
             <script id="my-modal.html" type="text/ng-template">
-                <div class="modal">
-                  <ion-header-bar>
-                    <h1 class="title">Edit Contact</h1>
-                  </ion-header-bar>
-                  <ion-content>
-                    <div class="list">
-                      <label class="item item-input">
-                        <span class="input-label">Name</span>
-                        <input type="text" ng-model="contact.name">
-                      </label>
-                      <label class="item item-input">
-                        <span class="input-label">Info</span>
-                        <input type="text" ng-model="contact.info">
-                      </label>
+                <div class="modal modal_affichage_trajet">
+                    <ion-header-bar ng-click="closeModal()">
+                        <h1 class="title"> 
+                            <div class="km_modal">
+                                <i class="icon ion-map"></i>
+                                <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].distance.text}}</strong>
+                            </div>
+                            <div class="h_modal">
+                                <i class="icon ion-clock"></i>
+                                <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
+                            </div>
+                        </h1>
+                    </ion-header-bar>
+                    <div id="PanelTrajet" class="PanelTrajet">
                     </div>
-
-                    <button class="button button-full button-energized" ng-click="closeModal()">Done</button>
-                  </ion-content>
                 </div>
             </script>
         </div>
     </div>
-<!--		<div class="title" >Distance : {{donnees_du_trajet.routes[0].legs[0].distance.text}} ; Durée : {{donnees_du_trajet.routes[0].legs[0].duration.text}} </div>
-	</div>-->
+<!--                       <ion-list>
+                            <ion-item ng-repeat="step in donnees_du_trajet.routes[0].legs[0].steps" class="item_liste_trajet">
+                            {{step.instructions}}
+                            <i class="icon ion-map"></i>
+                            {{step.distance.text}}
+                            <i class="icon ion-clock"></i>
+                            {{step.duration.text}}
+                            </ion-item>
+                        </ion-list>-->
 	</ion-content>
 	
 		
