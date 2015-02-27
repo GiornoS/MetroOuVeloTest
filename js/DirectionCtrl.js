@@ -214,12 +214,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     //~ Fonction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
     $scope.initializeAutocomplete = function (id1, id2) {
-        var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2;
+        var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2, optionsAutocomplete;
         addresse_a_completer1 = document.getElementById(id1);
         addresse_a_completer2 = document.getElementById(id2);
         if (addresse_a_completer1 && addresse_a_completer2) {
-            autocomplete1 = new google.maps.places.Autocomplete(addresse_a_completer1);
-            autocomplete2 = new google.maps.places.Autocomplete(addresse_a_completer2);
+            // On restreint l'autocomplétion à la France
+            optionsAutocomplete = {
+                componentRestrictions: {country: 'fr'}
+            };
+            autocomplete1 = new google.maps.places.Autocomplete(addresse_a_completer1, optionsAutocomplete);
+            autocomplete2 = new google.maps.places.Autocomplete(addresse_a_completer2, optionsAutocomplete);
             google.maps.event.addListener(autocomplete1, 'place_changed', function () {
                 place1 = this.getPlace();
                 if (place1.address_components) {

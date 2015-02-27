@@ -97,6 +97,7 @@ function WeatherCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnaly
         var addresse_a_completer, autocomplete, options;
         addresse_a_completer = document.getElementById(id);
         if (addresse_a_completer) {
+            // On restreint l'autocomplétion à la France
             options = { componentRestrictions: {country: 'fr'} };
             autocomplete = new google.maps.places.Autocomplete(addresse_a_completer, options);
             google.maps.event.addListener(autocomplete, 'place_changed', function () {
