@@ -4,7 +4,7 @@
 xmlns:gap = "http://phonegap.com/ns/1.0"
 id = "com.phonegap.helloworld"
 version = "1.0.0">
-<name>Métro ou Vélib ? VERSION DE TEST</name>
+<name>Métro ou Vélib ? BETA</name>
 <description>
  Application permettant de prévoir quel moyen de locomotion est idéal pour un trajet à un instant donné.
 </description>
