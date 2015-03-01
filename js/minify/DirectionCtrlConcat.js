@@ -41,8 +41,8 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
 
-    
-/*    $ionicModal.fromTemplateUrl('my-modal.html', {
+    // Modal d'affichage de l'itinéraire
+    $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
@@ -51,15 +51,19 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
+        $scope.showModal = true;
+        // On affiche la paneau avec les informations sur les étapes du trajet
+        directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
     };
 
     $scope.closeModal = function () {
         $scope.modal.hide();
+        $scope.showModal = false;
     };
 
     $scope.$on('$destroy', function () {
         $scope.modal.remove();
-    });*/
+    });
     
     var directionsDisplay = new google.maps.DirectionsRenderer();
     function initialize() {
@@ -68,6 +72,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         mapOptions = {
             center: paris,
             zoom: 11,
+            panControl : false,
+            zoomControl : false,
+            mapTypeControl : true,
+            mapTypeControlOptions: {
+                position : google.maps.ControlPosition.RIGHT_BOTTOM
+            },
+            scaleControl : false,
+            streetViewControl : false,
+            overviewMapControl : true,
+            rotateControl : true,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -111,8 +125,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
                 // On affiche la ville de départ dans le formulaire
-                $scope.city_start = response.results[0].formatted_address;
                 $scope.address_autocomplete1 = response.results[0].formatted_address;
+                $scope.city_start = angular.copy($scope.address_autocomplete1);
+/*
+                $scope.address_autocomplete1 = response.results[0].formatted_address;
+*/
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
             });
@@ -131,24 +148,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.show_card_definir_un_trajet = false;
         } else {
             $scope.show_card_definir_un_trajet = true;
+            // On reset le temps
+            $scope.setTime();
+            // On affiche la bonne adresse (par exemple si l'utilisateur a réappuyé sur le bouton de géolocalisation entre temps)
+            if ($scope.city_start) {
+                document.getElementById('city_start').value = $scope.city_start;
+            }
         }
     };
-
-
-/*     //~ Initialisations des variables servant à définir la date actuelle   
-    var d, heure_actuelle, minute_actuelle;
-    d = new Date();
-    heure_actuelle = d.getHours();
-    minute_actuelle = d.getMinutes();
-    $scope.heure_actuelle = heure_actuelle.toString();
-    $scope.minute_actuelle = minute_actuelle.toString();
-    
-    if (minute_actuelle < 10) {
-        $scope.minute_actuelle = "0" + $scope.minute_actuelle;
-    }
-    if (heure_actuelle < 10) {
-        $scope.heure_actuelle = "0" + $scope.heure_actuelle;
-    }*/
     
     //~ Initialisations des variables servant à définir la date actuelle   
     var d, heure_choisie, minute_choisie, dateHasBeenPicked;
@@ -173,7 +180,18 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         dateHasBeenPicked = false;
     };
     
+    // On affiche l'heure actuelle au lancement de l'application
     $scope.setTime();
+    
+    $scope.showTrajet = function () {
+        if ($scope.show_card_trajet === true) {
+            $scope.show_card_trajet = false;
+        } else {
+            $scope.show_card_trajet = true;
+        }
+    };
+    
+
     
     //~ Fonction permettant de calculer un trajet à une heure donnée
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
@@ -228,15 +246,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 travelMode    : google.maps.DirectionsTravelMode.BICYCLING, // Mode de conduite
                 unitSystem    : google.maps.UnitSystem.METRIC
             };
-            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire*/
+            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
 
             directionsService.route(request, function (response, status) { // Envoie de la requête pour calculer le parcours
                 if (status === google.maps.DirectionsStatus.OK) {
                     $ionicLoading.hide();
-                    $scope.showCard(); //on cache la carte de défintion d'itinéraire
                     directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
+                    
                     $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
+                    // On affiche le footer avec la distance et la durée
                     $scope.show_donnees_du_trajet = true;
+                    $scope.showCard(); //on cache la carte de défintion d'itinéraire
                 }
             });
         }
@@ -245,12 +265,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     //~ Fonction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
     $scope.initializeAutocomplete = function (id1, id2) {
-        var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2;
+        var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2, optionsAutocomplete;
         addresse_a_completer1 = document.getElementById(id1);
         addresse_a_completer2 = document.getElementById(id2);
         if (addresse_a_completer1 && addresse_a_completer2) {
-            autocomplete1 = new google.maps.places.Autocomplete(addresse_a_completer1);
-            autocomplete2 = new google.maps.places.Autocomplete(addresse_a_completer2);
+            // On restreint l'autocomplétion à la France
+            optionsAutocomplete = {
+                componentRestrictions: {country: 'fr'}
+            };
+            autocomplete1 = new google.maps.places.Autocomplete(addresse_a_completer1, optionsAutocomplete);
+            autocomplete2 = new google.maps.places.Autocomplete(addresse_a_completer2, optionsAutocomplete);
             google.maps.event.addListener(autocomplete1, 'place_changed', function () {
                 place1 = this.getPlace();
                 if (place1.address_components) {

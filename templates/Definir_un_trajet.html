@@ -20,16 +20,14 @@
     <script src="../cordova.js"></script>
 
 	<script src="../js/angular.js"></script>
-<!--
     <script src="../js/minify/DirectionCtrlMini.js"></script>
--->
-	<script src="../js/app.js"></script>    
-	<script src="../js/DirectionCtrl.js"></script>
+<!--	<script src="../js/app.js"></script>    
+	<script src="../js/DirectionCtrl.js"></script>-->
     
 </head>
   
   
-<body ng-controller="DirectionCtrl">
+<body class="body" ng-controller="DirectionCtrl">
 	<ion-content>
         
     <!-- Le bandeau supérieur avec le nom de l'application -->
@@ -85,7 +83,7 @@
         
 
     <!-- Affichage de l'objet map de l'api google (affichage de la carte) -->
-    <div id="map" data-tap-disabled="true"></div>
+    <map id="map" data-tap-disabled="true"></map>
     
     <!-- Affichage des boutons de géolocalisation et de définition du trajet -->
 	<img class="button button-icon icon" src="../res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()"></img>
@@ -104,24 +102,24 @@
               <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
                 
             </a>
-            <script id="my-modal.html" type="text/ng-template">
+<!--            <script id="my-modal.html" type="text/ng-template">
                 <div class="modal modal_affichage_trajet">
-                    <ion-header-bar ng-click="closeModal()">
+                    <div class="bar bar-header header_panel" ng-click="closeModal()">
                         <h1 class="title"> 
-                            <div class="km_modal">
+                            <div class="km_modal" ng-click="closeModal()">
                                 <i class="icon ion-map"></i>
                                 <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].distance.text}}</strong>
                             </div>
-                            <div class="h_modal">
+                            <div class="h_modal" ng-click="closeModal()">
                                 <i class="icon ion-clock"></i>
                                 <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
                             </div>
                         </h1>
-                    </ion-header-bar>
+                    </div>
                     <div id="PanelTrajet" class="PanelTrajet">
                     </div>
                 </div>
-            </script>
+            </script>-->
         </div>
     </div>
 <!--                       <ion-list>

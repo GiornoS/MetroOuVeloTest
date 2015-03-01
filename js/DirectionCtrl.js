@@ -12,12 +12,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
+        $scope.showModal = true;
         // On affiche la paneau avec les informations sur les étapes du trajet
         directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
     };
 
     $scope.closeModal = function () {
         $scope.modal.hide();
+        $scope.showModal = false;
     };
 
     $scope.$on('$destroy', function () {
@@ -31,6 +33,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         mapOptions = {
             center: paris,
             zoom: 11,
+            panControl : false,
+            zoomControl : false,
+            mapTypeControl : true,
+            mapTypeControlOptions: {
+                position : google.maps.ControlPosition.RIGHT_BOTTOM
+            },
+            scaleControl : false,
+            streetViewControl : false,
+            overviewMapControl : true,
+            rotateControl : true,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
