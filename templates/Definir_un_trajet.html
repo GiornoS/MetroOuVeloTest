@@ -20,9 +20,11 @@
     <script src="../cordova.js"></script>
 
 	<script src="../js/angular.js"></script>
+<!--
     <script src="../js/minify/DirectionCtrlMini.js"></script>
-<!--	<script src="../js/app.js"></script>    
-	<script src="../js/DirectionCtrl.js"></script>-->
+-->
+	<script src="../js/app.js"></script>    
+	<script src="../js/DirectionCtrl.js"></script>
     
 </head>
   
@@ -79,11 +81,10 @@
             </div>
 		</div>
 
-	</div>
-        
+	</div>        
 
     <!-- Affichage de l'objet map de l'api google (affichage de la carte) -->
-    <map id="map" data-tap-disabled="true"></map>
+    <map id="map" class="map_animation" ng-class="{big_map : sizeMap=='big', small_map : sizeMap=='small'}" data-tap-disabled="true" on-touch="reloadMap()"></map>
     
     <!-- Affichage des boutons de géolocalisation et de définition du trajet -->
 	<img class="button button-icon icon" src="../res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()"></img>
@@ -102,9 +103,9 @@
               <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
                 
             </a>
-<!--            <script id="my-modal.html" type="text/ng-template">
-                <div class="modal modal_affichage_trajet">
-                    <div class="bar bar-header header_panel" ng-click="closeModal()">
+            <script id="my-modal.html" type="text/ng-template">
+                <ion-modal-view class="modal modal_affichage_trajet">
+                    <div no-tap-scroll="true" class="bar bar-header header_panel" ng-click="closeModal()">
                         <h1 class="title"> 
                             <div class="km_modal" ng-click="closeModal()">
                                 <i class="icon ion-map"></i>
@@ -118,8 +119,8 @@
                     </div>
                     <div id="PanelTrajet" class="PanelTrajet">
                     </div>
-                </div>
-            </script>-->
+                </ion-modal_view>
+            </script>
         </div>
     </div>
 <!--                       <ion-list>

@@ -19,9 +19,11 @@
     <script src="cordova.js"></script>
     
     <script src="js/angular.js"></script>
+<!--
     <script src="js/minify/WeatherCtrlMini.js"></script>
-<!--    <script src="js/app.js"></script>    
-    <script src="js/WeatherCtrl.js"></script>-->
+-->
+    <script src="js/app.js"></script>    
+    <script src="js/WeatherCtrl.js"></script>
 
 </head>
   
@@ -65,7 +67,8 @@
 				Valider
 			</button>
 		</center>
-
+    
+    
 	<!-- Affichage de la météo, de la date au format jj/mm à hh:mm, de l'icône -->
 	<div class="list liste_temperature" ng-repeat="h in weather.hourly.data">
 		<center>

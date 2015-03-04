@@ -114,12 +114,20 @@
     height: 100%;
 }
 
-#map 
-{    
+.big_map
+{
     position: absolute;
 	width: 100%;
     height: 88%;
-    bottom: 0px;
+    bottom: 0%;    
+}
+
+.small_map
+{
+    position: absolute;
+	width: 100%;
+    height: 38%;
+    bottom: 50%;
 }
 
 .card
@@ -160,8 +168,10 @@
 .modal_affichage_trajet
 {
     position: absolute;
+    top: 50%;
     width: 100%;
     height: 50%;
+    min-height: initial;
     overflow: auto;
 }
 
@@ -182,8 +192,10 @@
 {
     position: absolute;
     top:44px;
+    padding-left: 5px;
     padding-right: 5px;
     border: 1px solid #999;
+    overflow: scroll;
 }
 
 /*
@@ -203,7 +215,7 @@
 
 .pac-matched
 {
-    color: green;
+    color: #4a87ee;
 }
 
 .pac-item-query

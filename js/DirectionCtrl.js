@@ -2,6 +2,12 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
 
+    // Au départ la carte prend tout l'écran
+    $scope.sizeMap = 'big';
+    // directionsDisplay va permettre d'afficher le trajet sur la carte, mapToReload permet de recharger la map une fois que le modal est caché, et le marker permet de n'avoir qu'un seul marker sur la carte
+    var directionsDisplay, mapToReload, marker;
+    directionsDisplay = new google.maps.DirectionsRenderer();
+
     // Modal d'affichage de l'itinéraire
     $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
@@ -12,21 +18,43 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
-        $scope.showModal = true;
+        // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran
+        $scope.sizeMap = 'small';
+        // On centre la carte sur le point de départ
+        $scope.map.setCenter($scope.donnees_du_trajet.routes[0].legs[0].steps[0].start_location);
+        // On zoom sur les étapes
+        $scope.map.setZoom(16);
         // On affiche la paneau avec les informations sur les étapes du trajet
         directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
+        // On recharge la carte à cause d'un bug lorsqu'on cache le modèle
+        mapToReload = true;
     };
 
     $scope.closeModal = function () {
         $scope.modal.hide();
-        $scope.showModal = false;
     };
+    
+    // Quand le modal est fermé on réaffiche la carte en version grand écran
+    $scope.$on('modal.hidden', function () {
+        // On réaffiche la map version grand écran
+        $scope.sizeMap = 'big';
+        
+
+    });
 
     $scope.$on('$destroy', function () {
+        // On réaffiche la map version grand écran
+        google.maps.event.trigger($scope.map, 'resize');
         $scope.modal.remove();
     });
     
-    var directionsDisplay = new google.maps.DirectionsRenderer();
+    $scope.reloadMap = function () {
+        if (mapToReload) {
+            google.maps.event.trigger($scope.map, 'resize');
+            mapToReload = false;
+        }
+    };
+    
     function initialize() {
         var paris, mapOptions, map;
         paris = new google.maps.LatLng(48.85834, 2.33752);
@@ -52,7 +80,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     ionic.Platform.ready(initialize);
 
-    var marker;	//Variable pour avoir un seul marqueur
     $scope.centerOnMe = function () {
         $scope.show_donnees_du_trajet = false;
         if (!$scope.map) {
