@@ -20,11 +20,9 @@
     <script src="../cordova.js"></script>
 
 	<script src="../js/angular.js"></script>
-<!--
     <script src="../js/minify/DirectionCtrlMini.js"></script>
--->
-	<script src="../js/app.js"></script>    
-	<script src="../js/DirectionCtrl.js"></script>
+<!--	<script src="../js/app.js"></script>    
+	<script src="../js/DirectionCtrl.js"></script>-->
     
 </head>
   
@@ -104,8 +102,8 @@
                 
             </a>
             <script id="my-modal.html" type="text/ng-template">
-                <ion-modal-view class="modal modal_affichage_trajet">
-                    <div no-tap-scroll="true" class="bar bar-header header_panel" ng-click="closeModal()">
+                <ion-modal-view class="modal modal_affichage_trajet" on-drag-down="closeModal()">
+                    <div no-tap-scroll="true" class="bar bar-header header_panel" on-drag-down="closeModal()">
                         <h1 class="title"> 
                             <div class="km_modal" ng-click="closeModal()">
                                 <i class="icon ion-map"></i>

@@ -126,8 +126,8 @@
 {
     position: absolute;
 	width: 100%;
-    height: 38%;
-    bottom: 50%;
+    height: 52.3%;
+    bottom: 35%;
 }
 
 .card
@@ -168,9 +168,9 @@
 .modal_affichage_trajet
 {
     position: absolute;
-    top: 50%;
+    top: 65%;
     width: 100%;
-    height: 50%;
+    height: 35%;
     min-height: initial;
     overflow: auto;
 }
@@ -191,6 +191,7 @@
 .PanelTrajet
 {
     position: absolute;
+    width: 100%;
     top:44px;
     padding-left: 5px;
     padding-right: 5px;

@@ -1,6 +1,6 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
     // Au départ la carte prend tout l'écran
     $scope.sizeMap = 'big';
@@ -18,8 +18,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
-        // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran
-        $scope.sizeMap = 'small';
+        // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran. Timeout pour éviter que la carte se recalibre avant que le modal ne soit affiché
+        $timeout(function () {
+            $scope.sizeMap = 'small';
+        }, 400);
         // On centre la carte sur le point de départ
         $scope.map.setCenter($scope.donnees_du_trajet.routes[0].legs[0].steps[0].start_location);
         // On zoom sur les étapes
@@ -333,6 +335,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
