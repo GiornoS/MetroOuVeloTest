@@ -104,14 +104,14 @@
             
             <!-- Modal qui va afficher-->
             <script id="my-modal.html" type="text/ng-template">
-                <ion-modal-view class="modal modal_affichage_trajet" on-drag-down="closeModal()">
+                <ion-modal-view class="modal modal_affichage_trajet" on-click="closeModal()">
                     <div no-tap-scroll="true" class="bar bar-header header_panel">
                         <h1 class="title"> 
-                            <div class="km_modal">
+                            <div class="km_modal" ng-click="closeModal()">
                                 <i class="icon ion-map"></i>
                                 <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].distance.text}}</strong>
                             </div>
-                            <div class="h_modal">
+                            <div class="h_modal" ng-click="closeModal()">
                                 <i class="icon ion-clock"></i>
                                 <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].duration.text}}</strong>
                             </div>
