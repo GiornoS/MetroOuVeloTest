@@ -42,7 +42,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             DayFormatted = d.getDate();
         }
         var dateForecast, url;
-        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + d.getHours() + ":00:00";
+        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
