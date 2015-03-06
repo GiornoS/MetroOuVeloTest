@@ -2,6 +2,8 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
+    var monthFormatted, DayFormatted
+
     /*  PARTIE UTILE POUR LA MÉTÉO  */
     
     var FORECASTIO_KEY, heureARegarder, millisecondes_unix;
@@ -31,8 +33,20 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
     function httpSuccessGetCoordonates(response) {
         $scope.coordonates = response;
-        alert(millisecondes_unix);
-        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + millisecondes_unix + "?units=si";
+        if (d.getMonth()<10) {
+            monthFormatted = "0"+d.getMonth();
+        } else {
+            monthFormatted = d.getMonth();
+        }
+            if (d.getDate()<10) {
+            DayFormatted = "0"+d.getDate();
+        } else {
+            DayFormatted = d.getDate();
+        }
+
+        var dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + d.getHours() + ":00:00";
+        alert(dateForecast);
+        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
 
@@ -55,7 +69,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             template: 'Récupération des données météorologiques...',
             showBackdrop: false
         });
-        alert(millisecondes_unix);
         //~ On récupère les coordonnées
         var urlbis = "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
         $http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
