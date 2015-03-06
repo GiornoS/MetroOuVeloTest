@@ -221,9 +221,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.showCard = function () {
         if ($scope.show_card_definir_un_trajet === true) {
             $scope.show_card_definir_un_trajet = false;
+            alert($scope.heure_choisie);
         } else {
             $scope.show_card_definir_un_trajet = true;
             $scope.show_card_recommandation = false;
+            alert($scope.heure_choisie);
             // On reset le temps
             $scope.setTime();
             // On affiche la bonne adresse (par exemple si l'utilisateur a réappuyé sur le bouton de géolocalisation entre temps)
