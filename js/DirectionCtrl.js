@@ -16,14 +16,15 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
       //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
     function httpSuccessSearchWeather(response) {
+        // On garde la réponse dans une variable éventuellement utile pour la page index
         $scope.weather = response;
         $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data.icon === "rain" || $scope.weather.hourly.data.icon === "clear-day" || $scope.weather.hourly.data.icon === "clear-night" || $scope.weather.hourly.data.icon === "cloudy" || $scope.weather.hourly.data.icon === "fog" || $scope.weather.hourly.data.icon === "partly-cloudy-day" || $scope.weather.hourly.data.icon === "partly-cloudy-night" || $scope.weather.hourly.data.icon === "wind" || $scope.weather.hourly.data.icon === "snow") {
+        if (response.hourly.data.icon === "rain" || response.hourly.data.icon === "clear-day" || response.hourly.data.icon === "clear-night" || response.hourly.data.icon === "cloudy" || response.hourly.data.icon === "fog" || response.hourly.data.icon === "partly-cloudy-day" || response.hourly.data.icon === "partly-cloudy-night" || response.hourly.data.icon === "wind" || response.hourly.data.icon === "snow") {
             $scope.recommandation = "Prenez le métro !";
-            alert($scope.weather.hourly.data.icon);
+            alert(response.hourly.data.icon);
         } else {
             $scope.recommandation = "Prenez le vélo !";
-             alert($scope.weather.hourly.data.icon);
+             alert(response.hourly.data.icon);
         }
         $ionicLoading.hide();
     }
