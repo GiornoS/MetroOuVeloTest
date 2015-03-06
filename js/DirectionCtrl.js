@@ -24,9 +24,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             alert(response);
         } else {
             $scope.recommandation = "Prenez le vélo !";
-             alert(response);
-            alert(response.hourly);
-            alert(response.hourly.data);
+     
+            alert(response.hourly.data.temperature);
+            alert(response.hourly.data.icon);
         }
         $ionicLoading.hide();
     }
