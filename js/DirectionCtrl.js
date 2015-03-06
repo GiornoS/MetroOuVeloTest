@@ -4,7 +4,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     /*  PARTIE UTILE POUR LA MÉTÉO  */
     
-    var FORECASTIO_KEY;
+    var FORECASTIO_KEY, heureARegarder, millisecondes_unix;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
     
     //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
@@ -23,7 +23,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.recommandation = "Prenez le métro !";
         } else {
             $scope.recommandation = "Prenez le vélo !";
-            alert($scope.heure_choisie - d.getHours());
+            alert();
         }
         $ionicLoading.hide();
     }
@@ -31,7 +31,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
     function httpSuccessGetCoordonates(response) {
         $scope.coordonates = response;
-        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si";
+        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + millisecondes_unix + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
 
@@ -287,7 +287,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 alert("Impossible de récupérer la géolocalisation");
             });
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
-            var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService, millisecondes_unix;
+            var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService;
             jour = d.getDate().toString();
             mois = d.getMonth().toString();
             annee = d.getFullYear().toString();
