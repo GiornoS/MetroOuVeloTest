@@ -21,10 +21,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.show_card_recommandation = true;
         if (response.hourly.data.icon === "rain" || response.hourly.data.icon === "clear-day" || response.hourly.data.icon === "clear-night" || response.hourly.data.icon === "cloudy" || response.hourly.data.icon === "fog" || response.hourly.data.icon === "partly-cloudy-day" || response.hourly.data.icon === "partly-cloudy-night" || response.hourly.data.icon === "wind" || response.hourly.data.icon === "snow") {
             $scope.recommandation = "Prenez le métro !";
-            alert(response.hourly.data.icon);
+            alert(response);
         } else {
             $scope.recommandation = "Prenez le vélo !";
-             alert(response.hourly.data.icon);
+             alert(response);
+            alert(response.hourly);
+            alert(response.hourly.data);
         }
         $ionicLoading.hide();
     }
