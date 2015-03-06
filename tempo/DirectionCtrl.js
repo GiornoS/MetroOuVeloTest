@@ -2,74 +2,6 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
-    /*  PARTIE UTILE POUR LA MÉTÉO  */
-    
-    var FORECASTIO_KEY, recommandation;
-    FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
-    
-    //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
-    function httpError(response) {
-        $ionicLoading.hide();
-        alert('Impossible de récupérer les informations');
-    }
-    
-    
-    
-      //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
-    function httpSuccessSearchWeather(response) {
-        $scope.weather = response;
-        $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data.icon === "rain") {
-            recommandation = "À votre place, je prendrais le métro !";
-        } else {
-            recommandation = "Prenez le vélo !";
-        }
-        $ionicLoading.hide();
-    }
-
-    //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
-    function httpSuccessGetCoordonates(response) {
-        $scope.coordonates = response;
-        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "?units=si";
-        $http.get(url).success(httpSuccessSearchWeather).error(httpError);
-    }
-
-    //~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io
-    $scope.searchWeather = function (address) {
-        document.addEventListener("deviceready", function () {
-            function waitForAnalytics() {
-                if (typeof analytics !== 'undefined') {
-                    $cordovaGoogleAnalytics.trackEvent('city', 'click', 'Adresse Saisie');
-                } else {
-                    setTimeout(function () {
-                        waitForAnalytics();
-                    }, 250);
-                }
-            }
-            waitForAnalytics();
-        }, false);
-        //~ On affiche un gif de loading
-        $scope.loading = $ionicLoading.show({
-            template: 'Récupération des données météorologiques...',
-            showBackdrop: false
-        });
-        //~ On récupère les coordonnées
-        var urlbis = "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
-        $http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
-    };
-
-
-
-    
-    
-    
-    
-    
-    /*  PARTIE UTILE POUR LA CARTE  */
-    
-    
-    
-    
     // Au départ la carte prend tout l'écran
     $scope.sizeMap = 'big';
     // directionsDisplay va permettre d'afficher le trajet sur la carte, mapToReload permet de recharger la map une fois que le modal est caché, et le marker permet de n'avoir qu'un seul marker sur la carte
@@ -206,7 +138,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.show_card_definir_un_trajet = false;
         } else {
             $scope.show_card_definir_un_trajet = true;
-            $scope.show_card_recommandation = false;
             // On reset le temps
             $scope.setTime();
             // On affiche la bonne adresse (par exemple si l'utilisateur a réappuyé sur le bouton de géolocalisation entre temps)
@@ -316,8 +247,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     // On affiche le footer avec la distance et la durée
                     $scope.show_donnees_du_trajet = true;
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
-                    // On cherche la météo pour afficher la recommandation
-                    $scope.searchWeather(city_end);
                 }
             });
         }
@@ -388,28 +317,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
 
-    /* RECOMMANDATION */
-    
-    //Recommandation à montrer
-/*    var recommandation;
-    
-    function recommand(address) {
-        $scope.searchWeather(address);
-        $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data.icon === "rain") {
-            recommandation = "À votre place, je prendrais le métro !";
-        } else {
-            recommandation = "Prenez le vélo !";
-        }
-    }*/
 
 
-    /*  GOOGLE ANALYTICS  */
+    //Google Analytics
     document.addEventListener("deviceready", function () {
         function waitForAnalytics() {
             if (typeof analytics !== 'undefined') {
-                $cordovaGoogleAnalytics.startTrackerWithId('UA-59584237-1');
-                $cordovaGoogleAnalytics.trackView('Définir un trajet');
+                $cordovaGoogleAnalytics.trackView('Définition du trajet');
             } else {
                 setTimeout(function () {
                     waitForAnalytics();

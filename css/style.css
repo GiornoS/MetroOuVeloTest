@@ -4,58 +4,8 @@
 
 .header_definir_un_trajet
 {    
-    position: relative;
 }
 
-.tab-item
-{
-    margin: auto;
-}
-
-/*
- DEFINIR UNE ADRESSE
-*/
-
-.city_search
-{
-    position: relative;
-    margin: 40px
-}
-
-.validerButton
-{
-	border-radius:10px;
-	position:relative;
-    
-}
-
-.geolocaliserButton
-{
-	border-radius:10px;
-	position:relative;
-}
-
-.CityName
-{
-	position:relative;	
-}
-
-.liste_temperature
-{
-	margin-top:20px;
-}
-
-.weather_icon
-{
-	width:30%;
-	height:90%;
-	position:absolute;
-	left:0px;
-	bottom:8%;
-}
-.affichage_date
-{
-}
 
 /*
  DEFINIR UN TRAJET
@@ -118,7 +68,7 @@
 {
     position: absolute;
 	width: 100%;
-    height: 88%;
+    height: 100%;
     bottom: 0%;    
 }
 
@@ -126,8 +76,8 @@
 {
     position: absolute;
 	width: 100%;
-    height: 52.3%;
-    bottom: 35%;
+    height: 63%;
+    bottom: 37%;
 }
 
 .card
@@ -138,7 +88,6 @@
 .definir_un_trajet_card
 {
     position:absolute;
-    top:80px;
     width:96%;
 }
 
@@ -156,6 +105,13 @@
 .heure_de_depart
 {
     top: -17px;
+}
+
+.card_recommandation
+{
+    position: absolute;
+    z-index: 10;
+    width: 96%;    
 }
 
 .footer_card_definir_un_trajet
