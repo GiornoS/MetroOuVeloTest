@@ -55,6 +55,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             template: 'Récupération des données météorologiques...',
             showBackdrop: false
         });
+        alert(millisecondes_unix);
         //~ On récupère les coordonnées
         var urlbis = "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
         $http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
