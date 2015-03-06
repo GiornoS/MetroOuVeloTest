@@ -19,17 +19,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         // On garde la réponse dans une variable éventuellement utile pour la page index
         $scope.weather = response;
         $scope.show_card_recommandation = true;
-        if (response.hourly.data.icon === "rain" || response.hourly.data.icon === "clear-day" || response.hourly.data.icon === "clear-night" || response.hourly.data.icon === "cloudy" || response.hourly.data.icon === "fog" || response.hourly.data.icon === "partly-cloudy-day" || response.hourly.data.icon === "partly-cloudy-night" || response.hourly.data.icon === "wind" || response.hourly.data.icon === "snow") {
+        if (response.hourly.data[0].icon === "rain" || response.hourly.data[0].icon === "clear-day" || response.hourly.data[0].icon === "clear-night" || response.hourly.data[0].icon === "cloudy" || response.hourly.data[0].icon === "fog" || response.hourly.data[0].icon === "partly-cloudy-day" || response.hourly.data[0].icon === "partly-cloudy-night" || response.hourly.data[0].icon === "wind" || response.hourly.data[0].icon === "snow") {
             $scope.recommandation = "Prenez le métro !";
             alert(response);
         } else {
             $scope.recommandation = "Prenez le vélo !";
-            alert(response.hourly.data);
-            for (truc in response.hourly.data) {
-                alert(truc);
-            }
-            alert(response.hourly.data.temperature);
-            alert(response.hourly.data.time);
+            alert(response.hourly.data[0].icon);
+
         }
         $ionicLoading.hide();
     }
