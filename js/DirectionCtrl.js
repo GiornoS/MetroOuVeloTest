@@ -31,6 +31,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
     function httpSuccessGetCoordonates(response) {
         $scope.coordonates = response;
+        alert(millisecondes_unix);
         var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + millisecondes_unix + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
