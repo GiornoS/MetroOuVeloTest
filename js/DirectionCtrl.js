@@ -4,7 +4,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     /*  PARTIE UTILE POUR LA MÉTÉO  */
     
-    var FORECASTIO_KEY, recommandation;
+    var FORECASTIO_KEY;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
     
     //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
@@ -14,15 +14,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     }
     
     
-    
       //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
     function httpSuccessSearchWeather(response) {
         $scope.weather = response;
         $scope.show_card_recommandation = true;
         if ($scope.weather.hourly.data.icon === "rain") {
-            recommandation = "À votre place, je prendrais le métro !";
+            $scope.recommandation = "Prenez le métro !";
         } else {
-            recommandation = "Prenez le vélo !";
+            $scope.recommandation = "Prenez le vélo !";
         }
         $ionicLoading.hide();
     }
@@ -86,6 +85,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     $scope.openModal = function () {
         $scope.modal.show();
+        // On cache la recommandation pour éviter de géner
+        $scope.show_card_recommandation = false;
         // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran. Timeout pour éviter que la carte se recalibre avant que le modal ne soit affiché
         $timeout(function () {
             $scope.sizeMap = 'small';
@@ -108,6 +109,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.$on('modal.hidden', function () {
         // On réaffiche la map version grand écran
         $scope.sizeMap = 'big';
+        // On réaffiche la recommandation
+        $scope.show_card_recommandation = true;
         
 
     });
