@@ -2,11 +2,9 @@ var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
-    var monthFormatted, DayFormatted
-
     /*  PARTIE UTILE POUR LA MÉTÉO  */
     
-    var FORECASTIO_KEY, heureARegarder, millisecondes_unix;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
     
     //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
@@ -25,7 +23,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.recommandation = "Prenez le métro !";
         } else {
             $scope.recommandation = "Prenez le vélo !";
-            alert();
         }
         $ionicLoading.hide();
     }
@@ -33,20 +30,20 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
     function httpSuccessGetCoordonates(response) {
         $scope.coordonates = response;
-        if (d.getMonth()<10) {
-            monthFormatted = "0"+d.getMonth();
+        // On met la date au bon format : AAAA-MM-JJThh-mm-ss. Pour cela on rajoute éventuellement des 0
+        if (d.getMonth() < 10) {
+            monthFormatted = "0" + d.getMonth();
         } else {
             monthFormatted = d.getMonth();
         }
-            if (d.getDate()<10) {
-            DayFormatted = "0"+d.getDate();
+        if (d.getDate() < 10) {
+            DayFormatted = "0" + d.getDate();
         } else {
             DayFormatted = d.getDate();
         }
-
-        var dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + d.getHours() + ":00:00";
-        alert(dateForecast);
-        var url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
+        var dateForecast, url;
+        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + d.getHours() + ":00:00";
+        url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
 
@@ -237,7 +234,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
     //~ Initialisations des variables servant à définir la date actuelle   
-    var d, heure_choisie, minute_choisie, dateHasBeenPicked;
+    var heure_choisie, minute_choisie, dateHasBeenPicked;
     
     // Fonction qui va servir à reset l'heure à l'heure actuelle
     $scope.setTime = function () {
