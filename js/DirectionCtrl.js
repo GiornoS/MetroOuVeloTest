@@ -18,7 +18,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     function httpSuccessSearchWeather(response) {
         $scope.weather = response;
         $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data.icon === "rain") {
+        if ($scope.weather.hourly.data.icon === "rain" || $scope.weather.hourly.data.icon === "clear-day" || $scope.weather.hourly.data.icon === "clear-night" || $scope.weather.hourly.data.icon === "cloudy" || $scope.weather.hourly.data.icon === "fog" || $scope.weather.hourly.data.icon === "partly-cloudy-day" || $scope.weather.hourly.data.icon === "partly-cloudy-night" || $scope.weather.hourly.data.icon === "wind" || $scope.weather.hourly.data.icon === "snow") {
             $scope.recommandation = "Prenez le métro !";
         } else {
             $scope.recommandation = "Prenez le vélo !";

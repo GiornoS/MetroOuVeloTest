@@ -114,6 +114,12 @@
     width: 96%;    
 }
 
+.text_recommandation
+{
+    text-align: center;
+    font-weight: bold;
+}
+
 .footer_card_definir_un_trajet
 {
     bottom:-13px;
