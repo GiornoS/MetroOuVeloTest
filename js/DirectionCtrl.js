@@ -4,7 +4,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
     /*  PARTIE UTILE POUR LA MÉTÉO  */
     
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
     
     //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
@@ -41,8 +41,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             DayFormatted = d.getDate();
         }
+        if (HourFormatted < 10) {
+           HourFormatted = "0" + $scope.heure_choisie;
+        } else {
+            HourFormatted = $scope.heure_choisie;
+        }
         var dateForecast, url;
-        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
+        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + HourFormatted + ":00:00";
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
