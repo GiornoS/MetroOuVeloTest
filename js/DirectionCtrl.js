@@ -41,13 +41,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             DayFormatted = d.getDate();
         }
-        if ($scope.heure_choisie < 10) {
-            HourFormatted = "0" + $scope.heure_choisie;
-        } else {
-            HourFormatted = $scope.heure_choisie;
-        }
         var dateForecast, url;
-        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + HourFormatted + ":00:00";
+        dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
+        alert(dateForecast);
+        alert($scope.heure_choisie);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
