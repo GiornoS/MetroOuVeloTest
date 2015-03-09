@@ -42,7 +42,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             DayFormatted = d.getDate();
         }
         if ($scope.heure_choisie < 10) {
-           HourFormatted = "0" + $scope.heure_choisie;
+            HourFormatted = "0" + $scope.heure_choisie;
         } else {
             HourFormatted = $scope.heure_choisie;
         }
@@ -147,8 +147,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
     };
     
+    // Fonction d'initialisation de la carte
     function initialize() {
         var paris, mapOptions, map;
+        
         paris = new google.maps.LatLng(48.85834, 2.33752);
         mapOptions = {
             center: paris,
@@ -169,7 +171,136 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         directionsDisplay.setMap(map);
         $scope.map = map;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
+    
+/*    // On charge les markers des stations de vélib au démarrage
+    var markers, LatLng, i, iconMarker, ParisVelibDate;
+    iconMarker = "res/img/velib.png";
+    markers = [];
+    $http.get("res/data/Paris.json").success(function (response) {
+        ParisVelibDate = response;
+        for (i = 0; i < ParisVelibDate.length; i++) {
+            LatLng = new google.maps.LatLng(ParisVelibDate[i].latitude, ParisVelibDate[i].longitude);
+            $http.get('https://api.jcdecaux.com/vls/v1/stations?contract="Paris"&apiKey=a23a36fd28a2875bf3183ae15335cc8120992f52').success(function (response) {
+                var marker = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response.available_bikes + "|FFFFFF|000000",
+                    clickable: true
+                });
+                google.maps.event.addListener(marker, "click", function (evenement) {
+                    $scope.map.panTo(evenement.latLng);
+                });
+            markers.push(marker);
+            }).error(function () {
+                var marker = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=5|FFFFFF|000000",
+                    clickable: true
+                });
+                google.maps.event.addListener(marker, "click", function (evenement) {
+                    $scope.map.panTo(evenement.latLng);
+                });
+                markers.push(marker);
+            });
+            var marker = new google.maps.Marker({
+                position: LatLng,
+                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=9|FFFFFF|000000",
+                clickable: true
+            });
+            google.maps.event.addListener(marker, "click", function (evenement) {
+                $scope.map.panTo(evenement.latLng);
+            });
+            markers.push(marker);
+
+        }
+    });*/
+    
+    
+    
+    // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres
+    var markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker;
+    velibMarker = "res/img/velib.png";
+    // On récupère tous les markers dans une liste pour pouvoir les afficher/désafficher
+    markersPlacesDispo = [];
+    markersVelibDispo = [];
+    // La Key pour faire un appel à l'api de JCDecaux
+    VelibKey = 'a23a36fd28a2875bf3183ae15335cc8120992f52';
+    // Appel à l'API, on met le nom du contrat pour récupérer les infos de toutes les stations
+    $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
+        // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
+        for (i = 0; i < response.length; i += 1) {
+            LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
+            var markerPlcDisp, markerVlbDisp;
+            markerPlcDisp = new google.maps.Marker({
+                position: LatLng,
+                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
+                clickable: true
+            });
+            markerVlbDisp = new google.maps.Marker({
+                position: LatLng,
+                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
+                clickable: true
+            });
+            // Quand on clique sur un marker, la map glisse et se centre sur lui
+            google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
+                $scope.map.panTo(evenement.latLng);
+            });
+            google.maps.event.addListener(markerVlbDisp, "click", function (evenement) {
+                $scope.map.panTo(evenement.latLng);
+            });
+            markersPlacesDispo.push(markerPlcDisp);
+            markersVelibDispo.push(markerVlbDisp);
+        }
+        
+    }).error(function (reponse) {
+        // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
+        $http.get("res/data/Paris.json").success(function (response) {
+            for (i = 0; i < response.length; i += 1) {
+                LatLng = new google.maps.LatLng(response[i].latitude, response[i].longitude);
+                var marker = new google.maps.Marker({
+                    position: LatLng,
+                    icon: velibMarker,
+                    clickable: true
+                });
+                google.maps.event.addListener(marker, "click", function (evenement) {
+                    $scope.map.panTo(evenement.latLng);
+                });
+                // Dans ce cas les 2 types de markers sont les mêmes
+                markersPlacesDispo.push(marker);
+                markersVelibDispo.push(marker);
+               
+            }
+        });
+    });
+/*
+            var marker = new google.maps.Marker({
+                position: LatLng,
+                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=9|FFFFFF|000000",
+                clickable: true
+            });
+            google.maps.event.addListener(marker, "click", function (evenement) {
+                $scope.map.panTo(evenement.latLng);
+            });
+            markers.push(marker);
+*/
+    
+   
+
+    // On initialise
     ionic.Platform.ready(initialize);
 
     $scope.centerOnMe = function () {
@@ -237,6 +368,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
         }
     };
+    
+    
+ 
     
     //~ Initialisations des variables servant à définir la date actuelle   
     var heure_choisie, minute_choisie, dateHasBeenPicked;
@@ -410,20 +544,34 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
 
-    /* RECOMMANDATION */
+    /* RECUPERATION D'UN FICHIER JSON */
     
-    //Recommandation à montrer
-/*    var recommandation;
-    
-    function recommand(address) {
-        $scope.searchWeather(address);
-        $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data.icon === "rain") {
-            recommandation = "À votre place, je prendrais le métro !";
+    // Fonction qui affiche toutes les stations de vélib par des markers Google Map ou les désaffiche
+    // Variable qui va permettre de savoir si l'utilisateur veut afficher ou désafficher les markers. Prend les valeurs 0 pour non affiché, 1 pour vélibs affichés et 2 pour places affichées
+    var areMarkersDisplayed = 0;
+    $scope.displayVelibStations = function () {
+        // On récupère les données de Paris.json pour connaître les coordonnées des stations de vélib, et on affiche un marqueur pour chaque station !
+        if (areMarkersDisplayed === 0) {
+            for (i = 0; i < markersVelibDispo.length; i += 1) {
+                markersVelibDispo[i].setMap($scope.map);
+            }
+            areMarkersDisplayed = 1;
+            
+        } else if (areMarkersDisplayed === 1) {
+            for (i = 0; i < markersVelibDispo.length; i += 1) {
+                markersVelibDispo[i].setMap(null);
+                markersPlacesDispo[i].setMap($scope.map);
+            }
+            areMarkersDisplayed = 2;
         } else {
-            recommandation = "Prenez le vélo !";
+            for (i = 0; i < markersVelibDispo.length; i += 1) {
+                markersPlacesDispo[i].setMap(null);
+            }
+            areMarkersDisplayed = 0;
         }
-    }*/
+         
+  
+    };
 
 
     /*  GOOGLE ANALYTICS  */
