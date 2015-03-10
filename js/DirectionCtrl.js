@@ -21,23 +21,22 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         alert('Impossible de récupérer les informations');
     }
     
+    /*** FONCTION RECUPERANT LES PREVISIONS METEOS A DES COORDONNEES PRECISES A UN INSTANT DONNE ***/
     
-      //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
-    function httpSuccessSearchWeather(response) {
-        // On garde la réponse dans une variable éventuellement utile pour la page index
-        $scope.weather = response;
-        $scope.show_card_recommandation = true;
-        if (response.hourly.data[0].icon === "rain") {
-            $scope.recommandation = "Prenez le métro !";
-        } else {
-            $scope.recommandation = "Prenez le vélo !";
-        }
-        $ionicLoading.hide();
-    }
+    /** @param  address : sous la forme d'un objet LatLng de Google
+    ***  
+    *** @return  $scope.weather : les prédictions à la destination voulue au moment voulu
+    *** @return  $scope.recommandation : "Prenez le vélo !" ou "Prenez le métro !"
+    **/
+    
+    $scope.searchWeather = function (LatLngCityEnd) {
+        
+        // On affiche un gif de loading
+        $scope.loading = $ionicLoading.show({
+            template: 'Récupération des données météorologiques...',
+            showBackdrop: false
+        });
 
-    //~ On envoie une requête aux serveurs de forecast.io pour qu'ils nous renvoient la météo aux coordonnées récupérées
-    function httpSuccessGetCoordonates(response) {
-        $scope.coordonates = response;
         // On met la date au bon format : AAAA-MM-JJThh-mm-ss. Pour cela on rajoute éventuellement des 0
         if (d.getMonth() < 10) {
             monthFormatted = "0" + d.getMonth();
@@ -49,36 +48,22 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             DayFormatted = d.getDate();
         }
-        var dateForecast, url, LatLngCityEnd;
+        var dateForecast, url;
         dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
-        LatLngCityEnd = new google.maps.LatLng($scope.coordonates.results[0].geometry.location.lat, $scope.coordonates.results[0].geometry.location.lng);
         $scope.stationVelibPlusProche(LatLngCityEnd);
-        url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
-        $http.get(url).success(httpSuccessSearchWeather).error(httpError);
-    }
-
-    //~ Fonction pour récupérer les prévisions météo à des coordonnées en se connectant à l'API forecast.io
-    $scope.searchWeather = function (address) {
-        document.addEventListener("deviceready", function () {
-            function waitForAnalytics() {
-                if (typeof analytics !== 'undefined') {
-                    $cordovaGoogleAnalytics.trackEvent('city', 'click', 'Adresse Saisie');
-                } else {
-                    setTimeout(function () {
-                        waitForAnalytics();
-                    }, 250);
-                }
+        url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + LatLngCityEnd.lat() + "," + LatLngCityEnd.lng() + "," + dateForecast + "?units=si";
+        $http.get(url).success(function (response) {
+            //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
+            // On garde la réponse dans une variable éventuellement utile pour la page index
+            $scope.weather = response;
+            $scope.show_card_recommandation = true;
+            if (response.hourly.data[0].icon === "rain") {
+                $scope.recommandation = "Prenez le métro !";
+            } else {
+                $scope.recommandation = "Prenez le vélo !";
             }
-            waitForAnalytics();
-        }, false);
-        //~ On affiche un gif de loading
-        $scope.loading = $ionicLoading.show({
-            template: 'Récupération des données météorologiques...',
-            showBackdrop: false
-        });
-        //~ On récupère les coordonnées
-        var urlbis = "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&language=fr&&sensor=false";
-        $http.get(urlbis).success(httpSuccessGetCoordonates).error(httpError);
+            $ionicLoading.hide();
+        }).error(httpError);
     };
 
 
@@ -195,7 +180,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         // Styles des Clusters
         ClusterStylesPlc = [
             {
-                textSize: 12,
+                textSize: 1,
                 textColor: 'white',
                 url: 'res/markers_clusters/VelibPurple.png',
                 height: 50,
@@ -205,7 +190,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         ];
         ClusterStylesVlb = [
             {
-                textSize: 12,
+                textSize: 1,
                 textColor: 'white',
                 url: 'res/markers_clusters/VelibPurple.png',
                 height: 50,
@@ -460,7 +445,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     $scope.show_donnees_du_trajet = true;
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
                     // On cherche la météo pour afficher la recommandation
-                    $scope.searchWeather(city_end);
+                    $scope.searchWeather(response.routes[0].legs[0].end_location);
                 }
             });
         }
@@ -587,32 +572,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
             $scope.donneesVelibPlusProche = response.routes[0].legs[0];
         });
-        
-        
-        
-// Envoie de la requête pour calculer le parcours*/
-        //alert(stationPlusProche.position.lat() + ", " + stationPlusProche.position.lng());
-        
-/*        var LATLNG = new google.maps.LatLng(markersPlacesDispo[markersVelibDispo.length-1].position.lat(), markersPlacesDispo[markersVelibDispo.length-1].position.lng());
-        var LATLNGBIS = new google.maps.LatLng(markersPlacesDispo[1].position.lat(), markersPlacesDispo[1].position.lng());
-        
-        alert(google.maps.geometry.spherical.computeDistanceBetween(LATLNG, LATLNGBIS));
-        
-        
-        
-        
-        request = {
-            origin        : LATLNG,
-            destination   : LATLNGBIS,
-            travelMode    : google.maps.DirectionsTravelMode.WALKING, // Mode de conduite
-            unitSystem    : google.maps.UnitSystem.METRIC
-        };
-        directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
-
-        directionsService.route(request, function (response, status) {
-            alert(response.routes[0].legs[0].distance.text)
-        })// Envoie de la requête pour calculer le parcours*/
-        
         
     };
 
