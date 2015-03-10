@@ -559,14 +559,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     /* DETERMINATION DE LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT */
     
     $scope.stationVelibPlusProche = function (address) {
-        var distanceMini, stationPlusProche, paris, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
-        paris = new google.maps.LatLng(48.85834, 2.33752);
+        var distanceMini, stationPlusProche, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
         stationPlusProche = markersVelibDispo[0];
         stationLatLng = new google.maps.LatLng(markersVelibDispo[0].position.lat(), markersVelibDispo[0].position.lng());
-        distanceMini = google.maps.geometry.spherical.computeDistanceBetween(paris, stationLatLng);
+        distanceMini = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
         for (i = 1; i < markersVelibDispo.length; i += 1) {
             stationLatLng = new google.maps.LatLng(markersVelibDispo[i].position.lat(), markersVelibDispo[i].position.lng());
-            distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(paris, stationLatLng);
+            distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
             if (distanceTemp < distanceMini) {
                 distanceMini = distanceTemp;
                 stationPlusProche = markersVelibDispo[i];
@@ -582,7 +581,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
 
         directionsService.route(request, function (response, status) {
-            $scope.distanceVelibPlusProche = response.routes[0].legs[0].distance.text;
+            $scope.donneesVelibPlusProche = response.routes[0].legs[0];
         });
         
         
