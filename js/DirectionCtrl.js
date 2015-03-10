@@ -1,8 +1,16 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova']);
 
+
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
+    
+    
+    
+    
+    
+    
     /*  PARTIE UTILE POUR LA MÉTÉO  */
+    
     
     var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted;
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
@@ -24,6 +32,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             $scope.recommandation = "Prenez le vélo !";
         }
+        var LATTTTTTTTT = new google.maps.LatLng(response.latitude, response.longitude);
+        $scope.stationVelibPlusProche(LATTTTTTTTT);
         $ionicLoading.hide();
     }
 
@@ -41,10 +51,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             DayFormatted = d.getDate();
         }
-        var dateForecast, url;
+        var dateForecast, url, LatLngCityEnd;
         dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
-        alert(dateForecast);
-        alert($scope.heure_choisie);
+        LatLngCityEnd = new google.maps.LatLng($scope.coordonates.results[0].geometry.location.lat, $scope.coordonates.results[0].geometry.location.lng);
+        $scope.stationVelibPlusProche(LatLngCityEnd);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + $scope.coordonates.results[0].geometry.location.lat + "," + $scope.coordonates.results[0].geometry.location.lng + "," + dateForecast + "?units=si";
         $http.get(url).success(httpSuccessSearchWeather).error(httpError);
     }
@@ -143,7 +153,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             mapToReload = false;
         }
     };
-    
+
     // Fonction d'initialisation de la carte
     function initialize() {
         var paris, mapOptions, map;
@@ -169,67 +179,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.map = map;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     
-/*    // On charge les markers des stations de vélib au démarrage
-    var markers, LatLng, i, iconMarker, ParisVelibDate;
-    iconMarker = "res/img/velib.png";
-    markers = [];
-    $http.get("res/data/Paris.json").success(function (response) {
-        ParisVelibDate = response;
-        for (i = 0; i < ParisVelibDate.length; i++) {
-            LatLng = new google.maps.LatLng(ParisVelibDate[i].latitude, ParisVelibDate[i].longitude);
-            $http.get('https://api.jcdecaux.com/vls/v1/stations?contract="Paris"&apiKey=a23a36fd28a2875bf3183ae15335cc8120992f52').success(function (response) {
-                var marker = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response.available_bikes + "|FFFFFF|000000",
-                    clickable: true
-                });
-                google.maps.event.addListener(marker, "click", function (evenement) {
-                    $scope.map.panTo(evenement.latLng);
-                });
-            markers.push(marker);
-            }).error(function () {
-                var marker = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=5|FFFFFF|000000",
-                    clickable: true
-                });
-                google.maps.event.addListener(marker, "click", function (evenement) {
-                    $scope.map.panTo(evenement.latLng);
-                });
-                markers.push(marker);
-            });
-            var marker = new google.maps.Marker({
-                position: LatLng,
-                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=9|FFFFFF|000000",
-                clickable: true
-            });
-            google.maps.event.addListener(marker, "click", function (evenement) {
-                $scope.map.panTo(evenement.latLng);
-            });
-            markers.push(marker);
+    // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
+    // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
+    var markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb;
+    
 
-        }
-    });*/
-    
-    
-    
-    // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres
-    var markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker;
     velibMarker = "res/img/velib.png";
     // On récupère tous les markers dans une liste pour pouvoir les afficher/désafficher
     markersPlacesDispo = [];
@@ -238,20 +194,68 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     VelibKey = 'a23a36fd28a2875bf3183ae15335cc8120992f52';
     // Appel à l'API, on met le nom du contrat pour récupérer les infos de toutes les stations
     $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
+        // Styles des Clusters
+        ClusterStylesPlc = [
+            {
+                textSize: 12,
+                textColor: 'white',
+                url: 'res/markers_clusters/VelibPurple.png',
+                height: 50,
+                width: 50,
+                anchorText: [3, 1]
+            }
+        ];
+        ClusterStylesVlb = [
+            {
+                textSize: 12,
+                textColor: 'white',
+                url: 'res/markers_clusters/VelibPurple.png',
+                height: 50,
+                width: 50,
+                anchorText: [3, 1]
+            }
+        ];
+        // Options pour les Marker Clusterer : 
+        // minimumClusterSize : Il faut 4 stations minimum pour faire un cluster
+        // gridSize : Augmente la taille du carré sur lequel le cluster va chercher les stations à rassembler
+        MCOptionsPlc = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesPlc};
+        MCOptionsVlb = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesVlb};
+        // On créé les Markers Clusterer utiles par la suite
+        MarkerClustererPlc = new MarkerClusterer($scope.map, markersPlacesDispo, MCOptionsPlc);
+        MarkerClustererVlb = new MarkerClusterer($scope.map, markersVelibDispo, MCOptionsVlb);
+
         // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
         for (i = 0; i < response.length; i += 1) {
             LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
             var markerPlcDisp, markerVlbDisp;
-            markerPlcDisp = new google.maps.Marker({
-                position: LatLng,
-                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
-                clickable: true
-            });
-            markerVlbDisp = new google.maps.Marker({
-                position: LatLng,
-                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
-                clickable: true
-            });
+            // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
+            if (response[i].available_bike_stands < 4) {
+                markerPlcDisp = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
+                    clickable: true
+                });
+            } else {
+                markerPlcDisp = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
+                    clickable: true
+                });
+            }
+            if (response[i].available_bikes < 4) {
+                markerVlbDisp = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
+                    clickable: true
+                });
+            } else {
+                markerVlbDisp = new google.maps.Marker({
+                    position: LatLng,
+                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
+                    clickable: true
+                });
+            }
+
             // Quand on clique sur un marker, la map glisse et se centre sur lui
             google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
                 $scope.map.panTo(evenement.latLng);
@@ -279,21 +283,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 // Dans ce cas les 2 types de markers sont les mêmes
                 markersPlacesDispo.push(marker);
                 markersVelibDispo.push(marker);
-               
             }
         });
     });
-/*
-            var marker = new google.maps.Marker({
-                position: LatLng,
-                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=9|FFFFFF|000000",
-                clickable: true
-            });
-            google.maps.event.addListener(marker, "click", function (evenement) {
-                $scope.map.panTo(evenement.latLng);
-            });
-            markers.push(marker);
-*/
     
    
 
@@ -549,25 +541,76 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.displayVelibStations = function () {
         // On récupère les données de Paris.json pour connaître les coordonnées des stations de vélib, et on affiche un marqueur pour chaque station !
         if (areMarkersDisplayed === 0) {
-            for (i = 0; i < markersVelibDispo.length; i += 1) {
-                markersVelibDispo[i].setMap($scope.map);
-            }
+            MarkerClustererVlb.addMarkers(markersVelibDispo);
             areMarkersDisplayed = 1;
-            
         } else if (areMarkersDisplayed === 1) {
-            for (i = 0; i < markersVelibDispo.length; i += 1) {
-                markersVelibDispo[i].setMap(null);
-                markersPlacesDispo[i].setMap($scope.map);
-            }
+            MarkerClustererVlb.clearMarkers();
+            MarkerClustererPlc.addMarkers(markersPlacesDispo);
             areMarkersDisplayed = 2;
         } else {
-            for (i = 0; i < markersVelibDispo.length; i += 1) {
-                markersPlacesDispo[i].setMap(null);
-            }
+            MarkerClustererPlc.clearMarkers();
             areMarkersDisplayed = 0;
         }
          
   
+    };
+    
+
+    /* DETERMINATION DE LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT */
+    
+    $scope.stationVelibPlusProche = function (address) {
+        var distanceMini, stationPlusProche, paris, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
+        paris = new google.maps.LatLng(48.85834, 2.33752);
+        stationPlusProche = markersVelibDispo[0];
+        stationLatLng = new google.maps.LatLng(markersVelibDispo[0].position.lat(), markersVelibDispo[0].position.lng());
+        distanceMini = google.maps.geometry.spherical.computeDistanceBetween(paris, stationLatLng);
+        for (i = 1; i < markersVelibDispo.length; i += 1) {
+            stationLatLng = new google.maps.LatLng(markersVelibDispo[i].position.lat(), markersVelibDispo[i].position.lng());
+            distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(paris, stationLatLng);
+            if (distanceTemp < distanceMini) {
+                distanceMini = distanceTemp;
+                stationPlusProche = markersVelibDispo[i];
+            }
+        }
+        stationLatLngPlusProche = new google.maps.LatLng(stationPlusProche.position.lat(), stationPlusProche.position.lng());
+        request = {
+            origin        : stationLatLngPlusProche,
+            destination   : address,
+            travelMode    : google.maps.DirectionsTravelMode.WALKING, // Mode de conduite
+            unitSystem    : google.maps.UnitSystem.METRIC
+        };
+        directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+
+        directionsService.route(request, function (response, status) {
+            $scope.distanceVelibPlusProche = response.routes[0].legs[0].distance.text;
+        });
+        
+        
+        
+// Envoie de la requête pour calculer le parcours*/
+        //alert(stationPlusProche.position.lat() + ", " + stationPlusProche.position.lng());
+        
+/*        var LATLNG = new google.maps.LatLng(markersPlacesDispo[markersVelibDispo.length-1].position.lat(), markersPlacesDispo[markersVelibDispo.length-1].position.lng());
+        var LATLNGBIS = new google.maps.LatLng(markersPlacesDispo[1].position.lat(), markersPlacesDispo[1].position.lng());
+        
+        alert(google.maps.geometry.spherical.computeDistanceBetween(LATLNG, LATLNGBIS));
+        
+        
+        
+        
+        request = {
+            origin        : LATLNG,
+            destination   : LATLNGBIS,
+            travelMode    : google.maps.DirectionsTravelMode.WALKING, // Mode de conduite
+            unitSystem    : google.maps.UnitSystem.METRIC
+        };
+        directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+
+        directionsService.route(request, function (response, status) {
+            alert(response.routes[0].legs[0].distance.text)
+        })// Envoie de la requête pour calculer le parcours*/
+        
+        
     };
 
 
