@@ -32,8 +32,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         } else {
             $scope.recommandation = "Prenez le vélo !";
         }
-        var LATTTTTTTTT = new google.maps.LatLng(response.latitude, response.longitude);
-        $scope.stationVelibPlusProche(LATTTTTTTTT);
         $ionicLoading.hide();
     }
 
@@ -559,18 +557,23 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     /* DETERMINATION DE LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT */
     
     $scope.stationVelibPlusProche = function (address) {
+        // Calcul d'un minimum, on calcule la distance géodésique, donc approximative entre chaque station et la destination, on garde le minimum de ces distances, qui, on le suppose, va aussi être le minimum de la distance à pied
         var distanceMini, stationPlusProche, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
+        // On initialise la station la plus proche comme étant la première de la liste
         stationPlusProche = markersVelibDispo[0];
         stationLatLng = new google.maps.LatLng(markersVelibDispo[0].position.lat(), markersVelibDispo[0].position.lng());
         distanceMini = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
+        // Boucle for de calcul de minimum
         for (i = 1; i < markersVelibDispo.length; i += 1) {
             stationLatLng = new google.maps.LatLng(markersVelibDispo[i].position.lat(), markersVelibDispo[i].position.lng());
             distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
+            // Si la distance calculée est plus petite, on la garde comme minimum
             if (distanceTemp < distanceMini) {
                 distanceMini = distanceTemp;
                 stationPlusProche = markersVelibDispo[i];
             }
         }
+        // Une fois qu'on a trouvé la distance minimum, on envoie une requête à l'API Google Direction afin de déterminer la véritable distance à pied entre la station de vélib la plus proche et la destination voulue
         stationLatLngPlusProche = new google.maps.LatLng(stationPlusProche.position.lat(), stationPlusProche.position.lng());
         request = {
             origin        : stationLatLngPlusProche,
@@ -581,6 +584,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
 
         directionsService.route(request, function (response, status) {
+            // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
             $scope.donneesVelibPlusProche = response.routes[0].legs[0];
         });
         
