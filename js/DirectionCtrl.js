@@ -96,6 +96,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         var dateForecast, url;
         dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
         $scope.stationVelibPlusProche(LatLngCityEnd);
+        $scope.stationVelibPlusProche(LatLngCityEnd);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + LatLngCityEnd.lat() + "," + LatLngCityEnd.lng() + "," + dateForecast + "?units=si";
         $http.get(url).success(function (response) {
             
@@ -701,9 +702,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
         directionsService.route(request, function (response, status) {
             // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
-            for (i = 0; i < 3; i += 1) {
-                $scope.donneesVelibPlusProche = response.routes[0].legs[0];
-            }
+            $scope.donneesVelibPlusProche = response.routes[0].legs[0];
         });
         
     };
