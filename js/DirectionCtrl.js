@@ -564,7 +564,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return String $scope.address_autocomplete1 : Adresse de départ complétée choisie par l'utilisateur
     *** @return String $scope.address_autocomplete2 : Adresse d'arrivée complétée choisie par l'utilisateur
     **/
-    $scope.initializeAutocomplete = function (id1, id2) {
+/*    $scope.initializeAutocomplete = function (id1, id2) {
         var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2, optionsAutocomplete;
         addresse_a_completer1 = document.getElementById(id1);
         addresse_a_completer2 = document.getElementById(id2);
@@ -591,7 +591,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
     // Dès le lancement de l'application, on initialise l'autocomplétion
-    $scope.initializeAutocomplete("city_start", "city_end");
+    $scope.initializeAutocomplete("city_start", "city_end");*/
 
     /*** FONCTION PERMETTANT A L'UTILISATEUR DE CHOISIR UNE HEURE DE DEPART ***/
     
