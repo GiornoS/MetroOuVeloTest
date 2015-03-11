@@ -9,13 +9,57 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     
     
-    /*  PARTIE UTILE POUR LA MÉTÉO  */
+    /*** DECLARATION DES VARIABLES UTILISEES PAR LE PROGRAMME ***/
     
+    /** 
+    *** @Date d : Date, permet de récupérer la date actuelle (si l'utilisateur ne choisit pas d'heure, l'heure actuelle est utilisée)
+    *** @String FORECASTIO_KEY : API key pour récupérer les prévisions météorologiques à une date et un endroit donnés
+    *** @ heureARegarder : 
+    *** @int millisecondes_unix : heure choisi sous la forme d'un temps UNIX (nombre de secondes écoulées depuis un certain jour en 1970). Utile pour déterminer le trajet à un       ***                           instant donné
+    *** @String monthFormatted : mois actuel mis sous le format MM
+    *** @String DayFormatted : jour actuel mis sous le format JJ
+    *** @String HourFormatted : heure actuelle mise sous le format HH
+    *** @DirectionRenderer : Objet google permettant d'afficher le trajet calculé sur la map
+    *** @boolean mapToReload : permet de rafraichir la map une fois que le modal est caché
+    *** @Marker marker : Objet google pour n'avoir qu'un seul marker sur la map
+    *** @Array<Marker> markersPlacesDispo : Regroupe tous les markers associés aux stations de Vélib avec le nombre de places dispo
+    *** @Array<Marker> markersVelibDispo : Regroupe tous les markers associés aux stations de Vélib avec le nombre de vélibs dispo
+    *** @LatLng LatLng : 
+    *** @int i : variable incrémentielle utilisée dans chaque boucle for() {}
+    *** @String VelibKey : API key pour se connecter aux services Vélibs et récupérer les données sur chaque station
+    *** @String velibMarker : adresse de l'URL des markers de vélibs utilisés si l'accès à l'API Vélib n'est pas possible
+    *** @MarkerClusterer MarkerClustererVlb : Permet de regrouper tous les Markers de Vélibs et former des clusters plus rapides à afficher et plus élégants à voir
+    *** @MarkerClusterer MarkerClustererPlc : Permet de regrouper tous les Markers de Places et former des clusters plus rapides à afficher et plus élégants à voir
+    *** @JSONObject MCOtionsPlc : Options pour le MarkerClustererPlc
+    *** @JSONObject MCOtionsVlb : Options pour le MarkerClustererVlb
+    *** @JSONObject ClusterStylesPlc : Styles des Clusters de Places affichés
+    *** @JSONObject ClusterStylesVlb : Styles des Clusters de Vélibs affichés
+    *** @String heure_choisie : heure choisie par l'utilisateur. S'il n'en a pas choisie, est égale à l'heure actuelle
+    *** @String minute_choisie : minute choisie par l'utilisateur. S'il n'en a pas choisie, est égale à la minute actuelle
+    *** @Boolean dateHasBeenPicked : permet de savoir si l'utilisateur a choisi une date ou non. Si non, la date utilisée sera l'actuelle
+    *** @int areMarkersDisplayed : permet de savoir quels marqueurs afficher lorsque l'utilisateur appuie sur le bouton pour afficher les markers (affiche successivement les                                        Vélibs dispo, les places dispo, et rien)
+    *** @String $scope.sizeMap : permet de changer la taille de la arte affichée pour s'adapter en fonction de l'affichage ou non du modal
+    **/
     
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted;
-    FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c';		//~ Clé forecast pour se connecter à l'API
+    // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
+    // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed;
     
-    //~ En cas de problème (non connexion à internet, soucis avec les serveurs de forecast.io ou Google,...
+    FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
+    directionsDisplay = new google.maps.DirectionsRenderer(); // Google Object pour afficher le trajet sur la carte
+    velibMarker = "res/img/velib.png"; // Adresse de l'icône utilisée pour afficher des stations vélibs dans le cas où il serait impossible de se connecter à l'API vélibs
+    markersPlacesDispo = []; // Markers de places dispo
+    markersVelibDispo = []; // Markers de Vélibs dispo
+    VelibKey = 'a23a36fd28a2875bf3183ae15335cc8120992f52'; // API key pour accéder aux données sur les stations vélibs
+    areMarkersDisplayed = 0; // Permeyt de savoir quels markers l'utilisateur veut voir
+    $scope.sizeMap = 'big'; // Au départ la carte prend tout l'écran
+    
+    /*** FONCTION APPELEE EN CAS D'ERREUR (non fonctionnement de l'API Météo, non connexion à Internet,...) LORS DE L'APPEL DE LA FONCTION $scope.searchWeather ***/
+    
+    /** 
+    *** @return alert("Erreur")
+    **/
+    
     function httpError(response) {
         $ionicLoading.hide();
         alert('Impossible de récupérer les informations');
@@ -23,8 +67,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     /*** FONCTION RECUPERANT LES PREVISIONS METEOS A DES COORDONNEES PRECISES A UN INSTANT DONNE ***/
     
-    /** @param  address : sous la forme d'un objet LatLng de Google
-    ***  
+    /** 
+    *** @param  address : sous la forme d'un objet LatLng de Google
+    ***
     *** @return  $scope.weather : les prédictions à la destination voulue au moment voulu
     *** @return  $scope.recommandation : "Prenez le vélo !" ou "Prenez le métro !"
     **/
@@ -53,6 +98,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.stationVelibPlusProche(LatLngCityEnd);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + LatLngCityEnd.lat() + "," + LatLngCityEnd.lng() + "," + dateForecast + "?units=si";
         $http.get(url).success(function (response) {
+            
             //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
             // On garde la réponse dans une variable éventuellement utile pour la page index
             $scope.weather = response;
@@ -67,24 +113,18 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-
-    
-    
-    
-    
-    
     /*  PARTIE UTILE POUR LA CARTE  */
     
     
     
+    /*** ENSEMBLE DES FONCTIONS UTILISEES POUR L'AFFICHAGE ET LE DESAFFICHAGE DU MODAL PRESENTANT LES ETAPES DU TRAJET DEFINI PAR L'UTILISATEUR ***/
     
-    // Au départ la carte prend tout l'écran
-    $scope.sizeMap = 'big';
-    // directionsDisplay va permettre d'afficher le trajet sur la carte, mapToReload permet de recharger la map une fois que le modal est caché, et le marker permet de n'avoir qu'un seul marker sur la carte
-    var directionsDisplay, mapToReload, marker;
-    directionsDisplay = new google.maps.DirectionsRenderer();
-
-    // Modal d'affichage de l'itinéraire
+    /**
+    *** @function $scope.openModal() : affiche le modal. Change la taille de la Map pour l'adapter à la place restante sur l'écran. Augmente le zoom. Affiche le Panel de                                                directions étape par étape
+    *** @function $scope.closeModal() : ferme le modal. Une fois le modal détruit, change la taille de la map pour qu'elle reprenne tout l'écran, et réaffiche la carte de                                               recommandation
+    *** @function $scope.reloadMap() : reload la carte une fois le modal fermé
+    **/
+    
     $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -92,6 +132,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.modal = modal;
     });
 
+    /** $scope.openModal()
+    *** 
+    *** @return boolean $scope.show_card_recommandation : permet de cacher la carte de recommandation une fois le modal affiché
+    *** @return String $scope.sizeMap : permet d'adapter la taille de la map affichée à la place restante sur l'écran
+    **/
+    
     $scope.openModal = function () {
         $scope.modal.show();
         // On cache la recommandation pour éviter de géner
@@ -110,6 +156,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         mapToReload = true;
     };
 
+    /** $scope.closeModal()
+    **/
+    
     $scope.closeModal = function () {
         $scope.modal.hide();
     };
@@ -130,6 +179,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.modal.remove();
     });
     
+    /** $scope.reloadMap()
+    **/
+    
     $scope.reloadMap = function () {
         if (mapToReload) {
             google.maps.event.trigger($scope.map, 'resize');
@@ -137,7 +189,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
     };
 
-    // Fonction d'initialisation de la carte
+    /*** FONCTION D'INITIALISATION DE LA CARTE ***/
+    /**
+    *** @return Map $scope.map : Google object représentant une carte
+    **/
+    
     function initialize() {
         var paris, mapOptions, map;
         
@@ -163,19 +219,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     }
     
 
-    
-    // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
-    // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
-    var markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb;
+
     
 
-    velibMarker = "res/img/velib.png";
-    // On récupère tous les markers dans une liste pour pouvoir les afficher/désafficher
-    markersPlacesDispo = [];
-    markersVelibDispo = [];
-    // La Key pour faire un appel à l'api de JCDecaux
-    VelibKey = 'a23a36fd28a2875bf3183ae15335cc8120992f52';
-    // Appel à l'API, on met le nom du contrat pour récupérer les infos de toutes les stations
+
+    /*** APPEL A L'API POUR RECUPERER LES DONNEES SUR TOUTES LES STATIONS VELIB ***/
+    
+    /** 
+    *** @return Array<Marker> markersPlacesDispo : tous les markers avec le nombre de places dispo pour chaque station
+    *** @return Array<Marker> markersVelibsDispo : tous les markers avec le nombre de vélibs dispo pour chaque station
+    **/
+    
     $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
         // Styles des Clusters
         ClusterStylesPlc = [
@@ -275,11 +329,21 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     // On initialise
     ionic.Platform.ready(initialize);
 
+    /*** FONCTION PERMETTANT DE CENTRER LA MAP SUR L'UTILISATEUR ET DE RECUPERER L'ADRESSE DE SA LOCALISATION ***/
+    
+    /**
+    *** @return String $scope.address_autocomplete1 : adresse utilisée comme point de départ pour calculer le trajet
+    *** @return String $scope.city_start : adresse qui va s'afficher dans la card "Définir un trajet" pour montrer à l'utilisateur qu'on a bien sa géolocalisation commme adresse                                            de départ
+    **/
+    
     $scope.centerOnMe = function () {
+        // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
+        // Si la carte n'est pas définie, aucun sens
         if (!$scope.map) {
             return;
         }
+        // On affiche une loading icon
         $scope.loading = $ionicLoading.show({
             template: 'Recherche de la position en cours...',
             showBackdrop: false
@@ -310,9 +374,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 // On affiche la ville de départ dans le formulaire
                 $scope.address_autocomplete1 = response.results[0].formatted_address;
                 $scope.city_start = angular.copy($scope.address_autocomplete1);
-/*
-                $scope.address_autocomplete1 = response.results[0].formatted_address;
-*/
+                
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
             });
@@ -325,7 +387,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-    //~ Fonction permettant d'affcher et de désafficher la carte de définition du trajet
+    /*** FONCTION PERMETTANT D'AFFICHER OU DE DESAFFICHER LA CARD "DEFINIR UN TRAJET" ***/
+    
+    /**
+    *** @return boolean $scope.show_card_definir_un_trajet : permet de savoir s'il faut afficher ou désafficher la card "Définir un trajet"
+    *** @return boolean $scope.show_card_recommandation : cache la arte de recommandation si l'utilisateur veut calculer un autre trajet
+    **/
+    
     $scope.showCard = function () {
         if ($scope.show_card_definir_un_trajet === true) {
             $scope.show_card_definir_un_trajet = false;
@@ -345,9 +413,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
  
     
     //~ Initialisations des variables servant à définir la date actuelle   
-    var heure_choisie, minute_choisie, dateHasBeenPicked;
     
-    // Fonction qui va servir à reset l'heure à l'heure actuelle
+    /*** FONCTION PERMETTANT DE RESET L'HEURE AFFICHEE SUR LA CARD "DEFINIR UN TRAJET" A L'HEURE ACTUELLE ***/
+    
+    /**
+    *** @return String $scope.minute_choisie : retourne la minute choisie (ou actuelle) au format mm
+    *** @return String $scope.heure_choisie : retourne l'heure choisie (ou actuelle) au format hh
+    **/
+    
     $scope.setTime = function () {
         d = new Date();
         heure_choisie = d.getHours();
@@ -370,6 +443,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     // On affiche l'heure actuelle au lancement de l'application
     $scope.setTime();
     
+    /*** FONCTION PERMETTANT D'AFFICHER OU DE DESAFFICHER LA CARD PRESENTANT LES DONNEES DU TRAJET ***/
+    
+    /**
+    *** @return boolean $scope.show_card_trajet : permet de dire à la page html d'afficher ou non la card avec les données du trajet
+    **/
+    
     $scope.showTrajet = function () {
         if ($scope.show_card_trajet === true) {
             $scope.show_card_trajet = false;
@@ -380,7 +459,18 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
 
     
-    //~ Fonction permettant de calculer un trajet à une heure donnée
+    /*** FONCTION PERMETTANT DE CALCULER UN TRAJET A UN INSTANT DONNE ***/
+    
+    /**
+    *** @param String city_start : ville de départ retrounée par l'Autocomplete
+    *** @param String city_end : ville d'arrivée retrounée par l'Autocomplete
+    *** @param String minute_choisie : minute choisie par l'utilisateur ou minute actuelle
+    *** @param String heure_choisie : huere choisie par l'utlisateur ou heure actuelle
+    ***
+    *** @return JSONObject $scope.donnees_du_trajet : données du trajet permettat d'afficher la distance à parcourir et le temps prévu pour ce trajet
+    *** @return boolean $scope.show_donnees_du_trajet : affiche la carte avec les données du trajet
+    **/
+    
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         if (city_start && city_end) {
             document.addEventListener("deviceready", function () {
@@ -452,7 +542,15 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-    //~ Fonction permettant de proposer l'autocomplétion. PB CEPENDANT : SI L'UTILISATEUR N'UTILISE PAS L'AUTOCOMPLÉTION, MARCHE PAS !!
+    /*** DONCTION PERMETTANT D'UTILISER L'AUTOCOMPLETION POUR PROPOSER DES CHOIX A l4UTILISATUER ENTRANT UNE ADRESSE ***/
+    
+    /**
+    *** @param id1 : id de la balise HTML d'où il faut récupérer la city_start et proposer l'autocomplétion
+    *** @param id2 : id de la balise HTML d'où il faut récupérer la city_end et proposer l'autocomplétion
+    ***
+    *** @return String $scope.address_autocomplete1 : Adresse de départ complétée choisie par l'utilisateur
+    *** @return String $scope.address_autocomplete2 : Adresse d'arrivée complétée choisie par l'utilisateur
+    **/
     $scope.initializeAutocomplete = function (id1, id2) {
         var addresse_a_completer1, addresse_a_completer2, autocomplete1, autocomplete2, place1, place2, address_autocomplete1, address_autocomplete2, optionsAutocomplete;
         addresse_a_completer1 = document.getElementById(id1);
@@ -479,9 +577,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
     };
 
+    // Dès le lancement de l'application, on initialise l'autocomplétion
+    $scope.initializeAutocomplete("city_start", "city_end");
 
-    $scope.initializeAutocomplete("city_start", "city_end"); // On lance l'autocomplétion dès le lancement de l'application
-
+    /*** FONCTION PERMETTANT A L'UTILISATEUR DE CHOISIR UNE HEURE DE DEPART ***/
+    
+    /**
+    *** @return JSONObject scope.datePicked : date choisie par l'utilisateur
+    *** @return String $scope.minute_choisie : minute choisie par l'utilisateur
+    *** @return String $scope.heure_choisie : heure choisie par l'utilisateur
+    **/
+    
     $scope.openDatePicker = function () {
         var options = {
             date: new Date(),
@@ -516,13 +622,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
 
-    /* RECUPERATION D'UN FICHIER JSON */
     
-    // Fonction qui affiche toutes les stations de vélib par des markers Google Map ou les désaffiche
-    // Variable qui va permettre de savoir si l'utilisateur veut afficher ou désafficher les markers. Prend les valeurs 0 pour non affiché, 1 pour vélibs affichés et 2 pour places affichées
-    var areMarkersDisplayed = 0;
+    /*** FONCTION PERMETTANT D'AFFICHER LES MARKERS DEMANDES PAR L'UTILISATEUR ***/
+    
     $scope.displayVelibStations = function () {
-        // On récupère les données de Paris.json pour connaître les coordonnées des stations de vélib, et on affiche un marqueur pour chaque station !
         if (areMarkersDisplayed === 0) {
             MarkerClustererVlb.addMarkers(markersVelibDispo);
             areMarkersDisplayed = 1;
@@ -539,7 +642,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
 
-    /* DETERMINATION DE LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT */
+    /*** FONCTION PERMETTANT DE DETERMINER LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT ***/
+    
+    /**
+    *** @param LatLng address : Googe Object pcorrespondant à la position de l'adresse d'arrivée
+    ***
+    *** @return JSONObject $scope.donneesVelibPlusProche : contient toutes les infos utiles pour connaître le trajet à pied entre la station vélib la plus proche de la                                                                      destination et la destination elle-même
+    **/
     
     $scope.stationVelibPlusProche = function (address) {
         // Calcul d'un minimum, on calcule la distance géodésique, donc approximative entre chaque station et la destination, on garde le minimum de ces distances, qui, on le suppose, va aussi être le minimum de la distance à pied
@@ -576,7 +685,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-    /*  GOOGLE ANALYTICS  */
+    /***  GOOGLE ANALYTICS  ***/
     document.addEventListener("deviceready", function () {
         function waitForAnalytics() {
             if (typeof analytics !== 'undefined') {
