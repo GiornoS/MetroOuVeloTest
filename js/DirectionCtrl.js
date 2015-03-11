@@ -701,7 +701,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
         directionsService.route(request, function (response, status) {
             // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
-            $scope.donneesVelibPlusProche = response.routes[0].legs[0];
+            for (i = 0; i < 3; i += 1) {
+                $scope.donneesVelibPlusProche = response.routes[0].legs[0];
+            }
         });
         
     };
