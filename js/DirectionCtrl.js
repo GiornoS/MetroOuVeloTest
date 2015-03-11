@@ -223,112 +223,119 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
 
 
-    /*** APPEL A L'API POUR RECUPERER LES DONNEES SUR TOUTES LES STATIONS VELIB ***/
+    /*** FONCTION PERMETTANT L'APPEL A L'API POUR RECUPERER LES DONNEES SUR TOUTES LES STATIONS VELIB ***/
     
     /** 
     *** @return Array<Marker> markersPlacesDispo : tous les markers avec le nombre de places dispo pour chaque station
     *** @return Array<Marker> markersVelibsDispo : tous les markers avec le nombre de vélibs dispo pour chaque station
     **/
     
-    $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
+    $scope.loadMarkers = function () {
         // On affiche une loading icon
         $scope.loading = $ionicLoading.show({
             template: 'Mise à jour des stations vélibs...',
             showBackdrop: false
         });
-        // Styles des Clusters
-        ClusterStylesPlc = [
-            {
-                textSize: 1,
-                textColor: 'white',
-                url: 'res/markers_clusters/VelibPurple.png',
-                height: 50,
-                width: 50,
-                anchorText: [3, 1]
-            }
-        ];
-        ClusterStylesVlb = [
-            {
-                textSize: 1,
-                textColor: 'white',
-                url: 'res/markers_clusters/VelibPurple.png',
-                height: 50,
-                width: 50,
-                anchorText: [3, 1]
-            }
-        ];
-        // Options pour les Marker Clusterer : 
-        // minimumClusterSize : Il faut 4 stations minimum pour faire un cluster
-        // gridSize : Augmente la taille du carré sur lequel le cluster va chercher les stations à rassembler
-        MCOptionsPlc = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesPlc};
-        MCOptionsVlb = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesVlb};
-        // On créé les Markers Clusterer utiles par la suite
-        MarkerClustererPlc = new MarkerClusterer($scope.map, markersPlacesDispo, MCOptionsPlc);
-        MarkerClustererVlb = new MarkerClusterer($scope.map, markersVelibDispo, MCOptionsVlb);
+        $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
 
-        // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
-        for (i = 0; i < response.length; i += 1) {
-            LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
-            var markerPlcDisp, markerVlbDisp;
-            // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
-            if (response[i].available_bike_stands < 4) {
-                markerPlcDisp = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
-                    clickable: true
-                });
-            } else {
-                markerPlcDisp = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
-                    clickable: true
-                });
-            }
-            if (response[i].available_bikes < 4) {
-                markerVlbDisp = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
-                    clickable: true
-                });
-            } else {
-                markerVlbDisp = new google.maps.Marker({
-                    position: LatLng,
-                    icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
-                    clickable: true
-                });
-            }
+            // Styles des Clusters
+            ClusterStylesPlc = [
+                {
+                    textSize: 1,
+                    textColor: 'white',
+                    url: 'res/markers_clusters/VelibPurple.png',
+                    height: 50,
+                    width: 50,
+                    anchorText: [3, 1]
+                }
+            ];
+            ClusterStylesVlb = [
+                {
+                    textSize: 1,
+                    textColor: 'white',
+                    url: 'res/markers_clusters/VelibPurple.png',
+                    height: 50,
+                    width: 50,
+                    anchorText: [3, 1]
+                }
+            ];
+            // Options pour les Marker Clusterer : 
+            // minimumClusterSize : Il faut 4 stations minimum pour faire un cluster
+            // gridSize : Augmente la taille du carré sur lequel le cluster va chercher les stations à rassembler
+            MCOptionsPlc = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesPlc};
+            MCOptionsVlb = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesVlb};
+            // On créé les Markers Clusterer utiles par la suite
+            MarkerClustererPlc = new MarkerClusterer($scope.map, markersPlacesDispo, MCOptionsPlc);
+            MarkerClustererVlb = new MarkerClusterer($scope.map, markersVelibDispo, MCOptionsVlb);
 
-            // Quand on clique sur un marker, la map glisse et se centre sur lui
-            google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
-                $scope.map.panTo(evenement.latLng);
-            });
-            google.maps.event.addListener(markerVlbDisp, "click", function (evenement) {
-                $scope.map.panTo(evenement.latLng);
-            });
-            markersPlacesDispo.push(markerPlcDisp);
-            markersVelibDispo.push(markerVlbDisp);      
-        }
-        $ionicLoading.hide();
-        
-    }).error(function (reponse) {
-        // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
-        $http.get("res/data/Paris.json").success(function (response) {
+            // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
             for (i = 0; i < response.length; i += 1) {
-                LatLng = new google.maps.LatLng(response[i].latitude, response[i].longitude);
-                var marker = new google.maps.Marker({
-                    position: LatLng,
-                    icon: velibMarker,
-                    clickable: true
-                });
-                google.maps.event.addListener(marker, "click", function (evenement) {
+                LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
+                var markerPlcDisp, markerVlbDisp;
+                // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
+                if (response[i].available_bike_stands < 4) {
+                    markerPlcDisp = new google.maps.Marker({
+                        position: LatLng,
+                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
+                        clickable: true
+                    });
+                } else {
+                    markerPlcDisp = new google.maps.Marker({
+                        position: LatLng,
+                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
+                        clickable: true
+                    });
+                }
+                if (response[i].available_bikes < 4) {
+                    markerVlbDisp = new google.maps.Marker({
+                        position: LatLng,
+                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
+                        clickable: true
+                    });
+                } else {
+                    markerVlbDisp = new google.maps.Marker({
+                        position: LatLng,
+                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
+                        clickable: true
+                    });
+                }
+
+                // Quand on clique sur un marker, la map glisse et se centre sur lui
+                google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
                     $scope.map.panTo(evenement.latLng);
                 });
-                // Dans ce cas les 2 types de markers sont les mêmes
-                markersPlacesDispo.push(marker);
-                markersVelibDispo.push(marker);
+                google.maps.event.addListener(markerVlbDisp, "click", function (evenement) {
+                    $scope.map.panTo(evenement.latLng);
+                });
+                markersPlacesDispo.push(markerPlcDisp);
+                markersVelibDispo.push(markerVlbDisp);
             }
+            $ionicLoading.hide();
+
+        }).error(function (reponse) {
+            // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
+            $http.get("res/data/Paris.json").success(function (response) {
+                for (i = 0; i < response.length; i += 1) {
+                    LatLng = new google.maps.LatLng(response[i].latitude, response[i].longitude);
+                    var marker = new google.maps.Marker({
+                        position: LatLng,
+                        icon: velibMarker,
+                        clickable: true
+                    });
+                    google.maps.event.addListener(marker, "click", function (evenement) {
+                        $scope.map.panTo(evenement.latLng);
+                    });
+                    // Dans ce cas les 2 types de markers sont les mêmes
+                    markersPlacesDispo.push(marker);
+                    markersVelibDispo.push(marker);
+                }
+                $ionicLoading.hide();
+            });
         });
-    });
+    };
+    $scope.loadMarkers();
+
+
     
    
 
