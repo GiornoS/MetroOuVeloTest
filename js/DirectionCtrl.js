@@ -1,11 +1,10 @@
-var carte = angular.module('carte', ['ionic', 'ngCordova']);
+var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
 
     
-    
-    
+   
     
     
     
@@ -39,6 +38,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @Boolean dateHasBeenPicked : permet de savoir si l'utilisateur a choisi une date ou non. Si non, la date utilisée sera l'actuelle
     *** @int areMarkersDisplayed : permet de savoir quels marqueurs afficher lorsque l'utilisateur appuie sur le bouton pour afficher les markers (affiche successivement les                                        Vélibs dispo, les places dispo, et rien)
     *** @String $scope.sizeMap : permet de changer la taille de la arte affichée pour s'adapter en fonction de l'affichage ou non du modal
+    *** 
     **/
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/

@@ -184,7 +184,11 @@
 .pac-container
 {
     border-radius: 10px;
+    z-index: 100000;
+    pointer-events: all;
 }
+
+
 
 .pac-matched
 {
@@ -195,6 +199,5 @@
 {
     font-size: 170%;
 }
-
 
 

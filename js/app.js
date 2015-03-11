@@ -17,8 +17,8 @@ starter.run(function ($ionicPlatform) {
             StatusBar.styleDefault();
         }
 
-        // GOOGLE ANALYTICS
 
     });
+    
 });
 
