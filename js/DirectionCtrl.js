@@ -231,6 +231,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
+        // On affiche une loading icon
+        $scope.loading = $ionicLoading.show({
+            template: 'Mise à jour des stations vélibs...',
+            showBackdrop: false
+        });
         // Styles des Clusters
         ClusterStylesPlc = [
             {
@@ -301,8 +306,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 $scope.map.panTo(evenement.latLng);
             });
             markersPlacesDispo.push(markerPlcDisp);
-            markersVelibDispo.push(markerVlbDisp);
+            markersVelibDispo.push(markerVlbDisp);      
         }
+        $ionicLoading.hide();
         
     }).error(function (reponse) {
         // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
