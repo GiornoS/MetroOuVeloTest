@@ -386,7 +386,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
                 // On affiche la ville de départ dans le formulaire
                 $scope.address_autocomplete1 = response.results[0].formatted_address;
-                $scope.city_start = angular.copy($scope.address_autocomplete1);
+                $scope.city_start = response.results[0].formatted_address;
                 
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
@@ -483,9 +483,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return JSONObject $scope.donnees_du_trajet : données du trajet permettat d'afficher la distance à parcourir et le temps prévu pour ce trajet
     *** @return boolean $scope.show_donnees_du_trajet : affiche la carte avec les données du trajet
     **/
-    
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
-        if (city_start && city_end) {
+        var address_autocomplete1, address_autocomplete2;
+        if ($scope.address_autocomplete1) {
+            address_autocomplete1 = $scope.address_autocomplete1;
+            $scope.address_autocomplete1 = null;
+        } else {
+            address_autocomplete1 = city_start.address_components[0].short_name + ' ' + city_start.address_components[1].short_name + ' ' + city_start.address_components[2].short_name;
+            $scope.city_start = city_start.formatted_address;
+        }
+        if (address_autocomplete1 && city_end) {
+            
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
@@ -502,12 +510,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 template: 'Calcul du trajet en cours...',
                 showBackdrop: false
             });
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + city_start + "&language=fr&&sensor=false").success(function (response) {
-                $scope.city_start = response.results[0].formatted_address;
+            address_autocomplete2 = city_end.address_components[0].short_name + ' ' + city_end.address_components[1].short_name + ' ' + city_end.address_components[2].short_name;
+            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete1 + "&language=fr&&sensor=false").success(function (response) {
+                $scope.city_startLatLng = response.results[0].formatted_address;
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
             });
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + city_end + "&language=fr&&sensor=false").success(function (response) {
+            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete2 + "&language=fr&&sensor=false").success(function (response) {
                 $scope.city_end = response.results[0].formatted_address;
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
@@ -528,8 +537,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
 
             request = {
-                origin        : city_start,
-                destination   : city_end,
+                origin        : address_autocomplete1,
+                destination   : address_autocomplete2,
                 transitOptions: {
                     departureTime: new Date(millisecondes_unix)
                 },
