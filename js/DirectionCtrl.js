@@ -96,7 +96,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         var dateForecast, url;
         dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
         // On récupère la station vélib la plus proche !
-        $scope.stationVelibPlusProche(LatLngCityEnd);
+      //  $scope.stationVelibPlusProche(LatLngCityEnd);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + LatLngCityEnd.lat() + "," + LatLngCityEnd.lng() + "," + dateForecast + "?units=si";
         $http.get(url).success(function (response) {
             
@@ -355,6 +355,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.centerOnMe = function () {
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
+        // On désaffiche la recommandation
+        $scope.show_card_recommandation = false;
         // Si la carte n'est pas définie, aucun sens
         if (!$scope.map) {
             return;
@@ -488,9 +490,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         var address_autocomplete1, address_autocomplete2;
+        if ($scope.address_autocomplete1 !== $scope.city_start) {
+            $scope.address_autocomplete1 = null;
+        }
         if ($scope.address_autocomplete1) {
             address_autocomplete1 = $scope.address_autocomplete1;
-            $scope.address_autocomplete1 = null;
         } else {
             address_autocomplete1 = city_start.address_components[0].short_name + ' ' + city_start.address_components[1].short_name + ' ' + city_start.address_components[2].short_name;
             $scope.city_start = city_start.formatted_address;
