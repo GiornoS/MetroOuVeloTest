@@ -110,7 +110,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 $scope.recommandation = "Prenez donc le VÉLO !";
             }
             // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
-            $scope.stationVelibPlusProche(LatLngCityEnd);
+            //$scope.stationVelibPlusProche(LatLngCityEnd);
             $ionicLoading.hide();
         }).error(httpError);
     };
@@ -563,6 +563,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     // On affiche le footer avec la distance et la durée
                     $scope.show_donnees_du_trajet = true;
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
+                    // On cherche la station de vélib la plus proche
+                    $scope.stationVelibPlusProche(response.routes[0].legs[0].end_location);
                     // On cherche la météo pour afficher la recommandation
                     $scope.searchWeather(response.routes[0].legs[0].end_location);
                 }
