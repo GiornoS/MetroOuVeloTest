@@ -62,7 +62,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     function httpError(response) {
         $ionicLoading.hide();
-        alert('Impossible de récupérer les informations');
+        alert('Impossible de récupérer les informations. Veuillez vérifier votre connexion internet.');
     }
     
     /*** FONCTION RECUPERANT LES PREVISIONS METEOS A DES COORDONNEES PRECISES A UN INSTANT DONNE ***/
@@ -95,7 +95,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
         var dateForecast, url;
         dateForecast = d.getFullYear() + "-" + monthFormatted + "-" + DayFormatted  + "T" + $scope.heure_choisie + ":00:00";
-        $scope.stationVelibPlusProche(LatLngCityEnd);
+        // On récupère la station vélib la plus proche !
         $scope.stationVelibPlusProche(LatLngCityEnd);
         url = "https://api.forecast.io/forecast/" + FORECASTIO_KEY + "/" + LatLngCityEnd.lat() + "," + LatLngCityEnd.lng() + "," + dateForecast + "?units=si";
         $http.get(url).success(function (response) {
@@ -105,10 +105,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.weather = response;
             $scope.show_card_recommandation = true;
             if (response.hourly.data[0].icon === "rain") {
-                $scope.recommandation = "Prenez le métro !";
+                $scope.recommandation = "Prenez donc le MÉTRO !";
             } else {
-                $scope.recommandation = "Prenez le vélo !";
+                $scope.recommandation = "Prenez donc le VÉLO !";
             }
+            // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
+            $scope.stationVelibPlusProche(LatLngCityEnd);
             $ionicLoading.hide();
         }).error(httpError);
     };
@@ -244,7 +246,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 {
                     textSize: 1,
                     textColor: 'white',
-                    url: 'res/markers_clusters/VelibPurple.png',
+                    url: 'res/markers_clusters/VelibGrey.png',
                     height: 50,
                     width: 50,
                     anchorText: [3, 1]
