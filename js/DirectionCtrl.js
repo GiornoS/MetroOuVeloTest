@@ -74,6 +74,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return  $scope.recommandation : "Prenez le vélo !" ou "Prenez le métro !"
     **/
     
+    
     $scope.searchWeather = function (LatLngCityEnd) {
         
         // On affiche un gif de loading
@@ -475,7 +476,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
     };
     
-
     
     /*** FONCTION PERMETTANT DE CALCULER UN TRAJET A UN INSTANT DONNE ***/
     
@@ -489,6 +489,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return boolean $scope.show_donnees_du_trajet : affiche la carte avec les données du trajet
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
+        $scope.donneesVelibPlusProchechargees = false;
         var address_autocomplete1, address_autocomplete2;
         if ($scope.address_autocomplete1 !== $scope.city_start) {
             $scope.address_autocomplete1 = null;
@@ -556,7 +557,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
             directionsService.route(request, function (response, status) { // Envoie de la requête pour calculer le parcours
                 if (status === google.maps.DirectionsStatus.OK) {
-                    $ionicLoading.hide();
+                    
                     directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
                     
                     $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
@@ -565,8 +566,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
                     // On cherche la station de vélib la plus proche
                     $scope.stationVelibPlusProche(response.routes[0].legs[0].end_location);
+
+          
+               
+
                     // On cherche la météo pour afficher la recommandation
-                    $scope.searchWeather(response.routes[0].legs[0].end_location);
+                    $timeout(function () {
+                        $ionicLoading.hide();
+                        $scope.searchWeather(response.routes[0].legs[0].end_location);
+                    }, 1000);
+                    
+
                 }
             });
         }
@@ -711,6 +721,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         directionsService.route(request, function (response, status) {
             // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
             $scope.donneesVelibPlusProche = response.routes[0].legs[0];
+            $scope.donneesVelibPlusProchechargees = true;
         });
         
     };
