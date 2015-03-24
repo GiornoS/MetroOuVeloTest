@@ -38,7 +38,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @Boolean dateHasBeenPicked : permet de savoir si l'utilisateur a choisi une date ou non. Si non, la date utilisée sera l'actuelle
     *** @int areMarkersDisplayed : permet de savoir quels marqueurs afficher lorsque l'utilisateur appuie sur le bouton pour afficher les markers (affiche successivement les                                        Vélibs dispo, les places dispo, et rien)
     *** @String $scope.sizeMap : permet de changer la taille de la arte affichée pour s'adapter en fonction de l'affichage ou non du modal
-    *** 
+    *** @String $scope.Titre_Recommandation : permet d'afficher la racommandation dans la barre de titre (si pas de trajet demandé, on affiche Métro ou Vélo ?)
+    ***
     **/
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
@@ -53,6 +54,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     VelibKey = 'a23a36fd28a2875bf3183ae15335cc8120992f52'; // API key pour accéder aux données sur les stations vélibs
     areMarkersDisplayed = 0; // Permeyt de savoir quels markers l'utilisateur veut voir
     $scope.sizeMap = 'big'; // Au départ la carte prend tout l'écran
+    var SWIledeFrance = new google.maps.LatLng(48.76417040404932, 2.195491804741323);
+    var NEIledeFrance = new google.maps.LatLng(48.93225884802438, 2.5106620928272605);
+    $scope.IledeFrance = new google.maps.LatLngBounds(SWIledeFrance, NEIledeFrance);
+    $scope.optionsAutocomplete = "{bounds : " + $scope.IledeFrance + ",types : ['address'], componentRestrictions: { country: 'fr' }}";
+    $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
     
     /*** FONCTION APPELEE EN CAS D'ERREUR (non fonctionnement de l'API Météo, non connexion à Internet,...) LORS DE L'APPEL DE LA FONCTION $scope.searchWeather ***/
     
@@ -107,8 +113,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.show_card_recommandation = true;
             if (response.hourly.data[0].icon === "rain") {
                 $scope.recommandation = "Prenez donc le MÉTRO !";
+                $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
             } else {
                 $scope.recommandation = "Prenez donc le VÉLO !";
+                $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
+
             }
             // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
             //$scope.stationVelibPlusProche(LatLngCityEnd);
@@ -389,6 +398,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     title: 'You are here'
                 });
             }
+            $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
                 // On affiche la ville de départ dans le formulaire
                 $scope.address_autocomplete1 = response.results[0].formatted_address;
