@@ -229,6 +229,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
         directionsDisplay.setMap(map);
         $scope.map = map;
+        $scope.loadMarkers(); // On load les markers à l'initialistion de l'application !
     }
     
 
@@ -346,7 +347,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
         });
     };
-    $scope.loadMarkers();
+    
 
 
     
