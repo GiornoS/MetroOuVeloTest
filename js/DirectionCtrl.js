@@ -1,4 +1,4 @@
-var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
+var carte = angular.module('carte', ['ionic', 'ngCordova', 'ngAutocomplete']);
 
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
@@ -56,9 +56,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.sizeMap = 'big'; // Au départ la carte prend tout l'écran
     var SWIledeFrance = new google.maps.LatLng(48.76417040404932, 2.195491804741323);
     var NEIledeFrance = new google.maps.LatLng(48.93225884802438, 2.5106620928272605);
-    $scope.IledeFrance = new google.maps.LatLngBounds(SWIledeFrance, NEIledeFrance);
-    $scope.optionsAutocomplete = "{bounds : " + $scope.IledeFrance + ",types : ['address'], componentRestrictions: { country: 'fr' }}";
+    var IledeFrance = new google.maps.LatLngBounds(SWIledeFrance, NEIledeFrance);
+    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance, watchEnter: true};
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
+    
+    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance, watchEnter: true};
+    
+    
+    
     
     /*** FONCTION APPELEE EN CAS D'ERREUR (non fonctionnement de l'API Météo, non connexion à Internet,...) LORS DE L'APPEL DE LA FONCTION $scope.searchWeather ***/
     
@@ -202,38 +207,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }
     };
 
-    /*** FONCTION D'INITIALISATION DE LA CARTE ***/
-    /**
-    *** @return Map $scope.map : Google object représentant une carte
-    **/
-    
-    function initialize() {
-        var paris, mapOptions, map;
-        
-        paris = new google.maps.LatLng(48.85834, 2.33752);
-        mapOptions = {
-            center: paris,
-            zoom: 11,
-            panControl : false,
-            zoomControl : false,
-            mapTypeControl : true,
-            mapTypeControlOptions: {
-                position : google.maps.ControlPosition.RIGHT_BOTTOM
-            },
-            scaleControl : false,
-            streetViewControl : false,
-            overviewMapControl : true,
-            rotateControl : true,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        directionsDisplay.setMap(map);
-        $scope.map = map;
-        $scope.loadMarkers(); // On load les markers à l'initialistion de l'application !
-    }
+
     
 
-
+    
     
 
 
@@ -348,14 +325,44 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         });
     };
     
-
+    
+    
+    /*** FONCTION D'INITIALISATION DE LA CARTE ***/
+    /**
+    *** @return Map $scope.map : Google object représentant une carte
+    **/
+    
+    function initialize() {
+        var paris, mapOptions, map;
+        
+        paris = new google.maps.LatLng(48.85834, 2.33752);
+        mapOptions = {
+            center: paris,
+            zoom: 11,
+            panControl : false,
+            zoomControl : false,
+            mapTypeControl : true,
+            mapTypeControlOptions: {
+                position : google.maps.ControlPosition.RIGHT_BOTTOM
+            },
+            scaleControl : false,
+            streetViewControl : false,
+            overviewMapControl : true,
+            rotateControl : true,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        directionsDisplay.setMap(map);
+        $scope.map = map;
+        // On load les markers à l'initialisation de l'application !
+    }
 
     
    
 
     // On initialise
     ionic.Platform.ready(initialize);
-
+    $scope.loadMarkers();
     /*** FONCTION PERMETTANT DE CENTRER LA MAP SUR L'UTILISATEUR ET DE RECUPERER L'ADRESSE DE SA LOCALISATION ***/
     
     /**
@@ -501,18 +508,19 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         $scope.donneesVelibPlusProchechargees = false;
-        var address_autocomplete1, address_autocomplete2;
+        var address_autocomplete1 = '', address_autocomplete2 = '';
         if ($scope.address_autocomplete1 !== $scope.city_start) {
             $scope.address_autocomplete1 = null;
         }
         if ($scope.address_autocomplete1) {
             address_autocomplete1 = $scope.address_autocomplete1;
         } else {
-            address_autocomplete1 = city_start.address_components[0].short_name + ' ' + city_start.address_components[1].short_name + ' ' + city_start.address_components[2].short_name;
+            for (i = 0; i < city_end.address_components.length; i += 1) {
+                address_autocomplete1 += city_start.address_components[i].short_name + ' ';
+            }
             $scope.city_start = city_start.formatted_address;
         }
         if (address_autocomplete1 && city_end) {
-            
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
@@ -529,7 +537,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 template: 'Calcul du trajet en cours...',
                 showBackdrop: false
             });
-            address_autocomplete2 = city_end.address_components[0].short_name + ' ' + city_end.address_components[1].short_name + ' ' + city_end.address_components[2].short_name;
+            for (i = 0; i < city_end.address_components.length;i += 1) {
+               address_autocomplete2 += city_end.address_components[i].short_name + ' ';
+            }
+            alert(address_autocomplete2);
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete1 + "&language=fr&&sensor=false").success(function (response) {
                 $scope.city_startLatLng = response.results[0].formatted_address;
             }).error(function (response) {
