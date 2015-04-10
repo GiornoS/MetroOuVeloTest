@@ -1,4 +1,4 @@
-var carte = angular.module('carte', ['ionic', 'ngCordova', 'ngAutocomplete']);
+var carte = angular.module('carte', ['ionic', 'ngCordova'/*, 'angucomplete-alt'*/]);
 
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
@@ -57,13 +57,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     var SWIledeFrance = new google.maps.LatLng(48.76417040404932, 2.195491804741323);
     var NEIledeFrance = new google.maps.LatLng(48.93225884802438, 2.5106620928272605);
     var IledeFrance = new google.maps.LatLngBounds(SWIledeFrance, NEIledeFrance);
-    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance, watchEnter: true};
+    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance};
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
     
-    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance, watchEnter: true};
     
     
-    
+
     
     /*** FONCTION APPELEE EN CAS D'ERREUR (non fonctionnement de l'API Météo, non connexion à Internet,...) LORS DE L'APPEL DE LA FONCTION $scope.searchWeather ***/
     
@@ -355,6 +354,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         directionsDisplay.setMap(map);
         $scope.map = map;
         // On load les markers à l'initialisation de l'application !
+        initializeAutocomplete();
     }
 
     
@@ -408,9 +408,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
             $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
+                var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
+
                 // On affiche la ville de départ dans le formulaire
-                $scope.address_autocomplete1 = response.results[0].formatted_address;
+                $scope.placeStart = {geometry: {location: geo}};
                 $scope.city_start = response.results[0].formatted_address;
+                
                 
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
@@ -508,19 +511,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         $scope.donneesVelibPlusProchechargees = false;
-        var address_autocomplete1 = '', address_autocomplete2 = '';
-        if ($scope.address_autocomplete1 !== $scope.city_start) {
-            $scope.address_autocomplete1 = null;
-        }
-        if ($scope.address_autocomplete1) {
-            address_autocomplete1 = $scope.address_autocomplete1;
-        } else {
-            for (i = 0; i < city_end.address_components.length; i += 1) {
-                address_autocomplete1 += city_start.address_components[i].short_name + ' ';
-            }
-            $scope.city_start = city_start.formatted_address;
-        }
-        if (address_autocomplete1 && city_end) {
+        
+
+        if (city_start && city_end) {
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
@@ -537,20 +530,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 template: 'Calcul du trajet en cours...',
                 showBackdrop: false
             });
-            for (i = 0; i < city_end.address_components.length;i += 1) {
-               address_autocomplete2 += city_end.address_components[i].short_name + ' ';
-            }
-            alert(address_autocomplete2);
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete1 + "&language=fr&&sensor=false").success(function (response) {
-                $scope.city_startLatLng = response.results[0].formatted_address;
-            }).error(function (response) {
-                alert("Impossible de récupérer la géolocalisation");
-            });
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete2 + "&language=fr&&sensor=false").success(function (response) {
-                $scope.city_end = response.results[0].formatted_address;
-            }).error(function (response) {
-                alert("Impossible de récupérer la géolocalisation");
-            });
+
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
             var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService;
             jour = d.getDate().toString();
@@ -565,10 +545,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 date_complete = mois + "/" + jour + "/" + annee + " " + heure_choisie_bis + ":" + minute_choisie_bis;
                 millisecondes_unix = Date.parse(date_complete);
             }
-
+            //alert(city_start.geometry.location.lat);
+            var geoloc = new google.maps.LatLng(48.76417040404932, 2.195491804741323);
+           // alert(city_end.geometry.location.lat());
             request = {
-                origin        : address_autocomplete1,
-                destination   : address_autocomplete2,
+                origin        : city_start.geometry.location,
+                destination   : city_end.geometry.location,
                 transitOptions: {
                     departureTime: new Date(millisecondes_unix)
                 },
@@ -747,6 +729,95 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         });
         
     };
+    
+    
+    
+    
+    
+    // Fonction permettant de proposer l'autocomplétion    
+    function initializeAutocomplete() {
+
+        var autocompleteOptions = {
+            componentRestrictions: {country: 'fr'}
+        };
+        
+        var inputStart = document.getElementById('city_start');
+        var inputEnd = document.getElementById('city_end');
+        
+        var autocompleteStart = new google.maps.places.Autocomplete(inputStart, autocompleteOptions);
+        var autocompleteEnd = new google.maps.places.Autocomplete(inputEnd, autocompleteOptions);
+        autocompleteStart.bindTo('bounds', $scope.map);
+        autocompleteEnd.bindTo('bounds', $scope.map);
+
+ 
+
+        google.maps.event.addListener(autocompleteStart, 'place_changed', function () {
+          
+            $scope.placeStart = autocompleteStart.getPlace();
+            if (!place.geometry) {
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if ($scope.placeStart.geometry.viewport) {
+                map.fitBounds($scope.placeStart.geometry.viewport);
+            } else {
+                map.setCenter($scope.placeStart.geometry.location);
+                map.setZoom(17);  // Why 17? Because it looks good.
+            }
+
+
+            var addressStart = '';
+            if ($scope.placeStart.address_components) {
+                addressStart = [
+                    (($scope.placeStart.address_components[0] && placeStart.address_components[0].short_name) || ''),
+                    (($scope.placeStart.address_components[1] && placeStart.address_components[1].short_name) || ''),
+                    (($scope.placeStart.address_components[2] && placeStart.address_components[2].short_name) || '')
+                ].join(' ');
+            }
+
+        });
+        
+        google.maps.event.addListener(autocompleteEnd, 'place_changed', function () {
+            $scope.placeEnd = autocompleteEnd.getPlace();
+            if (!$scope.placeEnd.geometry) {
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if ($scope.placeEnd.geometry.viewport) {
+                map.fitBounds($scope.placeEnd.geometry.viewport);
+            } else {
+                map.setCenter($scope.placeEnd.geometry.location);
+                map.setZoom(17);  // Why 17? Because it looks good.
+            }
+
+
+            var addressEnd = '';
+            if ($scope.placeEnd.address_components) {
+                addressEnd = [
+                    (($scope.placeEnd.address_components[0] && $scope.placeEnd.address_components[0].short_name) || ''),
+                    (($scope.placeEnd.address_components[1] && $scope.placeEnd.address_components[1].short_name) || ''),
+                    (($scope.placeEnd.address_components[2] && $scope.placeEnd.address_components[2].short_name) || '')
+                ].join(' ');
+            }
+
+        });
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
     /***  GOOGLE ANALYTICS  ***/
