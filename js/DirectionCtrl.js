@@ -1,4 +1,4 @@
-var carte = angular.module('carte', ['ionic', 'ngCordova'/*, 'angucomplete-alt'*/]);
+var carte = angular.module('carte', ['ionic', 'ngCordova', 'ngAutocomplete'/*, 'angucomplete-alt'*/]);
 
 
 function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
@@ -57,7 +57,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     var SWIledeFrance = new google.maps.LatLng(48.76417040404932, 2.195491804741323);
     var NEIledeFrance = new google.maps.LatLng(48.93225884802438, 2.5106620928272605);
     var IledeFrance = new google.maps.LatLngBounds(SWIledeFrance, NEIledeFrance);
-    $scope.optionsAutocomplete = {types: 'geocode', country: 'fr', bounds : IledeFrance};
+    $scope.optionsAutocomplete = {country: 'fr', bounds : IledeFrance};
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
     
     
@@ -733,7 +733,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     
     
-    
+/*    
     // Fonction permettant de proposer l'autocomplétion    
     function initializeAutocomplete() {
 
@@ -803,7 +803,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
 
         });
-    }
+    }*/
     
     
     

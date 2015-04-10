@@ -17,22 +17,19 @@
     
 	<!-- Importation du js -->
 	<script src="lib/ionic/js/ionic.bundle.min.js"></script>
-
+    
     <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <script src="cordova.js"></script>
     
     
-    
+<!--
     <script src="js/minify/DirectionCtrlMini.js"></script>
-<!--
+-->
 	<script src="js/app.js"></script>    
--->
     <script src="js/markerclusterer_packed.js"></script>
-<!--    <script src="js/ngAutocomplete.js"></script>
-    <script src="js/Angucomplete.js"></script>-->
-<!--
+    <script src="js/ngAutocomplete.js"></script>
+    <script src="js/Angucomplete.js"></script>
 	<script src="js/DirectionCtrl.js"></script>
--->
     
 </head>
 
@@ -56,6 +53,15 @@
                 
 
                 <label class="item item-input search_start">
+                    <i class="icon ion-search placeholder-icon"></i>
+                    <input type="text" id="city_start" ng-model="city_start" class="form-control" ng-autocomplete options="optionsAutocomplete" details="detailsCityStart"/>
+                </label>
+                
+                <label class="item item-input search_start">
+                    <i class="icon ion-search placeholder-icon"></i>
+                    <input type="text" id="city_end" ng-model="city_end" class="form-control" ng-autocomplete options="optionsAutocomplete" details="detailsCityEnd"/>
+                </label>
+ <!--               <label class="item item-input search_start">
 					<i class="icon ion-search placeholder-icon"></i>
 					<input type="search" placeholder="D'où partez vous ?" id="city_start" name="city_start" ng-model="city_start" />              
 				</label>       
@@ -63,7 +69,7 @@
 					<i class="icon ion-search placeholder-icon"></i>
 					<input type="search" placeholder="Où voulez-vous aller ?" id="city_end" name="city_end" ng-model="city_end" />              
 				</label>
-                
+                -->
                 
 <!--				<label class="item item-input search_start">
 					<i class="icon ion-search placeholder-icon"></i>
@@ -106,7 +112,7 @@
                 
             
                 <center>
-                    <button ng-click="calculate(placeStart, placeEnd, minute_choisie, heure_choisie)" class="button button-outline button-positive validerButtonTrajet">
+                    <button ng-click="calculate(detailsCityStart, detailsCityEnd, minute_choisie, heure_choisie)" class="button button-outline button-positive validerButtonTrajet">
                         Valider
                     </button>
                 </center>
