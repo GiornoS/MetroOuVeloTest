@@ -43,7 +43,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
     // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig;
     
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
     directionsDisplay = new google.maps.DirectionsRenderer(); // Google Object pour afficher le trajet sur la carte
@@ -55,7 +55,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.sizeMap = 'big'; // Au départ la carte prend tout l'écran
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
     $scope.city_start = "";
-    
+    headerConfig = {headers: {'Authorization': 'fef7a3cd-4d7f-4441-92c7-315a94fd48f0'}};
     
     
     /*** FONCTION PERMETTANT DE VÉRIFIER L'ÉTAT DE LA CONNEXION INTERNET ***/
@@ -369,6 +369,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.loadMarkers();
 
 
+
     
    
 
@@ -384,7 +385,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     $scope.centerOnMe = function () {
         alert('ok1');
-        //isPhoneConnected();
+        isPhoneConnected();
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
         // On désaffiche la recommandation
@@ -434,10 +435,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
         }, function (error) {
             $ionicLoading.hide();
- /*           $ionicLoading.show({
+            $ionicLoading.show({
                 template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
                 duration: 2000
-            });*/
+            });
         }, {
             timeout: 15000
         });
@@ -561,7 +562,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
 
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
-            var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService;
+            var jour, jour_bis, mois, mois_bis, annee, heure_choisie_bis, minute_choisie_bis, date_complete, date_complete_format_navitia, request, directionsService;
             jour = d.getDate().toString();
             mois = d.getMonth().toString();
             annee = d.getFullYear().toString();
@@ -569,11 +570,28 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 // On récupère le jour, le mois et l'année aux quels on va ajouter l'heue et la minute choisie pour le trajet, afin de convertir le tout en millisecondes depuis le 1er Janvier 1970. On enlève le "min" et le "h" pour la minute et pour l'heure choisie
                 millisecondes_unix = Date.parse($scope.datePicked);
             } else {
+                if (mois < 10) {
+                    mois_bis = "0" + mois;
+                } else {
+                    mois_bis = mois;
+                }
+                if (jour < 10) {
+                    jour_bis = "0" + jour;
+                } else {
+                    jour_bis = jour;
+                }
                 heure_choisie_bis = heure_choisie;
                 minute_choisie_bis = minute_choisie;
                 date_complete = mois + "/" + jour + "/" + annee + " " + heure_choisie_bis + ":" + minute_choisie_bis;
+                date_complete_format_navitia = annee + mois_bis + jour_bis + "T" + heure_choisie_bis + minute_choisie_bis + "00";
                 millisecondes_unix = Date.parse(date_complete);
             }
+            alert(date_complete_format_navitia);
+            $http.get("https://api.navitia.io/v1/journeys?from=" + CITYSTART.geometry.location.lng() + ";" + CITYSTART.geometry.location.lat() + "&to=" + city_end.geometry.location.lng() + ";" + city_end.geometry.location.lat() + "&datetime=" + date_complete_format_navitia, headerConfig).success(function (response) {
+                    alert(response.tickets);
+            }).error(function (response) {
+                alert(response.error.message);
+            });
 
             request = {
                 origin        : CITYSTART.geometry.location,
