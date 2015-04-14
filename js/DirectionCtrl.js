@@ -383,6 +383,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.centerOnMe = function () {
+        alert('ok1');
         //isPhoneConnected();
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
@@ -397,9 +398,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             template: 'Recherche de la position en cours...',
             showBackdrop: false
         });
+        alert('ok2');
         navigator.geolocation.getCurrentPosition(function (pos) {
-
-            $scope.map.panTo(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+            alert('ok3');
+            $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
             $scope.map.setZoom(15);
             $ionicLoading.hide();
 
