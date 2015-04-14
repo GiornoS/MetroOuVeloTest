@@ -383,7 +383,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.centerOnMe = function () {
-        isPhoneConnected();
+        //isPhoneConnected();
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
         // On désaffiche la recommandation
@@ -435,7 +435,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $ionicLoading.show({
                 template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
                 duration: 2000
-            })
+            });
         }, {
             timeout: 15000
         });
