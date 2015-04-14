@@ -434,10 +434,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
         }, function (error) {
             $ionicLoading.hide();
-            $ionicLoading.show({
+ /*           $ionicLoading.show({
                 template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
                 duration: 2000
-            });
+            });*/
         }, {
             timeout: 15000
         });
