@@ -10,12 +10,12 @@
 /*
  DEFINIR UN TRAJET
 */
-
 .heure_de_depart
 {
     position: relative;
     top: 10px;    
 }
+
 .hour_select_definir_un_trajet
 {
     width : 80px;
@@ -104,12 +104,23 @@
 .search_start
 {
     top: -17px;
+    width: 90%;
 }
+
+.geolocate-button 
+{
+    position:absolute;
+    top : -7px;
+    right:0px;
+    z-index: 999;
+}
+
 
 .search_end
 {
     top: -17px;
 	margin-top:0.5%;
+    width: 90%;
 }
 
 .heure_de_depart

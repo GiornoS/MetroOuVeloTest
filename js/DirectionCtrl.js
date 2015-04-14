@@ -1,7 +1,7 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork) {
 
     
    
@@ -54,6 +54,30 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     areMarkersDisplayed = 0; // Permeyt de savoir quels markers l'utilisateur veut voir
     $scope.sizeMap = 'big'; // Au départ la carte prend tout l'écran
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
+    $scope.city_start = "";
+    
+    
+    
+    /*** FONCTION PERMETTANT DE VÉRIFIER L'ÉTAT DE LA CONNEXION INTERNET ***/
+    
+    /**
+    ***
+    **/
+    
+    function isPhoneConnected() {
+        document.addEventListener("deviceready", function () {
+            if ($cordovaNetwork.isOffline()) {
+                $ionicLoading.show({
+                    template: "Votre appareil est déconnecté de tout réseau. Afin d'utiliser cette application à son plein potentiel, veuillez vous connecter",
+                    duration: 3000
+                });
+            }
+
+
+        }, false);
+    }
+    
+    
     
     /*** FONCTION APPELEE EN CAS D'ERREUR (non fonctionnement de l'API Météo, non connexion à Internet,...) LORS DE L'APPEL DE LA FONCTION $scope.searchWeather ***/
     
@@ -203,6 +227,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     function initialize() {
+        isPhoneConnected();
         var paris, mapOptions, map;
         
         paris = new google.maps.LatLng(48.85834, 2.33752);
@@ -358,6 +383,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.centerOnMe = function () {
+        isPhoneConnected();
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
         // On désaffiche la recommandation
@@ -373,7 +399,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         });
         navigator.geolocation.getCurrentPosition(function (pos) {
 
-            $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+            $scope.map.panTo(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
             $scope.map.setZoom(15);
             $ionicLoading.hide();
 
@@ -395,21 +421,25 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
             $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
             $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
-                // On affiche la ville de départ dans le formulaire
-                $scope.address_autocomplete1 = response.results[0].formatted_address;
-                $scope.city_start = response.results[0].formatted_address;
                 
+                var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
+                $scope.city_start = response.results[0].formatted_address;
+                // On affiche la ville de départ dans le formulaire
+                $scope.detailsCityStart = {geometry: {location: geo}};
+                document.getElementById('city_start').value = response.results[0].formatted_address;
             }).error(function (response) {
                 alert("Impossible de récupérer la géolocalisation");
             });
         }, function (error) {
-            alert('Unable to get location: ' + error.message);
             $ionicLoading.hide();
+            $ionicLoading.show({
+                template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
+                duration: 2000
+            })
         }, {
             timeout: 15000
         });
     };
-
 
     /*** FONCTION PERMETTANT D'AFFICHER OU DE DESAFFICHER LA CARD "DEFINIR UN TRAJET" ***/
     
@@ -494,19 +524,23 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return boolean $scope.show_donnees_du_trajet : affiche la carte avec les données du trajet
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
+        isPhoneConnected();
         $scope.donneesVelibPlusProchechargees = false;
-        var address_autocomplete1, address_autocomplete2;
-        if ($scope.address_autocomplete1 !== $scope.city_start) {
-            $scope.address_autocomplete1 = null;
-        }
-        if ($scope.address_autocomplete1) {
-            address_autocomplete1 = $scope.address_autocomplete1;
+        // Récupère la location de départ voulue (géolocalisation ou adresse entrée)
+        var CITYSTART;
+        // On vérifie si c'est la géolocalisation qui est utilisée ou non
+        if ($scope.city_start === document.getElementById("city_start").value) {
+            CITYSTART = $scope.detailsCityStart;
         } else {
-            address_autocomplete1 = city_start.address_components[0].short_name + ' ' + city_start.address_components[1].short_name + ' ' + city_start.address_components[2].short_name;
-            $scope.city_start = city_start.formatted_address;
+            CITYSTART = city_start;
         }
-        if (address_autocomplete1 && city_end) {
-            
+        // Permet de remplacer la première entrée du formulaire par sa vraie valeur
+        $scope.city_start = city_start.address_formatted;
+        if (city_start.address_components[0].short_name === "FR") {
+            $scope.city_start = city_start.name + ", Paris, France";
+        }
+
+        if (city_start && city_end) {
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
@@ -523,17 +557,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 template: 'Calcul du trajet en cours...',
                 showBackdrop: false
             });
-            address_autocomplete2 = city_end.address_components[0].short_name + ' ' + city_end.address_components[1].short_name + ' ' + city_end.address_components[2].short_name;
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete1 + "&language=fr&&sensor=false").success(function (response) {
-                $scope.city_startLatLng = response.results[0].formatted_address;
-            }).error(function (response) {
-                alert("Impossible de récupérer la géolocalisation");
-            });
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?address=" + address_autocomplete2 + "&language=fr&&sensor=false").success(function (response) {
-                $scope.city_end = response.results[0].formatted_address;
-            }).error(function (response) {
-                alert("Impossible de récupérer la géolocalisation");
-            });
+
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
             var jour, mois, annee, heure_choisie_bis, minute_choisie_bis, date_complete, request, directionsService;
             jour = d.getDate().toString();
@@ -550,8 +574,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
 
             request = {
-                origin        : address_autocomplete1,
-                destination   : address_autocomplete2,
+                origin        : CITYSTART.geometry.location,
+                destination   : city_end.geometry.location,
                 transitOptions: {
                     departureTime: new Date(millisecondes_unix)
                 },
@@ -749,6 +773,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
