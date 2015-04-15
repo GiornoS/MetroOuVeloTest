@@ -163,6 +163,7 @@
 
 .icon-modal-aide {
     width: 50px;
+    right: 0px;
     
 }
 
@@ -170,7 +171,7 @@
 .text-modal-aide {
     position: absolute;
     top: 40%;
-    left: 30%;
+    left: 80px;
     font-size: 1.1em;
     font-weight: 500;
 /*
@@ -179,26 +180,23 @@
 }
 
 .item2 {
-    width: 65%;
+    width: 80%;
     font-weight: bold;
 
 }
 
 .p1 {
-    top: 10%;
+    top: 22%;
 }
 
 .p2 {
-}
-
-.p3 {
-    top: 70%;
+    top: 53%;
 }
 
 .text-item3 {
     position: absolute;
-    left: 30%;
-        font-size: 1.1em;
+    left: 80px;
+    font-size: 1.1em;
     font-weight: 500;
 }
 
