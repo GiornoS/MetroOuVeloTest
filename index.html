@@ -40,6 +40,7 @@
     <!-- Le bandeau supérieur avec le nom de l'application -->
     <ion-header-bar class="bar-positive header_definir_un_trajet">
         <h1 class="title"><center>{{Titre_Recommandation}}</center></h1>
+        <button class="button button-icon icon ion-information-circled" ng-click="openModal(2)"></button>
     </ion-header-bar>
 <ion-content>
 
@@ -108,7 +109,7 @@
 	<!--Footer qui affiche le temps de trajet et la distance   -->
 	<div class="list card footer_card_definir_un_trajet" ng-show="show_donnees_du_trajet">
 		<!--On ne montre le résultat que si un trajet a été rentré, d'où le ng-show-->
-        <div class="item tabs tabs-secondary tabs-icon-left" ng-click="openModal()">
+        <div class="item tabs tabs-secondary tabs-icon-left" ng-click="openModal(1)">
             <a class="tab-item">
               <i class="icon ion-map"></i>
               <strong style="font-size:130%;">{{donnees_du_trajet.routes[0].legs[0].distance.text}}</strong>
@@ -119,8 +120,8 @@
                 
             </a>
             
-            <!-- Modal qui va afficher-->
-            <script id="my-modal.html" type="text/ng-template">
+            <!-- Modal qui va afficher les étapes du trajet -->
+            <script id="modal_affichage_trajet.html" type="text/ng-template">
                 <ion-modal-view class="modal modal_affichage_trajet" on-click="closeModal()">
                     <div no-tap-scroll="true" class="bar bar-header header_panel">
                         <h1 class="title"> 
@@ -138,6 +139,56 @@
                     </div>
                 </ion-modal_view>
             </script>
+            
+            <!-- Modal qui va afficher une aide (définition des boutons,...) -->
+            <script id="modal_affichage_aide.html" type="text/ng-template">
+                <ion-modal-view class="modal modal-affichage-aide">
+                    <header class="bar bar-header bar-positive">
+                      <h1 class="title">Besoin d'aide ?</h1>
+                      <div class="button button-clear" ng-click="closeModal(2)"><span class="icon ion-close"></span></div>
+                    </header>
+                   
+                    <div class="list list-aide">
+                        <div class="item item-divider">
+                            Quelques boutons
+                        </div>
+                        <div class="item item-button-left item-list-aide">
+                            <img class="icon icon-modal-aide" src="res/img/Plus.png"></img>
+                            <div class="text-modal-aide">
+                            Définissez un nouveau trajet
+                            </div>
+                        </div>
+                        <div class="item item-button-left item-list-aide item-2">
+                            <img class="icon icon-modal-aide" src="res/img/android-bicycle-button.png"></img>
+                            
+                            <div>
+                           
+                            <p class="text-modal-aide item2 p1">Appuyez une fois : les stations Vélib' avec le nombre de Vélib' restant apparaît</p>
+                            <p class="text-modal-aide item2 p2">Une deuxième fois : le nombre de places de rangement disponibles s'affiche</p>
+                            <p class="text-modal-aide item2 p3">Une troisième fois : Faîtes disparaître les stations</p>
+                            </div>
+                        </div>
+                        <div class="item item-divider">
+                            Carte
+                        </div>
+                        <div class="item item-button-left item-list-aide">
+                            <img class="icon icon-modal-aide" src="res/img/MapLegend/SentiersCyclables.png"></img>
+                            <span class="text-item3">Sentiers Cyclables</span>
+                        </div>
+                        <div class="item item-button-left item-list-aide">
+                            <img class="icon icon-modal-aide" src="res/img/MapLegend/PistesCyclables.png"></img>
+                            <span class="text-item3">Pistes Cyclables</span>
+                        </div>
+                        <div class="item item-button-left item-list-aide">
+                            <img class="icon icon-modal-aide" src="res/img/MapLegend/VoiesDouces.png"></img>
+                            <span class="text-item3">Voies douces pour les vélos</span>
+                        </div>
+                    </div>
+                </ion-modal-view>
+            </script>
+            
+            
+            
         </div>
     </div>
 

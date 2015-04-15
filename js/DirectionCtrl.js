@@ -157,11 +157,21 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @function $scope.reloadMap() : reload la carte une fois le modal fermé
     **/
     
-    $ionicModal.fromTemplateUrl('my-modal.html', {
+    $ionicModal.fromTemplateUrl('modal_affichage_trajet.html', {
+        id: '1',
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
-        $scope.modal = modal;
+        $scope.modalTrajet = modal;
+    });
+    
+    $ionicModal.fromTemplateUrl('modal_affichage_aide.html', {
+        id: '2',
+        backdropClickToClose: false,
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function (modal) {
+        $scope.modalAide = modal;
     });
 
     /** $scope.openModal()
@@ -170,45 +180,59 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     *** @return String $scope.sizeMap : permet d'adapter la taille de la map affichée à la place restante sur l'écran
     **/
     
-    $scope.openModal = function () {
-        $scope.modal.show();
-        // On cache la recommandation pour éviter de géner
-        $scope.show_card_recommandation = false;
-        // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran. Timeout pour éviter que la carte se recalibre avant que le modal ne soit affiché
-        $timeout(function () {
-            $scope.sizeMap = 'small';
-        }, 400);
-        // On centre la carte sur le point de départ
-        $scope.map.setCenter($scope.donnees_du_trajet.routes[0].legs[0].steps[0].start_location);
-        // On zoom sur les étapes
-        $scope.map.setZoom(16);
-        // On affiche la paneau avec les informations sur les étapes du trajet
-        directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
+    $scope.openModal = function (index) {
+        if (index === 1) {
+            $scope.modalTrajet.show();
+            // On cache la recommandation pour éviter de géner
+            $scope.show_card_recommandation = false;
+            // On affiche une carte plus petite pour coller avec le modal qui occupe la moitié de l'écran. Timeout pour éviter que la carte se recalibre avant que le modal ne soit affiché
+            $timeout(function () {
+                $scope.sizeMap = 'small';
+            }, 400);
+            // On centre la carte sur le point de départ
+            $scope.map.setCenter($scope.donnees_du_trajet.routes[0].legs[0].steps[0].start_location);
+            // On zoom sur les étapes
+            $scope.map.setZoom(16);
+            // On affiche la paneau avec les informations sur les étapes du trajet
+            directionsDisplay.setPanel(document.getElementById('PanelTrajet'));
         // On recharge la carte à cause d'un bug lorsqu'on cache le modèle
-        mapToReload = true;
+            mapToReload = true;
+        } else if (index === 2) {
+            $scope.modalAide.show();
+        }
+        
+
     };
 
     /** $scope.closeModal()
     **/
     
-    $scope.closeModal = function () {
-        $scope.modal.hide();
+    $scope.closeModal = function (index) {
+        if (index === 1) {
+            $scope.modalTrajet.hide();
+        } else if (index === 2) {
+            $scope.modalAide.hide();
+        }
     };
     
     // Quand le modal est fermé on réaffiche la carte en version grand écran
-    $scope.$on('modal.hidden', function () {
-        // On réaffiche la map version grand écran
-        $scope.sizeMap = 'big';
-        // On réaffiche la recommandation
-        $scope.show_card_recommandation = true;
-        
-
+    $scope.$on('modal.hidden', function (event, modal) {
+        if (modal.id === '1') {
+            // On réaffiche la map version grand écran
+            $scope.sizeMap = 'big';
+            // On réaffiche la recommandation
+            $scope.show_card_recommandation = true;
+        } 
     });
 
-    $scope.$on('$destroy', function () {
-        // On réaffiche la map version grand écran
-        google.maps.event.trigger($scope.map, 'resize');
-        $scope.modal.remove();
+    $scope.$on('$destroy', function (event, modal) {
+        if (modal.id === '1') {
+            // On réaffiche la map version grand écran
+            google.maps.event.trigger($scope.map, 'resize');
+            $scope.modalAide.remove();
+            $scope.modalTrajet.remove();        
+        }
+
     });
     
     /** $scope.reloadMap()
@@ -484,7 +508,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         minute_choisie = d.getMinutes();
         $scope.heure_choisie = heure_choisie.toString();/* + "h"*/
         $scope.minute_choisie = minute_choisie.toString();/* + "min"*/
-
         // On ajoute un 0 pour que ça affiche 01:02 et non 1:2
         if (minute_choisie < 10) {
             $scope.minute_choisie = "0" + $scope.minute_choisie;
@@ -564,7 +587,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
             var jour, jour_bis, mois, mois_bis, annee, heure_choisie_bis, minute_choisie_bis, date_complete, date_complete_format_navitia, request, directionsService;
             jour = d.getDate().toString();
-            mois = d.getMonth().toString();
+            mois = (d.getMonth() + 1).toString();
             annee = d.getFullYear().toString();
             if (dateHasBeenPicked) {
                 // On récupère le jour, le mois et l'année aux quels on va ajouter l'heue et la minute choisie pour le trajet, afin de convertir le tout en millisecondes depuis le 1er Janvier 1970. On enlève le "min" et le "h" pour la minute et pour l'heure choisie
@@ -586,11 +609,18 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 date_complete_format_navitia = annee + mois_bis + jour_bis + "T" + heure_choisie_bis + minute_choisie_bis + "00";
                 millisecondes_unix = Date.parse(date_complete);
             }
-            alert(date_complete_format_navitia);
             $http.get("https://api.navitia.io/v1/journeys?from=" + CITYSTART.geometry.location.lng() + ";" + CITYSTART.geometry.location.lat() + "&to=" + city_end.geometry.location.lng() + ";" + city_end.geometry.location.lat() + "&datetime=" + date_complete_format_navitia, headerConfig).success(function (response) {
-                    alert(response.tickets);
+                alert(response.journeys[0].sections[response.journeys[0].sections.length - 1]);
             }).error(function (response) {
-                alert(response.error.message);
+                $ionicLoading.hide();
+                $ionicLoading.show({
+                    template: "Impossible de récupérer les données des transports en commun",
+                    duration: 1000
+                });
+                $scope.loading = $ionicLoading.show({
+                    template: 'Calcul du trajet en cours...',
+                    showBackdrop: false
+                });
             });
 
             request = {
