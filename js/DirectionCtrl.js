@@ -1,7 +1,7 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaKeyboard) {
 
     
    
@@ -58,6 +58,21 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     headerConfig = {headers: {'Authorization': 'fef7a3cd-4d7f-4441-92c7-315a94fd48f0'}};
     
     
+    /*** FONCTION PERMETTANT DE SAVOIR SI LE CLAVIER EST OUVERT OU NON (pour l'affichage ou non de certains boutons) ***/
+    
+    /**
+    ***
+    **/
+    
+    $scope.isKeyboardNotVisible = function () {
+        if ($cordovaKeyboard.isVisible()) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+    
+    
     /*** FONCTION PERMETTANT DE VÉRIFIER L'ÉTAT DE LA CONNEXION INTERNET ***/
     
     /**
@@ -87,7 +102,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     function httpError(response) {
         $ionicLoading.hide();
-        alert('Impossible de récupérer les informations. Veuillez vérifier votre connexion internet.');
+        $ionicLoading.show({
+            template: "Impossible de récupérer les informations météorologiques. Veuillez vérifier votre connexion",
+            duration: 2000
+        });
     }
     
     /*** FONCTION RECUPERANT LES PREVISIONS METEOS A DES COORDONNEES PRECISES A UN INSTANT DONNE ***/
@@ -826,6 +844,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaKeyboard'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
