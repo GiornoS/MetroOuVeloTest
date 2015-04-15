@@ -2,8 +2,10 @@
  TOUTES LES PAGES
 */
 
-.header_definir_un_trajet
+.Titre-Appli
 {    
+    left: 50%;
+    position: absolute;
 }
 
 

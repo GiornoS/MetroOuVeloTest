@@ -222,7 +222,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.sizeMap = 'big';
             // On réaffiche la recommandation
             $scope.show_card_recommandation = true;
-        } 
+        }
     });
 
     $scope.$on('$destroy', function (event, modal) {
@@ -230,7 +230,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             // On réaffiche la map version grand écran
             google.maps.event.trigger($scope.map, 'resize');
             $scope.modalAide.remove();
-            $scope.modalTrajet.remove();        
+            $scope.modalTrajet.remove();
         }
 
     });
@@ -408,7 +408,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.centerOnMe = function () {
-        alert('ok1');
         isPhoneConnected();
         // On désaffiche la carte montrant les données d'un précédent trajet
         $scope.show_donnees_du_trajet = false;
@@ -423,9 +422,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             template: 'Recherche de la position en cours...',
             showBackdrop: false
         });
-        alert('ok2');
         navigator.geolocation.getCurrentPosition(function (pos) {
-            alert('ok3');
             $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
             $scope.map.setZoom(15);
             $ionicLoading.hide();
@@ -559,14 +556,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             CITYSTART = $scope.detailsCityStart;
         } else {
             CITYSTART = city_start;
-        }
-        // Permet de remplacer la première entrée du formulaire par sa vraie valeur
-        $scope.city_start = city_start.address_formatted;
-        if (city_start.address_components[0].short_name === "FR") {
-            $scope.city_start = city_start.name + ", Paris, France";
+            // Permet de remplacer la première entrée du formulaire par sa vraie valeur
+            $scope.city_start = city_start.address_formatted;
+            if (city_start.address_components[0].short_name === "FR") {
+                $scope.city_start = city_start.name + ", Paris, France";
+            }
         }
 
-        if (city_start && city_end) {
+
+
+
+        if (CITYSTART && city_end) {
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
