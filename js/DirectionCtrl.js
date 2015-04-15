@@ -452,7 +452,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 $scope.detailsCityStart = {geometry: {location: geo}};
                 document.getElementById('city_start').value = response.results[0].formatted_address;
             }).error(function (response) {
-                alert("Impossible de récupérer la géolocalisation");
+                $ionicLoading.show({
+                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
+                    duration: 2000
+                });
             });
         }, function (error) {
             $ionicLoading.hide();
