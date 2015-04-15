@@ -47,6 +47,9 @@
 	 <div class="list card definir_un_trajet_card" ng-show="show_card_definir_un_trajet">
 		<div class="item item-divider definir_un_trajet_titre_card">
 			<center>Définir un trajet</center>
+            <div class="button button-clear button-positive close-button-card" ng-click="showCard()">
+                <span class="icon ion-close"></span>
+            </div>
 		</div>
 		<div class="item item-body">
             <div class="list list-inset">
@@ -102,8 +105,8 @@
     
     <!-- Affichage des boutons de stations vélibs et de définition du trajet -->
 <!--	<img class="button button-icon icon" src="res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()" ng-show="isKeyboardNotVisible()"></img>-->
-	<img class="button button-icon icon" src="res/img/Plus.png" id="navigate_button" ng-click="showCard()" ng-show="isKeyboardNotVisible()"></img>
-    <img class="button button-icon icon" src="res/img/android-bicycle-button.png" id="bicycle_button" ng-click="displayVelibStations()" ng-show="isKeyboardNotVisible()"></img>
+	<img class="button button-icon icon" src="res/img/Plus.png" id="navigate_button" ng-click="showCard()" ng-show="showButtonsOnMap"></img>
+    <img class="button button-icon icon" src="res/img/android-bicycle-button.png" id="bicycle_button" ng-click="displayVelibStations()" ng-show="showButtonsOnMap"></img>
 
 
 	<!--Footer qui affiche le temps de trajet et la distance   -->

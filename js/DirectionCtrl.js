@@ -56,21 +56,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.Titre_Recommandation = "Métro ou Vélib ?"; // Au départ le titre est Métro ou Veélib ?
     $scope.city_start = "";
     headerConfig = {headers: {'Authorization': 'fef7a3cd-4d7f-4441-92c7-315a94fd48f0'}};
+    $scope.showButtonsOnMap = true;
     
-    
-    /*** FONCTION PERMETTANT DE SAVOIR SI LE CLAVIER EST OUVERT OU NON (pour l'affichage ou non de certains boutons) ***/
-    
-    /**
-    ***
-    **/
-    
-    $scope.isKeyboardNotVisible = function () {
-        if ($cordovaKeyboard.isVisible()) {
-            return false;
-        } else {
-            return true;
-        }
-    };
+
     
     
     /*** FONCTION PERMETTANT DE VÉRIFIER L'ÉTAT DE LA CONNEXION INTERNET ***/
@@ -496,9 +484,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.showCard = function () {
         if ($scope.show_card_definir_un_trajet === true) {
             $scope.show_card_definir_un_trajet = false;
+            $scope.showButtonsOnMap = true;
         } else {
             $scope.show_card_definir_un_trajet = true;
             $scope.show_card_recommandation = false;
+            $scope.showButtonsOnMap = false;
             // On reset le temps
             $scope.setTime();
             // On affiche la bonne adresse (par exemple si l'utilisateur a réappuyé sur le bouton de géolocalisation entre temps)

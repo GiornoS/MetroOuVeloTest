@@ -102,6 +102,13 @@
     width:96%;
 }
 
+.close-button-card
+{
+    position: absolute;
+    right: 0px;
+    top: -4px;
+}
+
 .search_start
 {
     top: -17px;
@@ -149,7 +156,8 @@
     position:absolute;
 }
 
-.modal-affichage-aide {
+.modal-affichage-aide 
+{
     width: 90%;
     min-height: initial;
     height: 90%;
@@ -158,18 +166,21 @@
     left: 5%;
 }
 
-.list-aide {
+.list-aide 
+{
     top: 45px;
 }
 
-.icon-modal-aide {
+.icon-modal-aide 
+{
     width: 50px;
     right: 0px;
     
 }
 
 
-.text-modal-aide {
+.text-modal-aide 
+{
     position: absolute;
     top: 40%;
     left: 75px;
@@ -180,21 +191,25 @@
 */
 }
 
-.item2 {
+.item2 
+{
     width: 80%;
     font-weight: bold;
 
 }
 
-.p1 {
+.p1
+{
     top: 22%;
 }
 
-.p2 {
+.p2 
+{
     top: 53%;
 }
 
-.text-item3 {
+.text-item3 
+{
     position: absolute;
     left: 75px;
     font-size: 1.1em;
