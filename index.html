@@ -39,7 +39,8 @@
         
     <!-- Le bandeau supérieur avec le nom de l'application -->
     <ion-header-bar class="bar-positive header_definir_un_trajet">
-        <h1 class="title Titre-Appli"><center>{{Titre_Recommandation}}</center></h1>
+       <!-- <button class="button button-icon icon ion-navicon" ng-click="openModal(3)"></button>-->
+        <h1 class="title Titre-Appli"><center>{{Titre_Recommandation}}<!--<button class="button button-icon icon ion-help" ng-show="show_card_recommandation" ng-click="openModal(4)"></button>--></center></h1>
         <button class="button button-icon icon ion-information-circled" ng-click="openModal(2)"></button>
     </ion-header-bar>
 <ion-content>
@@ -92,7 +93,7 @@
             <i class="icon ion-android-bicycle"></i>
 -->
             <!-- On affiche la recommandation ainsi que la distance à pied entre la station de vélib la plus proche et la durée du trajet -->
-            <div>Station de Vélib la plus proche à : {{donneesVelibPlusProche.distance.value}} m ({{donneesVelibPlusProche.duration.text}})</div>
+            <div>Station Vélib la plus proche à : {{donneesVelibPlusProche.distance.value}} m ({{donneesVelibPlusProche.duration.text}})</div>
         </div>
     </div>
 

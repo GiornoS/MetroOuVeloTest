@@ -1,7 +1,7 @@
 var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaKeyboard) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork) {
 
     
    
@@ -46,7 +46,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig;
     
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
-    directionsDisplay = new google.maps.DirectionsRenderer(); // Google Object pour afficher le trajet sur la carte
+    // Pour utiliser google il faut être connecté !
+    document.addEventListener("deviceready", function () {
+        if ($cordovaNetwork.isOnline()) {
+            directionsDisplay = new google.maps.DirectionsRenderer(); // Google Object pour afficher le trajet sur la carte
+        }
+    }, false);
+    
+
     velibMarker = "res/img/velib.png"; // Adresse de l'icône utilisée pour afficher des stations vélibs dans le cas où il serait impossible de se connecter à l'API vélibs
     markersPlacesDispo = []; // Markers de places dispo
     markersVelibDispo = []; // Markers de Vélibs dispo
@@ -59,6 +66,26 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.showButtonsOnMap = true;
     
 
+    
+    /*** FONCTION PERMETTANT DE CHOISIR LA RECOMMANDATION À AFFICHER ***/
+    
+    /**
+    ***
+    **/
+    
+    function recommend() {
+        $scope.show_card_recommandation = true;
+        if ($scope.weather.hourly.data[0].icon === "rain") {
+            $scope.recommandation = "Prenez donc le MÉTRO !";
+            $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
+        } else {
+            $scope.recommandation = "Prenez donc le VÉLO !";
+            $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
+        }
+        // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
+        $ionicLoading.hide();
+        
+    }
     
     
     /*** FONCTION PERMETTANT DE VÉRIFIER L'ÉTAT DE LA CONNEXION INTERNET ***/
@@ -135,7 +162,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             //~ On récupère la réponse des serveurs de forecast.io et on cache l'îcone de loading. Affiche aussi la carte de recommandation
             // On garde la réponse dans une variable éventuellement utile pour la page index
             $scope.weather = response;
-            $scope.show_card_recommandation = true;
+            recommend();
+            /*$scope.show_card_recommandation = true;
             if (response.hourly.data[0].icon === "rain") {
                 $scope.recommandation = "Prenez donc le MÉTRO !";
                 $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
@@ -146,7 +174,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
             // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
             //$scope.stationVelibPlusProche(LatLngCityEnd);
-            $ionicLoading.hide();
+            $ionicLoading.hide();*/
         }).error(httpError);
     };
 
@@ -294,107 +322,126 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.loadMarkers = function () {
-        // On affiche une loading icon
-        $scope.loading = $ionicLoading.show({
-            template: 'Mise à jour des stations vélibs...',
-            showBackdrop: false
-        });
-        $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
 
-            // Styles des Clusters
-            ClusterStylesPlc = [
-                {
-                    textSize: 1,
-                    textColor: 'white',
-                    url: 'res/markers_clusters/VelibGrey.png',
-                    height: 50,
-                    width: 50,
-                    anchorText: [3, 1]
-                }
-            ];
-            ClusterStylesVlb = [
-                {
-                    textSize: 1,
-                    textColor: 'white',
-                    url: 'res/markers_clusters/VelibPurple.png',
-                    height: 50,
-                    width: 50,
-                    anchorText: [3, 1]
-                }
-            ];
-            // Options pour les Marker Clusterer : 
-            // minimumClusterSize : Il faut 4 stations minimum pour faire un cluster
-            // gridSize : Augmente la taille du carré sur lequel le cluster va chercher les stations à rassembler
-            MCOptionsPlc = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesPlc};
-            MCOptionsVlb = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesVlb};
-            // On créé les Markers Clusterer utiles par la suite
-            MarkerClustererPlc = new MarkerClusterer($scope.map, markersPlacesDispo, MCOptionsPlc);
-            MarkerClustererVlb = new MarkerClusterer($scope.map, markersVelibDispo, MCOptionsVlb);
-
-            // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
-            for (i = 0; i < response.length; i += 1) {
-                LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
-                var markerPlcDisp, markerVlbDisp;
-                // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
-                if (response[i].available_bike_stands < 4) {
-                    markerPlcDisp = new google.maps.Marker({
-                        position: LatLng,
-                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
-                        clickable: true
-                    });
-                } else {
-                    markerPlcDisp = new google.maps.Marker({
-                        position: LatLng,
-                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
-                        clickable: true
-                    });
-                }
-                if (response[i].available_bikes < 4) {
-                    markerVlbDisp = new google.maps.Marker({
-                        position: LatLng,
-                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
-                        clickable: true
-                    });
-                } else {
-                    markerVlbDisp = new google.maps.Marker({
-                        position: LatLng,
-                        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
-                        clickable: true
-                    });
-                }
-
-                // Quand on clique sur un marker, la map glisse et se centre sur lui
-                google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
-                    $scope.map.panTo(evenement.latLng);
-                });
-                google.maps.event.addListener(markerVlbDisp, "click", function (evenement) {
-                    $scope.map.panTo(evenement.latLng);
-                });
-                markersPlacesDispo.push(markerPlcDisp);
-                markersVelibDispo.push(markerVlbDisp);
-            }
-            $ionicLoading.hide();
-
-        }).error(function (reponse) {
-            // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
-            $http.get("res/data/Paris.json").success(function (response) {
-                for (i = 0; i < response.length; i += 1) {
-                    LatLng = new google.maps.LatLng(response[i].latitude, response[i].longitude);
-                    var marker = new google.maps.Marker({
-                        position: LatLng,
-                        icon: velibMarker,
-                        clickable: true
-                    });
-                    google.maps.event.addListener(marker, "click", function (evenement) {
-                        $scope.map.panTo(evenement.latLng);
-                    });
-                    // Dans ce cas les 2 types de markers sont les mêmes
-                    markersPlacesDispo.push(marker);
-                    markersVelibDispo.push(marker);
-                }
-                $ionicLoading.hide();
+        document.addEventListener("deviceready", function () {
+            // On affiche une loading icon
+            $scope.loading = $ionicLoading.show({
+                template: 'Mise à jour des stations vélibs...',
+                showBackdrop: false
             });
-        });
+            if ($cordovaNetwork.isOnline()) {
+                $http.get('https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + VelibKey).success(function (response) {
+
+                    // Styles des Clusters
+                    ClusterStylesPlc = [
+                        {
+                            textSize: 1,
+                            textColor: 'white',
+                            url: 'res/markers_clusters/VelibGrey.png',
+                            height: 50,
+                            width: 50,
+                            anchorText: [3, 1]
+                        }
+                    ];
+                    ClusterStylesVlb = [
+                        {
+                            textSize: 1,
+                            textColor: 'white',
+                            url: 'res/markers_clusters/VelibPurple.png',
+                            height: 50,
+                            width: 50,
+                            anchorText: [3, 1]
+                        }
+                    ];
+                    // Options pour les Marker Clusterer : 
+                    // minimumClusterSize : Il faut 4 stations minimum pour faire un cluster
+                    // gridSize : Augmente la taille du carré sur lequel le cluster va chercher les stations à rassembler
+                    MCOptionsPlc = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesPlc};
+                    MCOptionsVlb = {minimumClusterSize: 4, gridSize: 90, styles: ClusterStylesVlb};
+                    // On créé les Markers Clusterer utiles par la suite
+                    MarkerClustererPlc = new MarkerClusterer($scope.map, markersPlacesDispo, MCOptionsPlc);
+                    MarkerClustererVlb = new MarkerClusterer($scope.map, markersVelibDispo, MCOptionsVlb);
+
+                    // Pour chacune des stations on créé un marker avec le nb de places ou de vélibs disponibles
+                    for (i = 0; i < response.length; i += 1) {
+                        LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
+                        var markerPlcDisp, markerVlbDisp;
+                        // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
+                        if (response[i].available_bike_stands < 4) {
+                            markerPlcDisp = new google.maps.Marker({
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
+                                clickable: true
+                            });
+                        } else {
+                            markerPlcDisp = new google.maps.Marker({
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
+                                clickable: true
+                            });
+                        }
+                        if (response[i].available_bikes < 4) {
+                            markerVlbDisp = new google.maps.Marker({
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
+                                clickable: true
+                            });
+                        } else {
+                            markerVlbDisp = new google.maps.Marker({
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
+                                clickable: true
+                            });
+                        }
+
+                        // Quand on clique sur un marker, la map glisse et se centre sur lui
+                        google.maps.event.addListener(markerPlcDisp, "click", function (evenement) {
+                            $scope.map.panTo(evenement.latLng);
+                        });
+                        google.maps.event.addListener(markerVlbDisp, "click", function (evenement) {
+                            $scope.map.panTo(evenement.latLng);
+                        });
+                        markersPlacesDispo.push(markerPlcDisp);
+                        markersVelibDispo.push(markerVlbDisp);
+                    }
+                    $ionicLoading.hide();
+
+                }).error(function (reponse) {
+                    $ionicLoading.hide();
+                    $ionicLoading.show({
+                        template: "Impossible de récupérer les informations sur les Vélibs. Veuillez vérifier votre connexion",
+                        duration: 2000
+                    });
+
+                });
+
+            } else {
+                // Si on ne parvient pas à récupérer pas les infos, on affiche les données statiques stockées en local
+                $http.get("res/data/Paris.json").success(function (response) {
+                    for (i = 0; i < response.length; i += 1) {
+                        LatLng = new google.maps.LatLng(response[i].latitude, response[i].longitude);
+                        var marker = new google.maps.Marker({
+                            position: LatLng,
+                            icon: velibMarker,
+                            clickable: true
+                        });
+                        google.maps.event.addListener(marker, "click", function (evenement) {
+                            $scope.map.panTo(evenement.latLng);
+                        });
+                        // Dans ce cas les 2 types de markers sont les mêmes
+                        markersPlacesDispo.push(marker);
+                        markersVelibDispo.push(marker);
+                    }
+                    $ionicLoading.hide();
+                    $ionicLoading.show({
+                        template: "Vous n'êtes pas connecté, seuls les emplacements des stations Vélib' seront chargées",
+                        duration: 2000
+                    });
+                });
+
+            }
+        }, false);
+        
     };
     $scope.loadMarkers();
 
@@ -415,63 +462,68 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     $scope.centerOnMe = function () {
         isPhoneConnected();
-        // On désaffiche la carte montrant les données d'un précédent trajet
-        $scope.show_donnees_du_trajet = false;
-        // On désaffiche la recommandation
-        $scope.show_card_recommandation = false;
-        // Si la carte n'est pas définie, aucun sens
-        if (!$scope.map) {
-            return;
-        }
-        // On affiche une loading icon
-        $scope.loading = $ionicLoading.show({
-            template: 'Recherche de la position en cours...',
-            showBackdrop: false
-        });
-        navigator.geolocation.getCurrentPosition(function (pos) {
-            $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-            $scope.map.setZoom(15);
-            $ionicLoading.hide();
-
-            var posit = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-
-            if (!marker) {
-                marker = new google.maps.Marker({
-                    position: posit,
-                    map: $scope.map,
-                    title: 'You are here'
-                });
-            } else {
-                marker.setMap(null);
-                marker = new google.maps.Marker({
-                    position: posit,
-                    map: $scope.map,
-                    title: 'You are here'
-                });
+        
+        if ($cordovaNetwork.isOnline()) {
+            // On désaffiche la carte montrant les données d'un précédent trajet
+            $scope.show_donnees_du_trajet = false;
+            // On désaffiche la recommandation
+            $scope.show_card_recommandation = false;
+            // Si la carte n'est pas définie, aucun sens
+            if (!$scope.map) {
+                return;
             }
-            $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
-            $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
-                
-                var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
-                $scope.city_start = response.results[0].formatted_address;
-                // On affiche la ville de départ dans le formulaire
-                $scope.detailsCityStart = {geometry: {location: geo}};
-                document.getElementById('city_start').value = response.results[0].formatted_address;
-            }).error(function (response) {
+            // On affiche une loading icon
+            $scope.loading = $ionicLoading.show({
+                template: 'Recherche de la position en cours...',
+                showBackdrop: false
+            });
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+                $scope.map.setZoom(15);
+                $ionicLoading.hide();
+
+                var posit = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+
+                if (!marker) {
+                    marker = new google.maps.Marker({
+                        position: posit,
+                        map: $scope.map,
+                        title: 'You are here'
+                    });
+                } else {
+                    marker.setMap(null);
+                    marker = new google.maps.Marker({
+                        position: posit,
+                        map: $scope.map,
+                        title: 'You are here'
+                    });
+                }
+                $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
+                $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
+
+                    var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
+                    $scope.city_start = response.results[0].formatted_address;
+                    // On affiche la ville de départ dans le formulaire
+                    $scope.detailsCityStart = {geometry: {location: geo}};
+                    document.getElementById('city_start').value = response.results[0].formatted_address;
+                }).error(function (response) {
+                    $ionicLoading.show({
+                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
+                        duration: 2000
+                    });
+                });
+            }, function (error) {
+                $ionicLoading.hide();
                 $ionicLoading.show({
                     template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
                     duration: 2000
                 });
+            }, {
+                timeout: 15000
             });
-        }, function (error) {
-            $ionicLoading.hide();
-            $ionicLoading.show({
-                template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
-                duration: 2000
-            });
-        }, {
-            timeout: 15000
-        });
+            
+        }
+
     };
 
     /*** FONCTION PERMETTANT D'AFFICHER OU DE DESAFFICHER LA CARD "DEFINIR UN TRAJET" ***/
@@ -834,6 +886,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaKeyboard'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
