@@ -534,6 +534,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     
     $scope.showCard = function () {
+		isPhoneConnected();
         if ($scope.show_card_definir_un_trajet === true) {
             $scope.show_card_definir_un_trajet = false;
             $scope.showButtonsOnMap = true;
