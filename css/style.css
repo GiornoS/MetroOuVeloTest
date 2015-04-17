@@ -170,7 +170,7 @@
 {
     width: 90%;
     min-height: initial;
-    height: 61%;
+    height: 63%;
     position: absolute;
     top: 50px;
     left: 5%;
@@ -178,12 +178,23 @@
 
 .list-aide 
 {
-    top: 44px;
+    top: 43px;
+}
+
+.item-divider-modal-aide
+{
+    border-width: 4px;
+    border-style:groove
+}
+
+.text-modal-aide-divider 
+{
+    font-weight: bolder;
 }
 
 .icon-modal-aide 
 {
-    width: 50px;
+    width: 12%;
     right: 0px;
     
 }
