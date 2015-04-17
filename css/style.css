@@ -110,6 +110,13 @@
 {
     position:absolute;
     width:96%;
+    top: 40px;
+}
+
+.definir_un_trajet_titre_card
+{
+    background-color: #387ef5;
+    color: #ffffff;
 }
 
 .close-button-card
@@ -170,7 +177,7 @@
 {
     width: 90%;
     min-height: initial;
-    height: 63%;
+    height: 90%;
     position: absolute;
     top: 50px;
     left: 5%;
@@ -184,7 +191,7 @@
 .item-divider-modal-aide
 {
     border-width: 4px;
-    border-style:groove
+    border-style: groove;
 }
 
 .text-modal-aide-divider 
@@ -195,8 +202,7 @@
 .icon-modal-aide 
 {
     width: 12%;
-    right: 0px;
-    
+    right: 0px;  
 }
 
 
