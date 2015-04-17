@@ -41,7 +41,7 @@
     <ion-header-bar class="bar-positive header_definir_un_trajet">
        <!-- <button class="button button-icon icon ion-navicon" ng-click="openModal(3)"></button>-->
         <h1 class="title Titre-Appli"><center>{{Titre_Recommandation}}<!--<button class="button button-icon icon ion-help" ng-show="show_card_recommandation" ng-click="openModal(4)"></button>--></center></h1>
-        <button class="button button-icon icon ion-information-circled" ng-click="openModal(2)"></button>
+        <button class="button button-clear" ng-click="openModal(2)"><span class="icon ion-information-circled"></span></button>
     </ion-header-bar>
 <ion-content>
 
@@ -108,6 +108,7 @@
 <!--	<img class="button button-icon icon" src="res/img/android-locate-bis.png" id="geolocate_button" ng-click="centerOnMe()" ng-show="isKeyboardNotVisible()"></img>-->
 	<img class="button button-icon icon" src="res/img/Plus.png" id="navigate_button" ng-click="showCard()" ng-show="showButtonsOnMap"></img>
     <img class="button button-icon icon" src="res/img/android-bicycle-button.png" id="bicycle_button" ng-click="displayVelibStations()" ng-show="showButtonsOnMap"></img>
+    <img class="button button-icon icon" src="res/img/android-navigate-bisbis.png" id="cutButton" ng-click="cutThePath()" ng-show="showButtonsOnMap"></img>
 
 
 	<!--Footer qui affiche le temps de trajet et la distance   -->
@@ -154,7 +155,7 @@
                    
                     <div class="list list-aide">
                         <div class="item item-divider">
-                            Quelques boutons
+                            Actions
                         </div>
                         <div class="item item-list-aide">
                             <img class="icon icon-modal-aide" src="res/img/Plus.png"></img>

@@ -46,6 +46,16 @@
 	right:10px;
 }*/
 
+#cutButton
+{
+    z-index:10;
+	position:absolute;
+    width:60px;
+    height:10px;
+	bottom:160px;
+	left:10px;
+}
+
 #navigate_button
 {
 	z-index:10;
@@ -160,7 +170,7 @@
 {
     width: 90%;
     min-height: initial;
-    height: 90%;
+    height: 61%;
     position: absolute;
     top: 50px;
     left: 5%;
@@ -168,7 +178,7 @@
 
 .list-aide 
 {
-    top: 45px;
+    top: 44px;
 }
 
 .icon-modal-aide 
@@ -185,27 +195,27 @@
     top: 40%;
     left: 75px;
     font-size: 1.1em;
-    font-weight: 500;
-/*
-    color: #0098ff;   
-*/
+    font-weight: 900;
+    color: #666666;   
 }
 
 .item2 
 {
     width: 80%;
-    font-weight: bold;
-
 }
 
 .p1
 {
-    top: 22%;
+    top: 21%;
+    color: #000000;
+    font-weight: 900;
 }
 
 .p2 
 {
     top: 53%;
+    color: #000000;
+    font-weight: 900;
 }
 
 .text-item3 
@@ -213,7 +223,8 @@
     position: absolute;
     left: 75px;
     font-size: 1.1em;
-    font-weight: 500;
+    font-weight: 900;
+    color: #666666;
 }
 
 .modal_affichage_trajet
