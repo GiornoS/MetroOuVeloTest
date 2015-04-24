@@ -98,7 +98,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         document.addEventListener("deviceready", function () {
             if ($cordovaNetwork.isOffline()) {
                 $ionicLoading.show({
-                    template: "Votre appareil est déconnecté de tout réseau. Afin d'utiliser cette application à son plein potentiel, veuillez vous connecter",
+                    template: "L'appareil n'a pas accès à internet ! Veuillez vous connecter pour utiliser l'application",
                     duration: 3000
                 });
             }
