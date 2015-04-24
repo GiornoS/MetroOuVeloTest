@@ -136,14 +136,15 @@
 {
     top: -10px;
     width: 90%;
+    z-index: 10;
 }
 
 .geolocate-button 
 {
     position:absolute;
     top : -7px;
-    right:0px;
-    z-index: 999;
+    right:-7px;
+    z-index: 20;
     color: #387ef5;
 }
 
@@ -197,13 +198,16 @@
 
 .item-divider-modal-aide
 {
-    border-width: 4px;
-    border-style: groove;
+    /*background-color: #659af5;*/
+    background-color: #b5bfd1;
 }
 
 .text-modal-aide-divider 
 {
     font-weight: bolder;
+/*
+    color: #387ef5;
+*/
 }
 
 .icon-modal-aide 
