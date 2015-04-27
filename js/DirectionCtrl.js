@@ -98,7 +98,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         document.addEventListener("deviceready", function () {
             if ($cordovaNetwork.isOffline()) {
                 $ionicLoading.show({
-                    template: "L'appareil n'a pas accès à internet ! Veuillez vous connecter pour utiliser l'application",
+                    template: "L'appareil n'a pas accès à internet ! Veuillez vérifier votre connection avant d'utiliser l'application.",
                     duration: 3000
                 });
             }
@@ -118,7 +118,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     function httpError(response) {
         $ionicLoading.hide();
         $ionicLoading.show({
-            template: "Impossible de récupérer les informations météorologiques. Veuillez vérifier votre connexion",
+            template: "Impossible de récupérer les informations météorologiques. Veuillez vérifier votre connexion.",
             duration: 2000
         });
     }
@@ -409,7 +409,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 }).error(function (reponse) {
                     $ionicLoading.hide();
                     $ionicLoading.show({
-                        template: "Impossible de récupérer les informations sur les Vélibs. Veuillez vérifier votre connexion",
+                        template: "Impossible de récupérer les informations sur les Vélibs. Veuillez vérifier votre connexion.",
                         duration: 2000
                     });
 
@@ -434,7 +434,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     }
                     $ionicLoading.hide();
                     $ionicLoading.show({
-                        template: "Vous n'êtes pas connecté, seuls les emplacements des stations Vélib' seront chargées",
+                        template: "Vous n'êtes pas connecté, seuls les emplacements des stations Vélib' seront chargées.",
                         duration: 2000
                     });
                 });
@@ -508,14 +508,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     document.getElementById('city_start').value = response.results[0].formatted_address;
                 }).error(function (response) {
                     $ionicLoading.show({
-                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
+                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
                         duration: 2000
                     });
                 });
             }, function (error) {
                 $ionicLoading.hide();
                 $ionicLoading.show({
-                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion",
+                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
                     duration: 2000
                 });
             }, {
@@ -678,7 +678,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }).error(function (response) {
                 $ionicLoading.hide();
                 $ionicLoading.show({
-                    template: "Impossible de récupérer les données des transports en commun",
+                    template: "Impossible de récupérer les données des transports en commun.",
                     duration: 1000
                 });
                 $scope.loading = $ionicLoading.show({
