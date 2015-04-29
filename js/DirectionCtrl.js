@@ -80,11 +80,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.recommandation = "Prenez donc le MÉTRO !";
             $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
         } else {
-            alert($scope.donneesVelibPlusProche);
-            alert($scope.transportsStationsProches);
             
             distanceStationMetroDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.transportsStationsProches.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
             distanceStationVelibDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.donneesVelibPlusProche.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
+            alert(distanceStationMetroDestination);
+            alert(distanceStationVelibDestination);
             if (distanceStationMetroDestination > distanceStationVelibDestination) {
                 $scope.recommandation = "Prenez donc le VÉLO !";
                 $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
@@ -99,7 +99,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }
 
         }
-        // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
+        
         $ionicLoading.hide();
         
     }
