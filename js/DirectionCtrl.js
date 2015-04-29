@@ -772,7 +772,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 travelMode    : google.maps.DirectionsTravelMode.BICYCLING, // Mode de conduite
                 unitSystem    : google.maps.UnitSystem.METRIC
             };
-            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+          
 
             directionsService.route(request, function (response, status) { // Envoie de la requête pour calculer le parcours
                 if (status === google.maps.DirectionsStatus.OK) {
@@ -783,13 +783,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     
                     requestNearbySearch = {
                         location : city_end.geometry.location,
-                        radius : '2000',
+                        rankBy : google.maps.places.RankBy.DISTANCE,
                         types : ['subway_station']
                     };
                     
                     $scope.placesService.nearbySearch(requestNearbySearch, function (results, status) {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
-                            $scope.transportsStationsProches = getNearestStation(city_end.geometry.location, results);
+                            $scope.transportsStationsProches = results[0];
                         }
                     });
                     
@@ -798,7 +798,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     $scope.show_donnees_du_trajet = true;
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
                     // On cherche la station de vélib la plus proche
-                    $scope.stationVelibPlusProche(response.routes[0].legs[0].end_location);
+                    stationVelibPlusProche(response.routes[0].legs[0].end_location);
 
           
                
@@ -816,7 +816,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
 
 
-    /*** DONCTION PERMETTANT D'UTILISER L'AUTOCOMPLETION POUR PROPOSER DES CHOIX A l4UTILISATUER ENTRANT UNE ADRESSE ***/
+    /*** DONCTION PERMETTANT D'UTILISER L'AUTOCOMPLETION POUR PROPOSER DES CHOIX A l'UTILISATEUR ENTRANT UNE ADRESSE ***/
     
     /**
     *** @param id1 : id de la balise HTML d'où il faut récupérer la city_start et proposer l'autocomplétion
