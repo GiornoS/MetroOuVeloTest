@@ -80,6 +80,9 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.recommandation = "Prenez donc le MÉTRO !";
             $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
         } else {
+            alert($scope.donneesVelibPlusProche);
+            alert($scope.transportsStationsProches);
+            
             distanceStationMetroDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.transportsStationsProches.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
             distanceStationVelibDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.donneesVelibPlusProche.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
             if (distanceStationMetroDestination > distanceStationVelibDestination) {
