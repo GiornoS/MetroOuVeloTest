@@ -164,6 +164,7 @@
 .card_recommandation
 {
     position: absolute;
+    top : 30px;
     z-index: 10;
     width: 96%;    
 }

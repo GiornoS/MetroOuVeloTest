@@ -43,13 +43,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
     // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplay, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig, directionsService, placesService, distanceStationMetroDestination, distanceStationVelibDestination;
     
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
     // Pour utiliser google il faut être connecté !
     document.addEventListener("deviceready", function () {
         if ($cordovaNetwork.isOnline()) {
             directionsDisplay = new google.maps.DirectionsRenderer(); // Google Object pour afficher le trajet sur la carte
+            directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
         }
     }, false);
     
@@ -75,12 +76,25 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     function recommend() {
         $scope.show_card_recommandation = true;
-        if ($scope.weather.hourly.data[0].icon === "rain") {
+        if ($scope.weather.hourly.data[0].icon === "rain" || $scope.weather.hourly.data[0].icon === "snow") {
             $scope.recommandation = "Prenez donc le MÉTRO !";
             $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
         } else {
-            $scope.recommandation = "Prenez donc le VÉLO !";
-            $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
+            distanceStationMetroDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.transportsStationsProches.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
+            distanceStationVelibDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.donneesVelibPlusProche.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
+            if (distanceStationMetroDestination > distanceStationVelibDestination) {
+                $scope.recommandation = "Prenez donc le VÉLO !";
+                $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
+            } else {
+                if (distanceStationVelibDestination < 200) {
+                    $scope.recommandation = "Prenez donc le VÉLO !";
+                    $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
+                } else {
+                    $scope.recommandation = "Prenez donc le MÉTRO !";
+                    $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
+                }
+            }
+
         }
         // On le remet une deuxième fois pour corriger un bug sur Android 4.4 et sup
         $ionicLoading.hide();
@@ -307,6 +321,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
         directionsDisplay.setMap(map);
         $scope.map = map;
+        $scope.placesService = new google.maps.places.PlacesService(map);
     }
     
 
@@ -599,6 +614,67 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
     
+    
+    /*** FONCTION PERMETTANT DE CALCULER LA DISTANCE ENTRE UN LATLNG ET LES STATIONS DE METROS DES ALENTOURS ***/
+    
+    function getNearestStation(location, stations) {
+        
+        var nearestStationTemp = google.maps.geometry.spherical.computeDistanceBetween(location, stations[0].geometry.location), nearestStationIndice = 0;
+        for (i = 1; i < stations.length; i = i + 1) {
+            if (google.maps.geometry.spherical.computeDistanceBetween(location, stations[i].geometry.location) < nearestStationTemp) {
+                nearestStationTemp = google.maps.geometry.spherical.computeDistanceBetween(location, stations[i].geometry.location);
+                nearestStationIndice = i;
+            }
+        }
+        return stations[nearestStationIndice];
+    }
+    
+    
+    /*** FONCTION PERMETTANT DE DETERMINER LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT ***/
+    
+    /**
+    *** @param LatLng address : Googe Object pcorrespondant à la position de l'adresse d'arrivée
+    ***
+    *** @return JSONObject $scope.donneesVelibPlusProche : contient toutes les infos utiles pour connaître le trajet à pied entre la station vélib la plus proche de la                                                                      destination et la destination elle-même
+    **/
+    
+    function stationVelibPlusProche(address) {
+        // Calcul d'un minimum, on calcule la distance géodésique, donc approximative entre chaque station et la destination, on garde le minimum de ces distances, qui, on le suppose, va aussi être le minimum de la distance à pied
+        var distanceMini, stationPlusProche, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
+        // On initialise la station la plus proche comme étant la première de la liste
+        stationPlusProche = markersVelibDispo[0];
+        stationLatLng = new google.maps.LatLng(markersVelibDispo[0].position.lat(), markersVelibDispo[0].position.lng());
+        distanceMini = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
+        // Boucle for de calcul de minimum
+        for (i = 1; i < markersVelibDispo.length; i += 1) {
+            stationLatLng = new google.maps.LatLng(markersVelibDispo[i].position.lat(), markersVelibDispo[i].position.lng());
+            distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
+            // Si la distance calculée est plus petite, on la garde comme minimum
+            if (distanceTemp < distanceMini) {
+                distanceMini = distanceTemp;
+                stationPlusProche = markersVelibDispo[i];
+            }
+        }
+        // Une fois qu'on a trouvé la distance minimum, on envoie une requête à l'API Google Direction afin de déterminer la véritable distance à pied entre la station de vélib la plus proche et la destination voulue
+        stationLatLngPlusProche = new google.maps.LatLng(stationPlusProche.position.lat(), stationPlusProche.position.lng());
+        request = {
+            origin        : stationLatLngPlusProche,
+            destination   : address,
+            travelMode    : google.maps.DirectionsTravelMode.WALKING, // Mode de conduite
+            unitSystem    : google.maps.UnitSystem.METRIC
+        };
+        directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
+
+        directionsService.route(request, function (response, status) {
+            // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
+            $scope.donneesVelibPlusProche = response.routes[0].legs[0];
+        });
+        
+    }
+    
+    
+    
+    
     /*** FONCTION PERMETTANT DE CALCULER UN TRAJET A UN INSTANT DONNE ***/
     
     /**
@@ -649,7 +725,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
 
             // Distinction de cas selon que l'utilisateur a choisi une heure et une minute, ou non. Si non, on définit la minute ou l'heure choisie par l'heure ou la minute actuelle
-            var jour, jour_bis, mois, mois_bis, annee, heure_choisie_bis, minute_choisie_bis, date_complete, date_complete_format_navitia, request, directionsService;
+            var jour, jour_bis, mois, mois_bis, annee, heure_choisie_bis, minute_choisie_bis, date_complete, date_complete_format_navitia, request, requestNearbySearch;
             jour = d.getDate().toString();
             mois = (d.getMonth() + 1).toString();
             annee = d.getFullYear().toString();
@@ -673,8 +749,8 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 date_complete_format_navitia = annee + mois_bis + jour_bis + "T" + heure_choisie_bis + minute_choisie_bis + "00";
                 millisecondes_unix = Date.parse(date_complete);
             }
-            $http.get("https://api.navitia.io/v1/journeys?from=" + CITYSTART.geometry.location.lng() + ";" + CITYSTART.geometry.location.lat() + "&to=" + city_end.geometry.location.lng() + ";" + city_end.geometry.location.lat() + "&datetime=" + date_complete_format_navitia, headerConfig).success(function (response) {
-                alert(response.journeys[0].sections[response.journeys[0].sections.length - 1]);
+            /*$http.get("https://api.navitia.io/v1/journeys?from=" + CITYSTART.geometry.location.lng() + ";" + CITYSTART.geometry.location.lat() + "&to=" + city_end.geometry.location.lng() + ";" + city_end.geometry.location.lat() + "&datetime=" + date_complete_format_navitia, headerConfig).success(function (response) {
+                //alert(response.journeys[0].sections[response.journeys[0].sections.length - 1]);
             }).error(function (response) {
                 $ionicLoading.hide();
                 $ionicLoading.show({
@@ -685,7 +761,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     template: 'Calcul du trajet en cours...',
                     showBackdrop: false
                 });
-            });
+            });*/
 
             request = {
                 origin        : CITYSTART.geometry.location,
@@ -704,6 +780,20 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     directionsDisplay.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
                     
                     $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
+                    
+                    requestNearbySearch = {
+                        location : city_end.geometry.location,
+                        radius : '2000',
+                        types : ['subway_station']
+                    };
+                    
+                    $scope.placesService.nearbySearch(requestNearbySearch, function (results, status) {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            $scope.transportsStationsProches = getNearestStation(city_end.geometry.location, results);
+                        }
+                    });
+                    
+                    
                     // On affiche le footer avec la distance et la durée
                     $scope.show_donnees_du_trajet = true;
                     $scope.showCard(); //on cache la carte de défintion d'itinéraire
@@ -826,48 +916,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
     
 
-    /*** FONCTION PERMETTANT DE DETERMINER LA STATION VELIB LA PLUS PROCHE DE LA DESTINATION ET CALCUL DE LA DISTANCE LES SEPARANT ***/
-    
-    /**
-    *** @param LatLng address : Googe Object pcorrespondant à la position de l'adresse d'arrivée
-    ***
-    *** @return JSONObject $scope.donneesVelibPlusProche : contient toutes les infos utiles pour connaître le trajet à pied entre la station vélib la plus proche de la                                                                      destination et la destination elle-même
-    **/
-    
-    $scope.stationVelibPlusProche = function (address) {
-        // Calcul d'un minimum, on calcule la distance géodésique, donc approximative entre chaque station et la destination, on garde le minimum de ces distances, qui, on le suppose, va aussi être le minimum de la distance à pied
-        var distanceMini, stationPlusProche, distanceTemp, stationLatLng, request, directionsService, stationLatLngPlusProche;
-        // On initialise la station la plus proche comme étant la première de la liste
-        stationPlusProche = markersVelibDispo[0];
-        stationLatLng = new google.maps.LatLng(markersVelibDispo[0].position.lat(), markersVelibDispo[0].position.lng());
-        distanceMini = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
-        // Boucle for de calcul de minimum
-        for (i = 1; i < markersVelibDispo.length; i += 1) {
-            stationLatLng = new google.maps.LatLng(markersVelibDispo[i].position.lat(), markersVelibDispo[i].position.lng());
-            distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
-            // Si la distance calculée est plus petite, on la garde comme minimum
-            if (distanceTemp < distanceMini) {
-                distanceMini = distanceTemp;
-                stationPlusProche = markersVelibDispo[i];
-            }
-        }
-        // Une fois qu'on a trouvé la distance minimum, on envoie une requête à l'API Google Direction afin de déterminer la véritable distance à pied entre la station de vélib la plus proche et la destination voulue
-        stationLatLngPlusProche = new google.maps.LatLng(stationPlusProche.position.lat(), stationPlusProche.position.lng());
-        request = {
-            origin        : stationLatLngPlusProche,
-            destination   : address,
-            travelMode    : google.maps.DirectionsTravelMode.WALKING, // Mode de conduite
-            unitSystem    : google.maps.UnitSystem.METRIC
-        };
-        directionsService = new google.maps.DirectionsService(); // Service de calcul d'itinéraire
-
-        directionsService.route(request, function (response, status) {
-            // On sauvegarde les données du trajet à pied pour les afficher dans a page (on affiche la distance et la durée)
-            $scope.donneesVelibPlusProche = response.routes[0].legs[0];
-            $scope.donneesVelibPlusProchechargees = true;
-        });
-        
-    };
 
 
     /***  GOOGLE ANALYTICS  ***/
