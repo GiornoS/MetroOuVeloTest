@@ -689,20 +689,23 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         isPhoneConnected();
-        $scope.donneesVelibPlusProchechargees = false;
         // Récupère la location de départ voulue (géolocalisation ou adresse entrée)
         var CITYSTART;
         // On vérifie si c'est la géolocalisation qui est utilisée ou non
         if ($scope.city_start === document.getElementById("city_start").value) {
             CITYSTART = $scope.detailsCityStart;
         } else {
-            CITYSTART = city_start;
-            // Permet de remplacer la première entrée du formulaire par sa vraie valeur
-            $scope.city_start = city_start.address_formatted;
-            if (city_start.address_components[0].short_name === "FR") {
-                $scope.city_start = city_start.name + ", Paris, France";
+            if (city_start.name + ", Paris, France" === document.getElementById("city_start").value || city_start.formatted_address === document.getElementById("city_start").value) {
+                CITYSTART = city_start;
+                // Permet de remplacer la première entrée du formulaire par sa vraie valeur
+                $scope.city_start = city_start.formatted_address;
+                if (city_start.address_components[0].short_name === "FR") {
+                    $scope.city_start = city_start.name + ", Paris, France";
+                }
             }
+
         }
+
 
 
 
