@@ -519,6 +519,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
                     var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
                     $scope.city_start = response.results[0].formatted_address;
+                    $scope.verif_city_start = response.results[0].formatted_address;
                     // On affiche la ville de départ dans le formulaire
                     $scope.detailsCityStart = {geometry: {location: geo}};
                     document.getElementById('city_start').value = response.results[0].formatted_address;
@@ -689,10 +690,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie) {
         isPhoneConnected();
-        // Récupère la location de départ voulue (géolocalisation ou adresse entrée)
-        var CITYSTART;
+ // Récupère la location de départ voulue (géolocalisation ou adresse entrée)
+        var CITYSTART, CITYEND;
         // On vérifie si c'est la géolocalisation qui est utilisée ou non
-        if ($scope.city_start === document.getElementById("city_start").value) {
+        if ($scope.verif_city_start === document.getElementById("city_start").value) {
             CITYSTART = $scope.detailsCityStart;
         } else {
             if (city_start.name + ", Paris, France" === document.getElementById("city_start").value || city_start.formatted_address === document.getElementById("city_start").value) {
@@ -703,14 +704,22 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     $scope.city_start = city_start.name + ", Paris, France";
                 }
             }
-
         }
 
+        if (city_end.formatted_address === document.getElementById("city_end").value) {
+            CITYEND = city_end;
+        } else {
+            if (city_end.name + ", Paris, France" === document.getElementById("city_end").value || city_end.formatted_address === document.getElementById("city_end").value) {
+                CITYEND = city_end;
+            }
+        }
+        
+        // Permet de sauvegarder les entrées du dernier chemin calculé dans le cas du recalcule lors d'un changement de moyen de transport
 
 
 
 
-        if (CITYSTART && city_end) {
+        if (CITYSTART && CITYEND) {
             document.addEventListener("deviceready", function () {
                 function waitForAnalytics() {
                     if (typeof analytics !== 'undefined') {
@@ -769,7 +778,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
             request = {
                 origin        : CITYSTART.geometry.location,
-                destination   : city_end.geometry.location,
+                destination   : CITYEND.geometry.location,
                 transitOptions: {
                     departureTime: new Date(millisecondes_unix)
                 },
@@ -786,7 +795,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
                     
                     requestNearbySearch = {
-                        location : city_end.geometry.location,
+                        location : CITYEND.geometry.location,
                         rankBy : google.maps.places.RankBy.DISTANCE,
                         types : ['subway_station']
                     };
