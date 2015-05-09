@@ -3,7 +3,7 @@ var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaVibration, $cordovaEmailComposer) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaVibration, $cordovaEmailComposer, $cordovaGeolocation) {
 
     'use strict';
    
@@ -45,7 +45,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
     // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplayMiddle, directionsDisplayStart, directionsDisplayEnd, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig, directionsService, placesService, distanceStationMetroDestination, distanceStationVelibArriveeDestination, mytimeout, counter, email, distanceStationVelibDepartDestination;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplayMiddle, directionsDisplayStart, directionsDisplayEnd, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig, directionsService, placesService, distanceStationMetroDestination, distanceStationVelibArriveeDestination, mytimeout, counter, email, distanceStationVelibDepartDestination, posOptions;
     
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
     document.addEventListener("deviceready", function () {
@@ -100,7 +100,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         ],*/
         subject: 'Application Métro ou Vélib ?'
     };
-    
+    posOptions = {timeout: 10000, enableHighAccuracy: true};
     
     
     
@@ -155,6 +155,16 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 // Vibre 1000ms
                 $cordovaVibration.vibrate(1000);
                 remaining = 1; // ?????
+                
+                $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                    $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
+                }, function (err) {
+                    $ionicLoading.show({
+                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
+                        duration: 2000
+                    });
+
+                });
             }, false);
 /*            navigator.geolocation.getCurrentPosition(function (pos) {
                 alert('pos');
@@ -167,11 +177,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             }, {
                 timeout: 15000
             });*/
-            $scope.centerOnMe();
+/*            $scope.centerOnMe();
             $timeout(function () {
                 $scope.calculate($scope.detailsCityStart, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-            }, 1000);
+            }, 500);*/
         }
+            
     });
     
     /*** FONCTION PERMETTANT DE DECLENCHER LE TIMER ***/
@@ -1074,7 +1085,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         $scope.donneesSauvegardees = [CITYSTART, CITYEND, minute_choisie, heure_choisie];
         
         if (forceToUseGeoloc) {
-            CITYSTART = $scope.detailsCityStart;
+            CITYSTART = {geometry : {location : new google.maps.LatLng(city_start.coords.latitude, city_start.coords.longitude)}};
         }
         if (CITYSTART && CITYEND) {
             stationVelibPlusProche(CITYSTART.geometry.location, true, "depart");
@@ -1380,6 +1391,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaVibration', '$cordovaEmailComposer'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaVibration', '$cordovaEmailComposer', '$cordovaGeolocation'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
