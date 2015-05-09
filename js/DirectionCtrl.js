@@ -45,7 +45,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     // On charge les markers des stations de vélib au démarrage. On créé 2 listes de markers : une avec le nb de places restantes pour poser son vélo, et une avec le nb de vélibs libres/
     // Les MarkerClusterer permettent de regrouper les markers proches ensemble afin d'éviter une surdensité de markers
-    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplayMiddle, directionsDisplayStart, directionsDisplayEnd, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig, directionsService, placesService, distanceStationMetroDestination, distanceStationVelibDestination, mytimeout, counter, email;
+    var d, FORECASTIO_KEY, heureARegarder, millisecondes_unix, monthFormatted, DayFormatted, HourFormatted, directionsDisplayMiddle, directionsDisplayStart, directionsDisplayEnd, mapToReload, marker, markersPlacesDispo, markersVelibDispo, LatLng, i, VelibKey, velibMarker, MarkerClustererPlc, MarkerClustererVlb, MCOptionsVlb, MCOptionsPlc, ClusterStylesPlc, ClusterStylesVlb, heure_choisie, minute_choisie, dateHasBeenPicked, areMarkersDisplayed, headerConfig, directionsService, placesService, distanceStationMetroDestination, distanceStationVelibArriveeDestination, mytimeout, counter, email, distanceStationVelibDepartDestination;
     
     FORECASTIO_KEY = '1706cc9340ee8e2c6c2fecd7b9dc5a1c'; // API key pour récuperer les données météorologiques d'un endroit à un instant donné
     document.addEventListener("deviceready", function () {
@@ -170,7 +170,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.centerOnMe();
             $timeout(function () {
                 $scope.calculate($scope.detailsCityStart, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-            }, 500);
+            }, 1000);
         }
     });
     
@@ -334,13 +334,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.Titre_Recommandation = "Prenez donc le MÉTRO !";
         } else {
             distanceStationMetroDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.transportsStationsProches.geometry.location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
-            distanceStationVelibDestination = google.maps.geometry.spherical.computeDistanceBetween($scope.donneesVelibPlusProche.start_location, $scope.donnees_du_trajet.routes[0].legs[0].end_location);
+            distanceStationVelibArriveeDestination = $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].distance.value;
+            distanceStationVelibDepartDestination = $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].distance.value;
 
-            if (distanceStationMetroDestination > distanceStationVelibDestination) {
+            if (distanceStationMetroDestination > distanceStationVelibArriveeDestination) {
                 $scope.recommandation = "Prenez donc le VÉLO !";
                 $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
             } else {
-                if (distanceStationVelibDestination < 200) {
+                if (distanceStationVelibArriveeDestination < 200) {
                     $scope.recommandation = "Prenez donc le VÉLO !";
                     $scope.Titre_Recommandation = "Prenez donc le VÉLO !";
                 } else {
@@ -582,7 +583,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         
         $scope.placesService = new google.maps.places.PlacesService(map);
         
-        // Récupère les réglages enregistrés en local pour les différentes options. Si aucun réglage trouvé (premier lancement), true est par défaut.
+/*        // Récupère les réglages enregistrés en local pour les différentes options. Si aucun réglage trouvé (premier lancement), true est par défaut.
         if (localStorage.getItem("prefDecoupageDuTrajet") === null) {
             localStorage.setItem("prefDecoupageDuTrajet", "true");
             $scope.decoupageDuTrajetInit = true;
@@ -608,7 +609,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         // Si l'utilisateur a choisi l'option de géolocalisation au lancement, on le géolocalise
         if ($scope.geolocalisationInit) {
             $scope.centerOnMe();
-        }
+        }*/
     
     }
 
@@ -1237,6 +1238,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                             }, 1000);
                         } else {
                             $ionicLoading.hide(); // Si c'est un recalcul, il faut juste arrêter de montrer l'icône de chargement
+                            // On cherche la météo pour afficher la recommandation
+                            $timeout(function () {
+                                $ionicLoading.hide();
+                                $scope.searchWeather(response.routes[0].legs[0].end_location);
+                            }, 1000);
                         }
                         //Si aucun résultat n'a été trouvé (lorsque le mode de transport est transports publics)
                     } else if (status === google.maps.DirectionsStatus.ZERO_RESULTS) {
