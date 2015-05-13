@@ -154,7 +154,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             document.addEventListener("deviceready", function () {
                 // Vibre 1000ms
                 $cordovaVibration.vibrate(1000);
-                remaining = 1; // ?????
                 
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                     $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
@@ -1169,6 +1168,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                             directionsDisplayStart.setMap($scope.map);
                             directionsDisplayEnd.setMap($scope.map);
                             
+                            // Affichage des temps de trajets et distances en prenant en compte toutes les étapes du trajet (marcher jusqu'à la station, marcher de la station à la destination)
                             if (response.routes[0].legs[0].distance.value + $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].distance.value + $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].distance.value > 1000) {
                                 $scope.effectiveDistance = Math.floor((response.routes[0].legs[0].distance.value + $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].distance.value + $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].distance.value) / 100, 3) / 10 + " km";
                             } else {
@@ -1193,12 +1193,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                             markerDepart = new google.maps.Marker({
                                 position: $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].start_location,
                                 map: $scope.map,
-                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=A|a71212|ffffff"
+                                icon: "res/img/marker/Depart.png"
                             });
                             markerArrivee = new google.maps.Marker({
                                 position: $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].end_location,
                                 map: $scope.map,
-                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=B|358137|ffffff"
+                                icon: "res/img/marker/Arrivee.png"
                             });
                             $scope.markersToErase = [$scope.donneesVelibPlusProcheDepart.station, $scope.donneesVelibPlusProcheArrivee.station, markerDepart, markerArrivee];
                             
@@ -1339,11 +1339,11 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 $scope.heure_choisie = $scope.datePicked.getHours();
                 $scope.minute_choisie = $scope.datePicked.getMinutes();
                 
-                // On ajoute un 0 pour que ça affiche 01:02 et non 1:2
-                if (minute_choisie < 10) {
+                // On ajoute un 0 pour que ça affiche 01:02 et non 1:2 // Changer minute_choisie par $scope.minute_choisie => marche ??
+                if ($scope.minute_choisie < 10) {
                     $scope.minute_choisie = "0" + $scope.minute_choisie;
                 }
-                if (heure_choisie < 10) {
+                if ($scope.heure_choisie < 10) {
                     $scope.heure_choisie = "0" + $scope.heure_choisie;
                 }
             });
