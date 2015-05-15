@@ -3,7 +3,7 @@ var carte = angular.module('carte', ['ionic', 'ngCordova', 'google.places']);
 
 
 
-function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaVibration, $cordovaEmailComposer, $cordovaGeolocation) {
+function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAnalytics, $ionicModal, $cordovaDatePicker, $timeout, $cordovaNetwork, $cordovaVibration, $cordovaEmailComposer, $cordovaGeolocation, $ionicPopup) {
 
     'use strict';
    
@@ -104,7 +104,25 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.showEraseIconStart = false;
     $scope.showEraseIconEnd = false;
  
-    
+    $scope.showAlert = function () {
+        var alertPopup = $ionicPopup.alert({
+            title: "Vous êtes partis il y a 22 minutes !",
+            template: "<p>Vous devriez chercher ranger votre Vélib' si vous ne voulez pas avoir à payer de supplément (après 30 minutes d'utilisation).</p> <p>En appuyant sur le bouton ci-dessous vous pourrez recalculer le trajet et trouver la station de Vélibs la plus proche pour garer votre Vélib', en prendre un autre, et continuer votre trajet !</p>",
+            okText: 'Recalculer le trajet'
+        });
+        alertPopup.then(function (res) {
+            $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
+                $scope.timerStopper();
+            }, function (err) {
+                $ionicLoading.show({
+                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
+                    duration: 2000
+                });
+
+            });
+        });
+    };
     
     $scope.clearText = function (index) {
         if (index === 1) {
@@ -182,17 +200,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         if (remaining === 0) {
             document.addEventListener("deviceready", function () {
                 // Vibre 1000ms
+                
                 $cordovaVibration.vibrate(1000);
-                $scope.timerStopper();
-                $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                    $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-                }, function (err) {
-                    $ionicLoading.show({
-                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
-                        duration: 2000
-                    });
-
-                });
+                $scope.showAlert();
+                
             }, false);
 /*            navigator.geolocation.getCurrentPosition(function (pos) {
                 alert('pos');
@@ -1422,6 +1433,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
 }
 
-DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaVibration', '$cordovaEmailComposer', '$cordovaGeolocation'];
+DirectionCtrl.$inject = ['$scope', '$http', '$ionicLoading', '$compile', '$cordovaGoogleAnalytics', '$ionicModal', '$cordovaDatePicker', '$timeout', '$cordovaNetwork', '$cordovaVibration', '$cordovaEmailComposer', '$cordovaGeolocation', '$ionicPopup'];
 
 carte.controller('DirectionCtrl', DirectionCtrl);
