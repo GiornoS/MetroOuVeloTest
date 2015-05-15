@@ -103,6 +103,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     posOptions = {timeout: 10000, enableHighAccuracy: true};
     $scope.showEraseIconStart = false;
     $scope.showEraseIconEnd = false;
+    $scope.wannaRecalculate = true;
  
     $scope.showAlert = function () {
         var alertPopup = $ionicPopup.alert({
@@ -184,6 +185,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     };
  
     $scope.startTimer = function () {
+        $scope.wannaRecalculate = true;
         mytimeout = $timeout($scope.onTimeout, 1000);
     };
  
@@ -198,13 +200,18 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
     $scope.$on('timer-stopped', function (event, remaining) {
         if (remaining === 0) {
-            document.addEventListener("deviceready", function () {
-                // Vibre 1000ms
+            if ($scope.wannaRecalculate) {
                 
-                $cordovaVibration.vibrate(1000);
-                $scope.showAlert();
-                
-            }, false);
+            
+                document.addEventListener("deviceready", function () {
+                    // Vibre 1000ms
+
+                    $cordovaVibration.vibrate(1000);
+                    $scope.showAlert();
+
+                }, false);
+                $scope.wannaRecalculate = false;
+            }
 /*            navigator.geolocation.getCurrentPosition(function (pos) {
                 alert('pos');
                 $scope.calculate(pos, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
