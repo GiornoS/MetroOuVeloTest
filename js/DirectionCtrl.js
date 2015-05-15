@@ -113,8 +113,13 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         });
         alertPopup.then(function (res) {
             $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                $ionicLoading.show({
+                    template: "Calcul du nouveau trajet en cours...",
+                });
                 $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-                $scope.timerStopper();
+                $timeout(function () {
+                    $scope.timerStopper();
+                }, 1000);
             }, function (err) {
                 $ionicLoading.show({
                     template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
@@ -1133,6 +1138,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         if (forceToUseGeoloc) {
             CITYSTART = {geometry : {location : new google.maps.LatLng(city_start.coords.latitude, city_start.coords.longitude)}};
         }
+        
         if (CITYSTART && CITYEND) {
             stationVelibPlusProche(CITYSTART.geometry.location, true, "depart");
             stationVelibPlusProche(CITYEND.geometry.location, true, "arrivee");
