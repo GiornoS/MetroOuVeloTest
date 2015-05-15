@@ -113,11 +113,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         });
         alertPopup.then(function (res) {
             $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                $ionicLoading.show({
-                    template: "Calcul du nouveau trajet en cours...",
+                $scope.loading = $ionicLoading.show({
+                    template: "Calcul du nouveau trajet en cours..."
                 });
-                $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
                 $timeout(function () {
+                    $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
+                
                     $scope.timerStopper();
                 }, 1000);
             }, function (err) {
@@ -1155,6 +1156,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                 }
                 waitForAnalytics();
             }, false);
+            $ionicLoading.hide();
             $scope.loading = $ionicLoading.show({
                 template: 'Calcul du trajet en cours...',
                 showBackdrop: false
