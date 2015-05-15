@@ -69,14 +69,17 @@
 	
                 <label class="item item-input search_start">
 				    <i class="icon ion-search placeholder-icon"></i>
-					<input type="search" placeholder="D'où partez vous ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityStart" ng-model="city_start" name="city_start" id="city_start"> 
+					<input type="search" placeholder="D'où partez vous ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityStart" ng-model="city_start" name="city_start" id="city_start" ng-blur="showEraseOnTap(1)" ng-focus="showEraseOnTap(1)"> 
+                    
                 </label>
+               <!-- <img ng-click="clearText(1)" src="res/img/erase.png" class="icon button button-icon erase-icon-start" ng-show="showEraseIconStart"></img> -->
                 <a ng-click="centerOnMe()" class="button button-icon icon ion-android-locate geolocate-button"></a>
                
                 <label class="item item-input search_end">
 					<a class="icon ion-search placeholder-icon"></a>
-					<input type="search" placeholder="Où voulez-vous aller ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityEnd" ng-model="city_end" name="city_end" id="city_end">
+					<input type="search" placeholder="Où voulez-vous aller ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityEnd" ng-model="city_end" name="city_end" id="city_end" ng-blur="showEraseOnTap(2)" ng-focus="showEraseOnTap(2)">
 				</label>
+               <!--  <img ng-click="clearText(2)" src="res/img/erase.png" class="icon button button-icon erase-icon-end" ng-show="showEraseIconEnd"></img> -->
             </div>
             <div class="heure_de_depart">
                 Départ à :
@@ -207,7 +210,7 @@
         <ion-header-bar class="bar-positive">
             <h1 class="title"><center>Configuration</center></h1>
         </ion-header-bar>
-        <ion-content>
+        <ion-content scroll="false">
 <!--
             <img class="icon icon-menu" src="res/img/bandeaumetrovelibBIS.png"></img>
 -->
@@ -229,15 +232,20 @@
                 </div>
             </ul>
             <ul class="list fin-menu">
-                <!--        <div class="button button-clear" ng-click="openModal(2)"><span class="icon ion-information-circled"></span></div>-->
-                 <a class="item item-icon-left item-positive" ng-click="openModal(2)">
-                    <i class="icon ion-information-circled"></i>
-                    Besoin d'aide ?
-                </a>               
+
+     
+                <a class="item item-icon-left item-positive" ng-click="rateApp()">
+                    <i class="icon ion-star"></i>
+                    Vous aimez l'application ?
+                </a>
                 <a class="item item-icon-left item-positive" ng-click="composeEMail()">
                     <i class="icon ion-email"></i>
                     Envoyer un commentaire
                 </a>
+                 <a class="item item-icon-left item-positive" ng-click="openModal(2)">
+                    <i class="icon ion-information-circled"></i>
+                    Besoin d'aide ?
+                </a>   
             </ul>
         </ion-content>
     </ion-side-menu>

@@ -12,12 +12,33 @@
 {
     position: absolute;
     right: 0px;
-    top: 5px;
+    top: 4px;
 }
 
-.button-counter
+.erase-icon-start
 {
+    width: 30px;
+    min-height: inherit;
+    height: 20px;
+    position: absolute;
+    right: 35px;
+    top: 10px;
+    z-index: 50;
+    
 }
+
+.erase-icon-end
+{
+    width: 30px;
+    min-height: inherit;
+    height: 20px;
+    position: absolute;
+    right: 35px;
+    top: 55px;
+    z-index: 50;
+    
+}
+
 
 /*
  DEFINIR UN TRAJET

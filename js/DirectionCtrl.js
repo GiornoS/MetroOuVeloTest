@@ -101,8 +101,37 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         subject: 'Application Métro ou Vélib ?'
     };
     posOptions = {timeout: 10000, enableHighAccuracy: true};
+    $scope.showEraseIconStart = false;
+    $scope.showEraseIconEnd = false;
+ 
     
     
+    $scope.clearText = function (index) {
+        if (index === 1) {
+            document.getElementById("city_start").value = "";
+        } else if (index === 2) {
+            document.getElementById("city_end").value = "";
+        }
+    };
+    
+    $scope.showEraseOnTap = function (index) {
+        if (index === 1) {
+            if ($scope.showEraseIconStart) {
+                $scope.showEraseIconStart = false;
+            } else {
+                $scope.showEraseIconStart = true;
+            }
+        } else if (index === 2) {
+            if ($scope.showEraseIconEnd) {
+                $scope.showEraseIconEnd = false;
+            } else {
+                $scope.showEraseIconEnd = true;
+            }
+            
+        }
+    };
+    
+        
     
     $scope.composeEMail = function () {
         document.addEventListener("deviceready", function () {
@@ -154,7 +183,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             document.addEventListener("deviceready", function () {
                 // Vibre 1000ms
                 $cordovaVibration.vibrate(1000);
-                
+                $scope.timerStopper();
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                     $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
                 }, function (err) {
@@ -1163,6 +1192,17 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
                 directionsService.route(request, function (response, status) { // Envoie de la requête pour calculer le parcours
                     if (status === google.maps.DirectionsStatus.OK) {
+                        var markerDepart, markerArrivee;
+                        markerDepart = new google.maps.Marker({
+                            position: $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].start_location,
+                            map: $scope.map,
+                            icon: "res/img/marker/Depart.png"
+                        });
+                        markerArrivee = new google.maps.Marker({
+                            position: $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].end_location,
+                            map: $scope.map,
+                            icon: "res/img/marker/Arrivee.png"
+                        });
                         if ($scope.choixDeTransport === google.maps.DirectionsTravelMode.BICYCLING) {
                             // On affiche tous les morceaux du trajet sur la carte
                             directionsDisplayStart.setMap($scope.map);
@@ -1189,17 +1229,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                             $scope.donneesVelibPlusProcheDepart.station.setOptions({visible : true});
                             $scope.donneesVelibPlusProcheDepart.station.setMap($scope.map);
                             
-                            var markerDepart, markerArrivee;
-                            markerDepart = new google.maps.Marker({
-                                position: $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].start_location,
-                                map: $scope.map,
-                                icon: "res/img/marker/Depart.png"
-                            });
-                            markerArrivee = new google.maps.Marker({
-                                position: $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].end_location,
-                                map: $scope.map,
-                                icon: "res/img/marker/Arrivee.png"
-                            });
+
                             $scope.markersToErase = [$scope.donneesVelibPlusProcheDepart.station, $scope.donneesVelibPlusProcheArrivee.station, markerDepart, markerArrivee];
                             
                             directionsDisplayStart.setDirections($scope.donneesVelibPlusProcheDepart.donneesTrajet); // Trace l'itinéraire sur la carte et les différentes étapes du parcours                        
@@ -1209,6 +1239,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                         } else {
                             $scope.effectiveDistance = response.routes[0].legs[0].distance.text;
                             $scope.effectiveDuration = response.routes[0].legs[0].duration.text;
+                            $scope.markersToErase = [markerDepart, markerArrivee];
                             // On désaffiche les morceux de routes correspondant aux parties à pied
                             directionsDisplayStart.setMap(null);
                             directionsDisplayEnd.setMap(null);
