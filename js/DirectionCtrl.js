@@ -112,37 +112,15 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             okText: 'Recalculer le trajet'
         });
         alertPopup.then(function (res) {
+
+            $scope.loading = $ionicLoading.show({
+                template: "Calcul du nouveau trajet en cours..."
+            });
             $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                if (position) {
-                    
-                    $scope.loading = $ionicLoading.show({
-                        template: "Calcul du nouveau trajet en cours..."
-                    });
-                    $timeout(function () {
-                        $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-
-                        $scope.timerStopper();
-                    }, 1000);
-                } else {
-                    $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                        if (position) {
-
-                            $scope.loading = $ionicLoading.show({
-                                template: "Calcul du nouveau trajet en cours..."
-                            });
-                            $timeout(function () {
-                                $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-
-                                $scope.timerStopper();
-                            }, 1000);
-                        }
-                    }, function (err) {
-                        $ionicLoading.show({
-                            template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
-                            duration: 2000
-                        });
-
-                    });
+                if (angular.isDefined(position)) {
+                    alert(position);
+                    $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
+                    $scope.timerStopper();
                 }
             }, function (err) {
                 $ionicLoading.show({
