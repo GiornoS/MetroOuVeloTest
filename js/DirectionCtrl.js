@@ -116,18 +116,20 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             $scope.loading = $ionicLoading.show({
                 template: "Calcul du nouveau trajet en cours..."
             });
-            $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                if (angular.isDefined(position)) {
-                    $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
-                    $scope.timerStopper();
-                }
-            }, function (err) {
-                $ionicLoading.show({
-                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
-                    duration: 2000
-                });
+            document.addEventListener("deviceready", function () {
+                $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                    if (angular.isDefined(position)) {
+                        $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
+                        $scope.timerStopper();
+                    }
+                }, function (err) {
+                    $ionicLoading.show({
+                        template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
+                        duration: 2000
+                    });
 
-            });
+                });
+            }, false);
         });
     };
     
@@ -869,7 +871,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     
     /**
     *** @return String $scope.address_autocomplete1 : adresse utilisée comme point de départ pour calculer le trajet
-    *** @return String $scope.city_start : adresse qui va s'afficher dans la card "Définir un trajet" pour montrer à l'utilisateur qu'on a bien sa géolocalisation commme adresse                                            de départ
+    *** @return String $scope.city_start : adresse qui va s'afficher dans la card "Définir un trajet" pour montrer à l'utilisateur qu'on a bien sa géolocalisation commme adresse de départ
     **/
     
     $scope.centerOnMe = function () {
@@ -887,6 +889,60 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             template: 'Recherche de la position en cours...',
             showBackdrop: false
         });
+        
+        
+        document.addEventListener("deviceready", function () {
+            $cordovaGeolocation.getCurrentPosition(posOptions).then(function (pos) {
+                if (angular.isDefined(pos)) {
+                    
+                    $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+                    $scope.map.setZoom(15);
+                    $ionicLoading.hide();
+
+                    var posit = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+
+                    if (!marker) {
+                        marker = new google.maps.Marker({
+                            position: posit,
+                            map: $scope.map,
+                            title: 'You are here'
+                        });
+                    } else {
+                        marker.setMap(null);
+                        marker = new google.maps.Marker({
+                            position: posit,
+                            map: $scope.map,
+                            title: 'You are here'
+                        });
+                    }
+                    $scope.Titre_Recommandation = "Métro ou Vélib ?"; // On réinitialise le itre à Métro ou Vélib ?
+                    $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.coords.latitude + "," + pos.coords.longitude + "&sensor=false").success(function (response) {
+
+                        var geo = new google.maps.LatLng(response.results[0].geometry.location.lat, response.results[0].geometry.location.lng);
+                        $scope.city_start = response.results[0].formatted_address;
+                        $scope.verif_city_start = response.results[0].formatted_address;
+                        // On affiche la ville de départ dans le formulaire
+                        $scope.detailsCityStart = {geometry: {location: geo}};
+                        document.getElementById('city_start').value = response.results[0].formatted_address;
+                    }).error(function (response) {
+                        $ionicLoading.show({
+                            template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
+                            duration: 2000
+                        });
+                    });
+                    
+    
+                }
+            }, function (err) {
+                $ionicLoading.hide();
+                $ionicLoading.show({
+                    template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
+                    duration: 2000
+                });
+            });
+        }, false);
+        
+        /*
         navigator.geolocation.getCurrentPosition(function (pos) {
             $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
             $scope.map.setZoom(15);
@@ -932,6 +988,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         }, {
             timeout: 15000
         });
+        */
     };
 
     /*** FONCTION PERMETTANT D'AFFICHER OU DE DESAFFICHER LA CARD "DEFINIR UN TRAJET" ***/
@@ -1112,9 +1169,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         var CITYSTART, CITYEND, stationVelibPlusProcheDepart, stationVelibPlusProcheArrivee;
         
         if (forceToUseGeoloc) {
-            alert("ok");
             CITYSTART = {geometry : {location : new google.maps.LatLng(city_start.coords.latitude, city_start.coords.longitude)}};
-            alert(CITYSTART.geometry.location);
         } else {
             // On vérifie si c'est la géolocalisation qui est utilisée ou non
             if ($scope.verif_city_start === document.getElementById("city_start").value) {
@@ -1207,6 +1262,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });*/
             
             $timeout(function () {
+                alert($scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].end_location);
                 request = {
                     origin        : $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].end_location,
                     destination   : $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].start_location,
@@ -1263,10 +1319,10 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
 
                             $scope.markersToErase = [$scope.donneesVelibPlusProcheDepart.station, $scope.donneesVelibPlusProcheArrivee.station, markerDepart, markerArrivee];
                             
-                            directionsDisplayStart.setDirections($scope.donneesVelibPlusProcheDepart.donneesTrajet); // Trace l'itinéraire sur la carte et les différentes étapes du parcours                        
+                            directionsDisplayStart.setDirections($scope.donneesVelibPlusProcheDepart.donneesTrajet); // Trace l'itinéraire de la position de départ vers la station de vélib la plus proche
 
-                            directionsDisplayEnd.setDirections($scope.donneesVelibPlusProcheArrivee.donneesTrajet); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
-                            directionsDisplayMiddle.setDirections(response); // Trace l'itinéraire sur la carte et les différentes étapes du parcours
+                            directionsDisplayEnd.setDirections($scope.donneesVelibPlusProcheArrivee.donneesTrajet); // Trace l'itinéraire de la station de vélib la plus proche de l'arrivée à la destination
+                            directionsDisplayMiddle.setDirections(response); // Trace l'itinéraire en vélib entre les deux stations de vélibs les plus proches respectivement du départ et de l'arrivée
                         } else {
                             $scope.effectiveDistance = response.routes[0].legs[0].distance.text;
                             $scope.effectiveDuration = response.routes[0].legs[0].duration.text;
@@ -1278,6 +1334,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                         }
                         $scope.donnees_du_trajet = response; //permet de récupérer la durée et la distance
 
+                        // Permet de récupérer les infos sur la staion de métro la plus proche de l'arrivée (utile pour la recommandation)
                         requestNearbySearch = {
                             location : CITYEND.geometry.location,
                             rankBy : google.maps.places.RankBy.DISTANCE,
