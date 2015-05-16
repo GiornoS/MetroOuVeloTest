@@ -123,6 +123,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                         $scope.timerStopper();
                     }
                 }, function (err) {
+                    $scope.timerStopper();
                     $ionicLoading.show({
                         template: "Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres et votre connexion.",
                         duration: 2000
@@ -1262,7 +1263,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });*/
             
             $timeout(function () {
-                alert($scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].end_location);
                 request = {
                     origin        : $scope.donneesVelibPlusProcheDepart.donneesTrajet.routes[0].legs[0].end_location,
                     destination   : $scope.donneesVelibPlusProcheArrivee.donneesTrajet.routes[0].legs[0].start_location,
