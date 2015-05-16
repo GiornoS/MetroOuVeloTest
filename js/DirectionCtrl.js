@@ -781,27 +781,46 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                         LatLng = new google.maps.LatLng(response[i].position.lat, response[i].position.lng);
                         var markerPlcDisp, markerVlbDisp;
                         // Si le nombre de places/vélibs dispo est inférieur à 4, on affiche une icône rouge, sinon une icône violette (vélib) ou grise (place)
-                        if (response[i].available_bike_stands < 4) {
+                        if (response[i].available_bike_stands === 0) {
                             markerPlcDisp = new google.maps.Marker({
+                                title: 0,
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|000000|ffffff",
+                                clickable: true
+                            });   
+                        } else if (response[i].available_bike_stands < 4 && response[i].available_bike_stands !== 0) {
+                            markerPlcDisp = new google.maps.Marker({
+                                title: response[i].available_bike_stands,
                                 position: LatLng,
                                 icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|ff0000|ffffff",
                                 clickable: true
                             });
                         } else {
                             markerPlcDisp = new google.maps.Marker({
+                                title: response[i].available_bike_stands,
                                 position: LatLng,
                                 icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bike_stands + "|a99faa|ffffff",
                                 clickable: true
                             });
                         }
-                        if (response[i].available_bikes < 4) {
+                        if (response[i].available_bikes === 0) {
                             markerVlbDisp = new google.maps.Marker({
+                                title: 0,
+                                position: LatLng,
+                                icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|000000|ffffff",
+                                clickable: true
+                            });
+                            
+                        } else if (response[i].available_bikes < 4 && response[i].available_bikes !== 0) {
+                            markerVlbDisp = new google.maps.Marker({
+                                title: response[i].available_bikes,
                                 position: LatLng,
                                 icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|ff0000|ffffff",
                                 clickable: true
                             });
                         } else {
                             markerVlbDisp = new google.maps.Marker({
+                                title: response[i].available_bikes,
                                 position: LatLng,
                                 icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + response[i].available_bikes + "|be65c6|ffffff",
                                 clickable: true
@@ -1095,11 +1114,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             if (distanceTemp < distanceMini && distanceTemp !== 0) {
                 distanceMini = distanceTemp;
                 // Si c'est le départ, c'est le nombre de vélibs dispo qui est intéressant, si c'est l'arrivée, c'est le nb de places dispo qui est utile
-                if (deparrivee === "depart") {
+                // La seconde condition permet de ne prendre en compte que les stations ayant plus de 3 places ou 3 vélibs dispo
+                if (deparrivee === "depart" && markersVelibDispo[i].title > 3) {
                     stationPlusProche = markersVelibDispo[i];
-                } else {
+                } else if (deparrivee === "arrivee" && markersPlacesDispo[i].title > 3) {
                     stationPlusProche = markersPlacesDispo[i];
                 }
+                
+
                 
                 
             }
