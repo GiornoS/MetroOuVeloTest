@@ -108,7 +108,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     $scope.showAlert = function () {
         var alertPopup = $ionicPopup.alert({
             title: "Vous êtes partis il y a 22 minutes !",
-            template: "<p>Vous devriez chercher ranger votre Vélib' si vous ne voulez pas avoir à payer de supplément (après 30 minutes d'utilisation).</p> <p>En appuyant sur le bouton ci-dessous vous pourrez recalculer le trajet et trouver la station de Vélibs la plus proche pour garer votre Vélib', en prendre un autre, et continuer votre trajet !</p>",
+            template: "<p>Déposez votre Vélib' à la station la plus proche pour ne pas payer de supplément</p>",
             okText: 'Recalculer le trajet'
         });
         alertPopup.then(function (res) {
