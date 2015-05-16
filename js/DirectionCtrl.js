@@ -118,7 +118,6 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             });
             $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                 if (angular.isDefined(position)) {
-                    alert(position);
                     $scope.calculate(position, $scope.donneesSauvegardees[1], $scope.donneesSauvegardees[2], $scope.donneesSauvegardees[3], true, true);
                     $scope.timerStopper();
                 }
@@ -1112,19 +1111,26 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         // Récupère la location de départ voulue (géolocalisation ou adresse entrée)
         var CITYSTART, CITYEND, stationVelibPlusProcheDepart, stationVelibPlusProcheArrivee;
         
-        // On vérifie si c'est la géolocalisation qui est utilisée ou non
-        if ($scope.verif_city_start === document.getElementById("city_start").value) {
-            CITYSTART = $scope.detailsCityStart;
+        if (forceToUseGeoloc) {
+            alert("ok");
+            CITYSTART = {geometry : {location : new google.maps.LatLng(city_start.coords.latitude, city_start.coords.longitude)}};
+            alert(CITYSTART.geometry.location);
         } else {
-            if (city_start.name + ", Paris, France" === document.getElementById("city_start").value || city_start.formatted_address === document.getElementById("city_start").value) {
-                CITYSTART = city_start;
-                // Permet de remplacer la première entrée du formulaire par sa vraie valeur
-                $scope.city_start = city_start.formatted_address;
-                if (city_start.address_components[0].short_name === "FR") {
-                    $scope.city_start = city_start.name + ", Paris, France";
+            // On vérifie si c'est la géolocalisation qui est utilisée ou non
+            if ($scope.verif_city_start === document.getElementById("city_start").value) {
+                CITYSTART = $scope.detailsCityStart;
+            } else {
+                if (city_start.name + ", Paris, France" === document.getElementById("city_start").value || city_start.formatted_address === document.getElementById("city_start").value) {
+                    CITYSTART = city_start;
+                    // Permet de remplacer la première entrée du formulaire par sa vraie valeur
+                    $scope.city_start = city_start.formatted_address;
+                    if (city_start.address_components[0].short_name === "FR") {
+                        $scope.city_start = city_start.name + ", Paris, France";
+                    }
                 }
             }
         }
+
 
         if (city_end.formatted_address === document.getElementById("city_end").value) {
             CITYEND = city_end;
@@ -1137,9 +1143,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
         // Permet de sauvegarder les entrées du dernier chemin calculé dans le cas du recalcule lors d'un changement de moyen de transport
         $scope.donneesSauvegardees = [CITYSTART, CITYEND, minute_choisie, heure_choisie];
         
-        if (forceToUseGeoloc) {
-            CITYSTART = {geometry : {location : new google.maps.LatLng(city_start.coords.latitude, city_start.coords.longitude)}};
-        }
+
         
         if (CITYSTART && CITYEND) {
             stationVelibPlusProche(CITYSTART.geometry.location, true, "depart");
