@@ -1112,12 +1112,14 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
             distanceTemp = google.maps.geometry.spherical.computeDistanceBetween(address, stationLatLng);
             // Si la distance calculée est plus petite, on la garde comme minimum. On la veut différente de 0 car cette fonction permettra aussi de déterminer la station élib la plus proche d'une autre station
             if (distanceTemp < distanceMini && distanceTemp !== 0) {
-                distanceMini = distanceTemp;
+                
                 // Si c'est le départ, c'est le nombre de vélibs dispo qui est intéressant, si c'est l'arrivée, c'est le nb de places dispo qui est utile
                 // La seconde condition permet de ne prendre en compte que les stations ayant plus de 3 places ou 3 vélibs dispo
                 if (deparrivee === "depart" && parseInt(markersVelibDispo[i].title, 10) > 3) {
+                    distanceMini = distanceTemp;
                     stationPlusProche = markersVelibDispo[i];
                 } else if (deparrivee === "arrivee" && parseInt(markersPlacesDispo[i].title, 10) > 3) {
+                    distanceMini = distanceTemp;
                     stationPlusProche = markersPlacesDispo[i];
                 }
                 
