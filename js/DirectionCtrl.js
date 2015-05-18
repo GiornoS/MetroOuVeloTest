@@ -1186,6 +1186,7 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
     **/
     $scope.calculate = function (city_start, city_end, minute_choisie, heure_choisie, isRecalculation, forceToUseGeoloc) {
         isPhoneConnected();
+        
         //On efface les markers utilisés précédemment
         for (i = 0; i < $scope.markersToErase.length; i += 1) {
             $scope.markersToErase[i].setMap(null);
@@ -1409,6 +1410,12 @@ function DirectionCtrl($scope, $http, $ionicLoading, $compile, $cordovaGoogleAna
                     }
                 });
             }, 500);
+        } else {
+            $ionicLoading.hide();
+            $ionicLoading.show({
+                template: "Veuillez entrer les adresses de départ et d'arrivée.",
+                duration: 1000
+            });
         }
     };
 

@@ -72,14 +72,14 @@
 					<input type="search" placeholder="D'où partez vous ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityStart" ng-model="city_start" name="city_start" id="city_start" ng-blur="showEraseOnTap(1)" ng-focus="showEraseOnTap(1)"> 
                     
                 </label>
-               <!-- <img ng-click="clearText(1)" src="res/img/erase.png" class="icon button button-icon erase-icon-start" ng-show="showEraseIconStart"></img> -->
+               <img ng-click="clearText(1)" src="res/img/erase.png" class="icon button button-icon erase-icon-start" ng-show="showEraseIconStart"></img>
                 <a ng-click="centerOnMe()" class="button button-icon icon ion-android-locate geolocate-button"></a>
                
                 <label class="item item-input search_end">
 					<a class="icon ion-search placeholder-icon"></a>
 					<input type="search" placeholder="Où voulez-vous aller ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityEnd" ng-model="city_end" name="city_end" id="city_end" ng-blur="showEraseOnTap(2)" ng-focus="showEraseOnTap(2)">
 				</label>
-               <!--  <img ng-click="clearText(2)" src="res/img/erase.png" class="icon button button-icon erase-icon-end" ng-show="showEraseIconEnd"></img> -->
+               <img ng-click="clearText(2)" src="res/img/erase.png" class="icon button button-icon erase-icon-end" ng-show="showEraseIconEnd"></img>
             </div>
             <div class="heure_de_depart">
                 Départ à :
