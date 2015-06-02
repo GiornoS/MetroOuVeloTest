@@ -72,14 +72,14 @@
 					<input type="search" placeholder="D'où partez vous ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityStart" ng-model="city_start" name="city_start" id="city_start" ng-blur="showEraseOnTap(1)" ng-focus="showEraseOnTap(1)"> 
                     
                 </label>
-               <img ng-click="clearText(1)" src="res/img/erase.png" class="icon button button-icon erase-icon-start" ng-show="showEraseIconStart"></img>
+                <img ng-click="clearText(1)" src="res/img/erase.png" class="icon button button-icon erase-icon-start" ng-show="showEraseIconStart"></img>
                 <a ng-click="centerOnMe()" class="button button-icon icon ion-android-locate geolocate-button"></a>
                
                 <label class="item item-input search_end">
 					<a class="icon ion-search placeholder-icon"></a>
 					<input type="search" placeholder="Où voulez-vous aller ?" g-places-autocomplete options="{componentRestrictions: { country: 'fr' }}" details="detailsCityEnd" ng-model="city_end" name="city_end" id="city_end" ng-blur="showEraseOnTap(2)" ng-focus="showEraseOnTap(2)">
 				</label>
-               <img ng-click="clearText(2)" src="res/img/erase.png" class="icon button button-icon erase-icon-end" ng-show="showEraseIconEnd"></img>
+                <img ng-click="clearText(2)" src="res/img/erase.png" class="icon button button-icon erase-icon-end" ng-show="showEraseIconEnd"></img>
             </div>
             <div class="heure_de_depart">
                 Départ à :
@@ -156,42 +156,51 @@
                       <h1 class="title">Besoin d'aide ?</h1>
                       <div class="button button-clear" ng-click="closeModal(2)"><span class="icon ion-close"></span></div>
                     </header>
-                   
-                    <div class="list list-aide">
-                        <div class="item item-divider item-divider-modal-aide">
-                            <center class="text-modal-aide-divider">Actions</center>
-                        </div>
-                        <div class="item item-list-aide">
-                            <img class="icon icon-modal-aide" src="res/img/Plus.png"></img>
-                            <div class="text-modal-aide">
-                            Définir un nouveau trajet
+                    <ion-content scroll="true">
+                        <div class="list list-aide">
+                            <div class="ion-item item-divider item-divider-modal-aide">
+                                <center class="text-modal-aide-divider">Actions</center>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/Plus.png"></img>
+                                <div class="text-modal-aide">
+                                Définir un nouveau trajet
+                                </div>
+                            </div>
+                            <div class="item item-list-aide item-2">
+                                <img class="icon icon-modal-aide" src="res/img/android-bicycle-button.png"></img>
+
+                                <div>
+
+                                <p class="text-modal-aide item2 p1">Appui 1 : Nombre de Vélib' restants</p>
+                                <p class="text-modal-aide item2 p2">Appui 2 : Nombre de places disponibles</p>
+                                </div>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/android-stopwatch.png"></img>
+                                <span class="text-item4">Appuyez lorsque vous partez, l'application vous avertira d'une vibration au bout de 22 min afin de vous proposer la station de vélib la plus proche pour ranger votre vélib et vous éviter de payer un supplément !</span>
+                            </div>
+                            <div class="item item-divider item-divider-modal-aide">
+                                <center class="text-modal-aide-divider">Carte</center>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/MapLegend/SentiersCyclables.png"></img>
+                                <span class="text-item3">Sentiers cyclables</span>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/MapLegend/PistesCyclables.png"></img>
+                                <span class="text-item3">Pistes cyclables</span>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/MapLegend/VoiesDouces.png"></img>
+                                <span class="text-item3">Voies adaptées pour les vélos</span>
+                            </div>
+                            <div class="item item-list-aide">
+                                <img class="icon icon-modal-aide" src="res/img/MapLegend/VoiesDouces.png"></img>
+                                <span class="text-item3">Voies adaptées pour les vélos</span>
                             </div>
                         </div>
-                        <div class="item item-list-aide item-2">
-                            <img class="icon icon-modal-aide" src="res/img/android-bicycle-button.png"></img>
-                            
-                            <div>
-                           
-                            <p class="text-modal-aide item2 p1">Appui 1 : Nombre de Vélib' restants</p>
-                            <p class="text-modal-aide item2 p2">Appui 2 : Nombre de places disponibles</p>
-                            </div>
-                        </div>
-                        <div class="item item-divider item-divider-modal-aide">
-                            <center class="text-modal-aide-divider">Carte</center>
-                        </div>
-                        <div class="item item-list-aide">
-                            <img class="icon icon-modal-aide" src="res/img/MapLegend/SentiersCyclables.png"></img>
-                            <span class="text-item3">Sentiers cyclables</span>
-                        </div>
-                        <div class="item item-list-aide">
-                            <img class="icon icon-modal-aide" src="res/img/MapLegend/PistesCyclables.png"></img>
-                            <span class="text-item3">Pistes cyclables</span>
-                        </div>
-                        <div class="item item-list-aide">
-                            <img class="icon icon-modal-aide" src="res/img/MapLegend/VoiesDouces.png"></img>
-                            <span class="text-item3">Voies adaptées pour les vélos</span>
-                        </div>
-                    </div>
+                    </ion-content>
                 </ion-modal-view>
             </script>
             
