@@ -304,10 +304,15 @@
     white-space: normal;
 }
 
+.item-timer
+{
+    height: 100px;
+}
+
 .text-item4 
 {
     position: absolute;
-    top: 0%;
+    top: 8px;
     width: 80%;
     left: 75px;
     font-size: 0.8em;
