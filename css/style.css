@@ -306,19 +306,20 @@
 
 .item-timer
 {
-    height: 100px;
+    min-height: 113px;
 }
 
 .text-item4 
 {
     position: absolute;
     top: 8px;
-    width: 80%;
+    width: 75%;
     left: 75px;
     font-size: 0.8em;
     font-weight: 900;
     color: #666666;
     white-space: normal;
+    text-align: justify;
 }
 
 .modal_affichage_trajet
